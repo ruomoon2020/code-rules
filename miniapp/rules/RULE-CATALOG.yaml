@@ -1,0 +1,510 @@
+schema_version: 1
+catalog_version: 1.0.0
+id_scope: stable file-level rule topics; clause-level IDs are not assigned
+stack: miniapp
+rules:
+- id: CR-MA-000
+  stack: miniapp
+  title: 00 Must Follow
+  path: shared/00-must-follow.md
+  owner_role: Miniapp owner
+  strength:
+    required_markers: 1
+    recommended_markers: 0
+  routing:
+  - codex/05-verification.md
+  - codex/AGENTS.md
+  - cursor/00-project-overview.mdc
+  eval_cases:
+  - M39
+  verification:
+  - scripts/validate-rules-package.py
+- id: CR-MA-001
+  stack: miniapp
+  title: 01 Project Structure
+  path: shared/01-project-structure.md
+  owner_role: Miniapp owner
+  strength:
+    required_markers: 7
+    recommended_markers: 1
+  routing:
+  - codex/AGENTS.md
+  - cursor/00-project-overview.mdc
+  eval_cases:
+  - M10
+  verification:
+  - scripts/validate-rules-package.py
+- id: CR-MA-002
+  stack: miniapp
+  title: 02 Naming
+  path: shared/02-naming.md
+  owner_role: Miniapp owner
+  strength:
+    required_markers: 4
+    recommended_markers: 1
+  routing:
+  - codex/AGENTS.md
+  - cursor/00-project-overview.mdc
+  - cursor/02-vue3-uniapp.mdc
+  - cursor/24-design-system.mdc
+  eval_cases:
+  - M48
+  verification:
+  - scripts/validate-rules-package.py
+- id: CR-MA-003
+  stack: miniapp
+  title: 03 Vue3 TypeScript uni-app
+  path: shared/03-vue3-typescript-uniapp.md
+  owner_role: Miniapp owner
+  strength:
+    required_markers: 11
+    recommended_markers: 0
+  routing:
+  - codex/AGENTS.md
+  - cursor/02-vue3-uniapp.mdc
+  - cursor/24-design-system.mdc
+  eval_cases:
+  - M10
+  - M45
+  - M46
+  verification:
+  - scripts/validate-rules-package.py
+- id: CR-MA-004
+  stack: miniapp
+  title: 04 Page UI Lifecycle
+  path: shared/04-page-ui-lifecycle.md
+  owner_role: Miniapp owner
+  strength:
+    required_markers: 8
+    recommended_markers: 2
+  routing:
+  - codex/AGENTS.md
+  - cursor/02-vue3-uniapp.mdc
+  - cursor/12-list-form-pagination.mdc
+  eval_cases:
+  - M18
+  - M19
+  - M45
+  - M47
+  verification:
+  - scripts/validate-rules-package.py
+- id: CR-MA-005
+  stack: miniapp
+  title: 05 API Contract Request
+  path: shared/05-api-contract-request.md
+  owner_role: Miniapp owner
+  strength:
+    required_markers: 8
+    recommended_markers: 0
+  routing:
+  - codex/07-network-security.md
+  - codex/AGENTS.md
+  - cursor/05-api-auth.mdc
+  - cursor/21-network-security.mdc
+  eval_cases:
+  - M01
+  - M03
+  - M08
+  - M22
+  - M44
+  - M52
+  verification:
+  - scripts/validate-rules-package.py
+- id: CR-MA-006
+  stack: miniapp
+  title: 06 Login Auth Session
+  path: shared/06-login-auth-session.md
+  owner_role: Miniapp owner
+  strength:
+    required_markers: 15
+    recommended_markers: 0
+  routing:
+  - codex/AGENTS.md
+  - cursor/05-api-auth.mdc
+  - cursor/08-state-storage.mdc
+  - cursor/14-payment-subscribe-share.mdc
+  - cursor/22-error-recovery.mdc
+  eval_cases:
+  - M02
+  - M11
+  - M21
+  - M36
+  verification:
+  - scripts/validate-rules-package.py
+- id: CR-MA-007
+  stack: miniapp
+  title: 07 Pages Routing Subpackages
+  path: shared/07-pages-routing-subpackages.md
+  owner_role: Miniapp owner
+  strength:
+    required_markers: 7
+    recommended_markers: 0
+  routing:
+  - codex/AGENTS.md
+  - cursor/07-pages-subpackages.mdc
+  - cursor/10-performance-package-size.mdc
+  eval_cases:
+  - M04
+  - M14
+  - M20
+  - M23
+  - M50
+  verification:
+  - scripts/validate-rules-package.py
+- id: CR-MA-008
+  stack: miniapp
+  title: 08 State Storage Cache
+  path: shared/08-state-storage-cache.md
+  owner_role: Miniapp owner
+  strength:
+    required_markers: 13
+    recommended_markers: 0
+  routing:
+  - codex/AGENTS.md
+  - cursor/08-state-storage.mdc
+  eval_cases:
+  - M11
+  verification:
+  - scripts/validate-rules-package.py
+- id: CR-MA-009
+  stack: miniapp
+  title: 09 Privacy Permission
+  path: shared/09-privacy-permission.md
+  owner_role: Miniapp owner
+  strength:
+    required_markers: 9
+    recommended_markers: 0
+  routing:
+  - codex/AGENTS.md
+  - cursor/00-project-overview.mdc
+  - cursor/05-api-auth.mdc
+  - cursor/09-privacy-permission.mdc
+  - cursor/13-upload-media.mdc
+  - cursor/14-payment-subscribe-share.mdc
+  - cursor/26-security-hardening-risk.mdc
+  eval_cases:
+  - M07
+  - M24
+  - M40
+  - M51
+  verification:
+  - scripts/validate-rules-package.py
+- id: CR-MA-010
+  stack: miniapp
+  title: 10 Performance Package Size
+  path: shared/10-performance-package-size.md
+  owner_role: Miniapp owner
+  strength:
+    required_markers: 21
+    recommended_markers: 1
+  routing:
+  - codex/AGENTS.md
+  - cursor/00-project-overview.mdc
+  - cursor/07-pages-subpackages.mdc
+  - cursor/10-performance-package-size.mdc
+  - cursor/25-dependency-supply-chain.mdc
+  eval_cases:
+  - M04
+  - M16
+  - M28
+  - M50
+  verification:
+  - scripts/validate-rules-package.py
+- id: CR-MA-011
+  stack: miniapp
+  title: 11 Platform Differences
+  path: shared/11-platform-differences.md
+  owner_role: Miniapp owner
+  strength:
+    required_markers: 16
+    recommended_markers: 0
+  routing:
+  - codex/AGENTS.md
+  - cursor/00-project-overview.mdc
+  - cursor/09-privacy-permission.mdc
+  - cursor/11-platform-differences.mdc
+  eval_cases:
+  - M17
+  - M42
+  verification:
+  - scripts/validate-rules-package.py
+- id: CR-MA-012
+  stack: miniapp
+  title: 12 List Form Pagination
+  path: shared/12-list-form-pagination.md
+  owner_role: Miniapp owner
+  strength:
+    required_markers: 7
+    recommended_markers: 0
+  routing:
+  - codex/AGENTS.md
+  - cursor/00-project-overview.mdc
+  - cursor/02-vue3-uniapp.mdc
+  - cursor/12-list-form-pagination.mdc
+  eval_cases:
+  - M18
+  - M25
+  verification:
+  - scripts/validate-rules-package.py
+- id: CR-MA-013
+  stack: miniapp
+  title: 13 Upload Download Media
+  path: shared/13-upload-download-media.md
+  owner_role: Miniapp owner
+  strength:
+    required_markers: 8
+    recommended_markers: 0
+  routing:
+  - codex/AGENTS.md
+  - cursor/13-upload-media.mdc
+  eval_cases:
+  - M51
+  verification:
+  - scripts/validate-rules-package.py
+- id: CR-MA-014
+  stack: miniapp
+  title: 14 Payment Subscribe Share
+  path: shared/14-payment-subscribe-share.md
+  owner_role: Miniapp owner
+  strength:
+    required_markers: 10
+    recommended_markers: 0
+  routing:
+  - codex/AGENTS.md
+  - cursor/00-project-overview.mdc
+  - cursor/11-platform-differences.mdc
+  - cursor/14-payment-subscribe-share.mdc
+  - cursor/20-app-runtime.mdc
+  eval_cases:
+  - M05
+  - M06
+  - M15
+  - M26
+  - M27
+  - M34
+  - M52
+  verification:
+  - scripts/validate-rules-package.py
+- id: CR-MA-015
+  stack: miniapp
+  title: 15 Logging Observability
+  path: shared/15-logging-observability.md
+  owner_role: Miniapp owner
+  strength:
+    required_markers: 6
+    recommended_markers: 1
+  routing:
+  - codex/AGENTS.md
+  - cursor/00-project-overview.mdc
+  - cursor/15-logging-observability.mdc
+  eval_cases:
+  - M12
+  - M31
+  - M38
+  verification:
+  - scripts/validate-rules-package.py
+- id: CR-MA-016
+  stack: miniapp
+  title: 16 Testing Quality Gates
+  path: shared/16-testing-quality-gates.md
+  owner_role: Miniapp owner
+  strength:
+    required_markers: 9
+    recommended_markers: 3
+  routing:
+  - codex/AGENTS.md
+  - cursor/02-vue3-uniapp.mdc
+  - cursor/16-quality-gates.mdc
+  - cursor/24-design-system.mdc
+  eval_cases:
+  - M13
+  - M29
+  - M49
+  - M52
+  verification:
+  - scripts/validate-rules-package.py
+- id: CR-MA-017
+  stack: miniapp
+  title: 17 AI Generation
+  path: shared/17-ai-generation.md
+  owner_role: Miniapp owner
+  strength:
+    required_markers: 13
+    recommended_markers: 0
+  routing:
+  - codex/AGENTS.md
+  - cursor/00-project-overview.mdc
+  - cursor/27-ai-generation.mdc
+  eval_cases:
+  - M13
+  verification:
+  - scripts/validate-rules-package.py
+- id: CR-MA-018
+  stack: miniapp
+  title: 18 Business Module Extension
+  path: shared/18-business-module-extension.md
+  owner_role: Miniapp owner
+  strength:
+    required_markers: 8
+    recommended_markers: 0
+  routing:
+  - codex/AGENTS.md
+  - cursor/00-project-overview.mdc
+  - cursor/18-business-module-extension.mdc
+  eval_cases:
+  - M21
+  verification:
+  - scripts/validate-rules-package.py
+- id: CR-MA-019
+  stack: miniapp
+  title: 19 Release Ops
+  path: shared/19-release-ops.md
+  owner_role: Miniapp owner
+  strength:
+    required_markers: 9
+    recommended_markers: 0
+  routing:
+  - codex/AGENTS.md
+  - cursor/16-quality-gates.mdc
+  - cursor/26-security-hardening-risk.mdc
+  eval_cases:
+  - M34
+  - M43
+  verification:
+  - scripts/validate-rules-package.py
+- id: CR-MA-020
+  stack: miniapp
+  title: 20 App Runtime
+  path: shared/20-app-runtime.md
+  owner_role: Miniapp owner
+  strength:
+    required_markers: 14
+    recommended_markers: 0
+  routing:
+  - codex/06-app-runtime.md
+  - codex/AGENTS.md
+  - cursor/00-project-overview.mdc
+  - cursor/20-app-runtime.mdc
+  eval_cases:
+  - M30
+  - M31
+  - M47
+  verification:
+  - scripts/validate-rules-package.py
+- id: CR-MA-021
+  stack: miniapp
+  title: 21 Network Security
+  path: shared/21-network-security.md
+  owner_role: Miniapp owner
+  strength:
+    required_markers: 12
+    recommended_markers: 0
+  routing:
+  - codex/07-network-security.md
+  - codex/AGENTS.md
+  - cursor/00-project-overview.mdc
+  - cursor/21-network-security.mdc
+  - cursor/25-dependency-supply-chain.mdc
+  - cursor/26-security-hardening-risk.mdc
+  eval_cases:
+  - M32
+  - M33
+  - M51
+  verification:
+  - scripts/validate-rules-package.py
+- id: CR-MA-022
+  stack: miniapp
+  title: 22 Error Recovery Offline
+  path: shared/22-error-recovery-offline.md
+  owner_role: Miniapp owner
+  strength:
+    required_markers: 10
+    recommended_markers: 1
+  routing:
+  - codex/08-error-recovery.md
+  - codex/AGENTS.md
+  - cursor/22-error-recovery.mdc
+  eval_cases:
+  - M35
+  - M36
+  verification:
+  - scripts/validate-rules-package.py
+- id: CR-MA-023
+  stack: miniapp
+  title: 23 Content Safety
+  path: shared/23-content-safety.md
+  owner_role: Miniapp owner
+  strength:
+    required_markers: 6
+    recommended_markers: 0
+  routing:
+  - codex/09-content-safety.md
+  - codex/AGENTS.md
+  - cursor/00-project-overview.mdc
+  - cursor/23-content-safety.mdc
+  eval_cases:
+  - M37
+  verification:
+  - scripts/validate-rules-package.py
+- id: CR-MA-024
+  stack: miniapp
+  title: 24 Design System Mobile
+  path: shared/24-design-system-mobile.md
+  owner_role: Miniapp owner
+  strength:
+    required_markers: 6
+    recommended_markers: 2
+  routing:
+  - codex/AGENTS.md
+  - cursor/02-vue3-uniapp.mdc
+  - cursor/24-design-system.mdc
+  eval_cases:
+  - M41
+  - M48
+  - M49
+  verification:
+  - scripts/validate-rules-package.py
+- id: CR-MA-025
+  stack: miniapp
+  title: 25 Dependency Supply Chain
+  path: shared/25-dependency-supply-chain.md
+  owner_role: Miniapp owner
+  strength:
+    required_markers: 5
+    recommended_markers: 1
+  routing:
+  - codex/AGENTS.md
+  - cursor/00-project-overview.mdc
+  - cursor/16-quality-gates.mdc
+  - cursor/25-dependency-supply-chain.mdc
+  - cursor/26-security-hardening-risk.mdc
+  eval_cases:
+  - M09
+  - M40
+  verification:
+  - scripts/validate-rules-package.py
+- id: CR-MA-026
+  stack: miniapp
+  title: 26 Security Hardening Risk
+  path: shared/26-security-hardening-risk.md
+  owner_role: Miniapp owner
+  strength:
+    required_markers: 20
+    recommended_markers: 0
+  routing:
+  - codex/AGENTS.md
+  - cursor/00-project-overview.mdc
+  - cursor/16-quality-gates.mdc
+  - cursor/26-security-hardening-risk.mdc
+  eval_cases:
+  - M39
+  - M40
+  - M42
+  - M43
+  - M44
+  verification:
+  - scripts/validate-rules-package.py
+coverage:
+  total: 27
+  routed: 27
+  with_eval_case: 27

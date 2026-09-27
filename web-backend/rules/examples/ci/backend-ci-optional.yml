@@ -1,0 +1,96 @@
+# Optional / Conditional 门禁 — Level 1–2 按需复制到 .github/workflows/backend-ci-optional.yml
+# dependency-scan、flyway-validate 当前为 Maven 样板；Gradle Flyway 见 backend-ci-optional-gradle.yml，Gradle OWASP 见 common-governance/examples/ci/supply-chain-required.yml
+# 另可按项目自增：SBOM、container scan、Pact、perf smoke（本文件未包含）
+
+name: backend-ci-optional
+
+on:
+  pull_request:
+    paths:
+      - "src/**"
+      - "pom.xml"
+      - "build.gradle*"
+      - "src/main/resources/db/migration/**"
+      - ".github/workflows/backend-ci-optional.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  detect-project:
+    runs-on: ubuntu-latest
+    outputs:
+      maven: ${{ steps.detect.outputs.maven }}
+      migrations: ${{ steps.detect.outputs.migrations }}
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+      - name: Detect Maven and migrations
+        id: detect
+        shell: bash
+        run: |
+          if [ -f pom.xml ]; then echo "maven=true" >> "$GITHUB_OUTPUT"; else echo "maven=false" >> "$GITHUB_OUTPUT"; fi
+          if find src/main/resources/db/migration -type f -print -quit 2>/dev/null | grep -q .; then
+            echo "migrations=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "migrations=false" >> "$GITHUB_OUTPUT"
+          fi
+
+  dependency-scan:
+    needs: detect-project
+    runs-on: ubuntu-latest
+    if: needs.detect-project.outputs.maven == 'true'
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+
+      - uses: actions/setup-java@cf277c60eb25467037889841efdb72551f06f6c3 # v4
+        with:
+          distribution: temurin
+          java-version: "17"
+          cache: maven
+
+      - name: OWASP dependency check
+        run: mvn -B org.owasp:dependency-check-maven:12.2.2:check
+
+  flyway-validate:
+    needs: detect-project
+    runs-on: ubuntu-latest
+    if: needs.detect-project.outputs.maven == 'true' && needs.detect-project.outputs.migrations == 'true'
+    services:
+      mysql:
+        image: mysql:8
+        env:
+          MYSQL_ROOT_PASSWORD: root
+          MYSQL_DATABASE: app
+        ports:
+          - 3306:3306
+        options: >-
+          --health-cmd="mysqladmin ping -h 127.0.0.1 -uroot -proot"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=10
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: app
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd="pg_isready -U postgres -d app"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=10
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+
+      - uses: actions/setup-java@cf277c60eb25467037889841efdb72551f06f6c3 # v4
+        with:
+          distribution: temurin
+          java-version: "17"
+          cache: maven
+
+      - name: Flyway validate MySQL
+        run: mvn -B -Dflyway.url=jdbc:mysql://127.0.0.1:3306/app -Dflyway.user=root -Dflyway.password=root flyway:validate
+
+      - name: Flyway validate PostgreSQL
+        run: mvn -B -Dflyway.url=jdbc:postgresql://127.0.0.1:5432/app -Dflyway.user=postgres -Dflyway.password=postgres flyway:validate

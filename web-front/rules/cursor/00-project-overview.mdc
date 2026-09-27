@@ -1,0 +1,46 @@
+---
+description: 企业级 Vue3 前端规则包概览（必读）
+alwaysApply: true
+---
+
+# 项目概览
+
+企业级 Vue 3 + TypeScript + Vite + Element Plus 管理端规则包。
+
+## 唯一入口
+
+- Level 0 硬规则：`rules/shared/00-must-follow.md`（当前 34 条）；场景能力按文末条件路由和项目 Level 触发
+- Evals：P0 8/8，P1 ≥39/42（E01–E50）；成熟后台业务 PR 跑 Business E32–E40；i18n/实时/富文本跑 Platform E41–E43；受监管 Web 跑 Enterprise Hardening E44–E49；测试治理变更跑 E31/E50
+- Codex：`rules/codex/AGENTS.md`（复制为仓库根 `AGENTS.md`）
+- Cursor：本目录 `.mdc` 文件（复制到业务仓 `.cursor/rules/`）；**编号 ≠ shared**，对照 `rules/docs/cursor-shared-map.md`
+
+## Cursor 路由
+
+| 场景 | Cursor |
+|---|---|
+| 立项 / 架构方案 / 上线评审 | `common-governance/docs/architect-engineering-checklist.md`、`common-governance/docs/definition-of-done.md`、`common-governance/docs/dod-maturity-mapping.md` |
+| 需求 / 业务 PR / 缺陷修复 | `common-governance/docs/requirements-traceability.md`、`common-governance/docs/business-correctness-review.md` |
+| 成熟后台业务页 | `18-business-module-extension.mdc` |
+| 改 layout / router / store / base | `19-platform-boundary.mdc` |
+| 表单 / 详情 | `20-form-detail.mdc` |
+| AI 生成复杂代码 | `21-ai-generation.mdc` |
+| 金融 / 政务 / 高敏 Web | `24-regulated-web-hardening.mdc` |
+| i18n / 金额 / 时区 | `22-i18n-locale.mdc` |
+| WebSocket / 富文本 | `23-realtime-rich-content.mdc` |
+| 测试 / CI | `08-quality-testing.mdc` |
+| 生产发布 / 灰度 / 回滚 | `common-governance/docs/environment-promotion.md`、`common-governance/docs/release-evidence.md` |
+| 生产事故 / 复盘 | `common-governance/docs/incident-response.md`、`common-governance/docs/incident-postmortem-template.md` |
+| 列表 / schema / Base | `10` / `11` / `13`；路由权限见 `06` 相关规则 |
+
+## 落地要求
+
+须能访问完整 `rules/` 目录（推荐整包 submodule），否则 `.mdc` 中的 `Read rules/shared/...` 会失效。详见 `rules/README.md`。
+
+## 核心约束
+
+- `src/views/**` 使用 Base 组件与 schema / generated 类型
+- 禁止原生 Element Plus（`el-*` 与 denylist 内 `<El*>`）、禁止虚构字段与 Base API
+- 写 views 前读 `rules/shared/11-base-components-context.md`、`rules/shared/19-list-pagination.md`（列表页）
+- 写字段前读 `rules/shared/12-schema-ssot.md`
+
+不要使用已删除的 `rules.md`。规则包应可独立使用，不依赖外部大文档。

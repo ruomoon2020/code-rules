@@ -1,0 +1,58 @@
+name: artifact-trust-required
+
+on:
+  workflow_call:
+    inputs:
+      artifact-name:
+        description: Artifact uploaded by the caller build job
+        required: true
+        type: string
+      subject-path:
+        description: Relative path under attestation-input to attest
+        required: true
+        type: string
+
+permissions:
+  contents: read
+
+jobs:
+  attest:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write
+      attestations: write
+    steps:
+      - name: Download exact build artifact
+        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4
+        with:
+          name: ${{ inputs.artifact-name }}
+          path: attestation-input
+
+      - name: Generate SPDX SBOM
+        uses: anchore/sbom-action@e22c389904149dbc22b58101806040fa8d37a610 # v0
+        with:
+          path: attestation-input
+          format: spdx-json
+          output-file: sbom.spdx.json
+          upload-artifact: false
+
+      - name: Upload SBOM evidence
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: ${{ inputs.artifact-name }}-sbom
+          path: sbom.spdx.json
+          if-no-files-found: error
+          retention-days: 90
+
+      - name: Attest build provenance
+        uses: actions/attest-build-provenance@e8998f949152b193b063cb0ec769d69d929409be # v2
+        with:
+          subject-path: attestation-input/${{ inputs.subject-path }}
+
+      - name: Attest SBOM
+        uses: actions/attest-sbom@bd218ad0dbcb3e146bd073d1d9c6d78e08aa8a0b # v2
+        with:
+          subject-path: attestation-input/${{ inputs.subject-path }}
+          sbom-path: sbom.spdx.json
+

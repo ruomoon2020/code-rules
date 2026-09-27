@@ -1,0 +1,20 @@
+---
+description: 架构归属与 ADR
+globs:
+  - "src/main/java/**/common/**/*.java"
+  - "src/main/java/**/config/**/*.java"
+  - "src/main/java/**/security/**/*.java"
+  - "src/main/java/**/client/**/*.java"
+  - "docs/adr/**/*.md"
+  - "docs/**/*.md"
+alwaysApply: false
+---
+
+# 架构归属与 ADR
+
+- 修改 common、认证授权、错误码、OpenAPI、迁移、缓存、任务、第三方集成前，先确认 Owner。
+- 新框架、新公共抽象、跨模块设计、breaking API、分库分表、Outbox/锁/缓存一致性方案须 ADR。
+- 废弃公共能力须有替代方案、迁移期限和删除版本。
+- AI 不得在未读现有 ADR / README / Owner 约定时新增全局抽象。
+
+全文：`rules/shared/30-ownership-adr.md`

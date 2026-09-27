@@ -1,0 +1,16 @@
+---
+description: 领域模型与聚合边界
+globs:
+  - "**/domain/**/*.java"
+  - "**/model/**/*.java"
+  - "**/entity/**/*.java"
+alwaysApply: false
+---
+
+# 领域模型
+
+- 聚合根、不变量与仓储边界在 Service / Domain 层表达；Controller 不拼业务规则。
+- Entity 不作为 API body；对外使用 DTO / VO。
+- 跨聚合写操作须明确一致性策略（本地事务 / 最终一致）。
+
+全文：`rules/shared/11-domain-model.md`

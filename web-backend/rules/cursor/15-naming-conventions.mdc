@@ -1,0 +1,15 @@
+---
+description: Java 命名规范
+globs:
+  - "src/main/java/**/*.java"
+  - "src/main/resources/mapper/**/*.xml"
+  - "src/main/resources/application*.yml"
+alwaysApply: false
+---
+
+# 命名
+
+- 包小写；类 PascalCase；表下划线；REST kebab-case。
+- 错误码、权限码格式见 shared。
+
+全文：`rules/shared/02-naming.md`

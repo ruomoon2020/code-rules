@@ -1,0 +1,18 @@
+---
+description: 威胁建模
+globs:
+  - "**/api/**/*Controller.java"
+  - "**/controller/**/*.java"
+  - "**/modules/**/*Controller.java"
+  - "**/config/*Security*.java"
+  - "**/webhook/**"
+  - "contracts/**/*.yaml"
+  - "contracts/**/*.json"
+alwaysApply: false
+---
+
+# 威胁建模
+
+登录、权限、支付、导入导出、Webhook、外部回调、跨租户、PII、生产数据操作等高风险变更须先列威胁点与缓解措施。
+
+全文：`rules/shared/35-threat-modeling.md`

@@ -1,0 +1,58 @@
+---
+description: 企业级 uni-app 小程序规则包概览（必读）
+alwaysApply: true
+---
+
+# 项目概览
+
+企业级 Vue 3 + TypeScript + uni-app + Vite 小程序规则包。Level 0 不变量 15 条（`shared/00-must-follow.md`）；支付、分包、UGC 等细则按场景触发。
+
+## 冲突优先级
+
+安全与合规 > `00-must-follow` > `99-project-local` / 项目 ESLint > 场景 shared。
+
+## 唯一入口
+
+- 硬规则：`rules/shared/00-must-follow.md`
+- Codex：`rules/codex/AGENTS.md`（复制为仓库根 `AGENTS.md`）
+- Cursor：本目录 `.mdc` 文件（复制到业务仓 `.cursor/rules/`）；编号对照见 `rules/docs/cursor-shared-map.md`（`27` → shared `17`）
+
+## 核心约束与场景触发
+
+- 页面禁止直接 `uni.request`、`uni.login`、支付、订阅消息、手机号授权。
+- 新业务页默认进分包；主包只放启动、登录、tabBar、基础能力。
+- API 字段来自 OpenAPI / schema / generated 类型。
+- 敏感能力必须有隐私用途、用户触发、拒绝态。
+- 使用支付时，最终状态以后端订单查询为准，并加载 `14-payment-subscribe-share.mdc`。
+- 平台差异进入 `src/platform/`，不要散落在页面。
+
+## Cursor 路由
+
+- 新建项目 / 调整目录 / 移动跨层文件：`rules/shared/01-project-structure.md`、`rules/shared/02-naming.md`
+- 立项 / 架构方案 / 上线评审：`common-governance/docs/architect-engineering-checklist.md`、`common-governance/docs/definition-of-done.md`、`common-governance/docs/dod-maturity-mapping.md`
+- 需求 / 业务 PR / 缺陷修复：`common-governance/docs/requirements-traceability.md`、`common-governance/docs/business-correctness-review.md`
+- 页面 / 生命周期：`02-vue3-uniapp.mdc`
+- API / 登录态：`05-api-auth.mdc`
+- Store / 缓存：`08-state-storage.mdc`
+- pages.json / 分包：`07-pages-subpackages.mdc`
+- 隐私授权：`09-privacy-permission.mdc`
+- 性能 / 包体积：`10-performance-package-size.mdc`
+- 平台 adapter：`11-platform-differences.mdc`
+- 列表 / 表单：`12-list-form-pagination.mdc`
+- 上传 / 媒体：`13-upload-media.mdc`
+- 支付 / 订阅 / 分享：`14-payment-subscribe-share.mdc`
+- 日志 / 埋点：`15-logging-observability.mdc`
+- CI / 发版：`16-quality-gates.mdc`
+- 生产发布 / 灰度 / 回滚：`common-governance/docs/environment-promotion.md`、`common-governance/docs/release-evidence.md`
+- 生产事故 / 安全事件 / 复盘：`common-governance/docs/incident-response.md`、`common-governance/docs/incident-postmortem-template.md`
+- App 运行时：`20-app-runtime.mdc`
+- 网络 / web-view：`21-network-security.mdc`
+- 错误恢复 / 弱网：`22-error-recovery.mdc`
+- 内容安全 / UGC：`23-content-safety.mdc`
+- 设计系统 / Base：`24-design-system.mdc`
+- 依赖 / 供应链：`25-dependency-supply-chain.mdc`
+- 安全加固 / 风控：`26-security-hardening-risk.mdc`
+- AI 处理网页、Issue、日志或工具输出：追加读取 `rules/shared/17-ai-generation.md`（Cursor 路由见 `27-ai-generation.mdc`）
+- 新业务分包：`18-business-module-extension.mdc`（仅新业务扩展任务强制；见 `99-project-local`）
+
+项目真实路径、包体积预算和目标平台写入 `.cursor/rules/99-project-local.mdc`。核心 P1 evals 门槛 **>= 10/12**。

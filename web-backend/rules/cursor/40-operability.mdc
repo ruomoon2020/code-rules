@@ -1,0 +1,18 @@
+---
+description: 运维可操作性与 Runbook
+globs:
+  - "**/runbook/**"
+  - "**/ops/**"
+  - "Dockerfile"
+  - "**/k8s/**"
+  - "**/helm/**"
+alwaysApply: false
+---
+
+# 可操作性
+
+- 发布、回滚、扩缩容步骤可执行且有 Owner。
+- 健康检查、就绪探针与关键依赖探测齐全。
+- 运维操作保留审计；生产手工变更走数据操作流程。
+
+全文：`rules/shared/22-operability.md`

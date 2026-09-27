@@ -1,0 +1,20 @@
+---
+description: 数据权限、多租户、缓存一致性
+globs:
+  - "src/main/java/**/*Cache*.java"
+  - "src/main/java/**/*Redis*.java"
+  - "src/main/java/**/*Permission*.java"
+  - "src/main/java/**/*DataScope*.java"
+  - "src/main/resources/mapper/**/*.xml"
+alwaysApply: false
+---
+
+# 数据权限 / 缓存
+
+- 多租户查询必须带 tenant 约束或统一拦截器注入。
+- 数据权限统一实现，列表、详情、导出、下载口径一致。
+- 缓存必须说明 key、TTL、失效策略；权限相关缓存 key 包含租户/权限维度。
+- 写操作影响缓存时必须删除或更新相关 key。
+- 禁止缓存未脱敏敏感对象。
+
+全文：**`rules/shared/24-data-access-cache.md`**

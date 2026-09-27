@@ -1,0 +1,6 @@
+# Fixture CODEOWNERS used to exercise strict adoption checks.
+
+* @acme/frontend-leads
+/rules/ @acme/frontend-leads @acme/architecture
+/.cursor/rules/ @acme/frontend-leads @acme/architecture
+/package.json @acme/frontend-leads

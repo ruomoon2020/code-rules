@@ -1,0 +1,30 @@
+---
+description: 改动完成前的 Review 清单
+globs:
+  - "src/**/*.vue"
+  - "src/**/*.ts"
+  - "packages/**/src/**/*.vue"
+  - "packages/**/src/**/*.ts"
+alwaysApply: false
+---
+
+# Review 清单
+
+## 收尾必查（高频）
+
+1. `views` 无 `<el-*>`、无 `<ElButton>` 等 EP PascalCase、无 `element-plus` import。
+2. 无新增 `any` / `as any`。
+3. 组件内无 `axios` / `fetch`。
+4. 字段与 schema / generated 一致。
+5. loading、empty、error、permission、提交 loading 已处理。
+6. 删除等破坏性操作有确认。
+7. keep-alive 的 `name` 与路由一致。
+8. 新增目录 / 文件 / 变量 / enum / class / 环境变量符合 `rules/shared/02-naming.md`。
+9. 日志结构化且无敏感信息；列表分页竞态 / 删最后一条回退已处理。
+10. 大依赖懒加载；大表格分页或虚拟滚动。
+11. i18n / 富文本 / 实时通道（若涉及）：formatter、禁止裸 `v-html`、WS 卸载与鉴权（`23`、`24`）。
+12. 已运行 `pnpm lint`（含 views-el 扫描若配置）/ `type-check` 等，或说明脚本未配置。
+
+完整清单：**`rules/shared/10-verification-checklist.md`**
+
+Codex：`rules/codex/05-verification.md` · 门禁：`rules/shared/08-quality-gates.md`

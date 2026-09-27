@@ -1,0 +1,16 @@
+---
+description: 接口与批处理性能预算
+globs:
+  - "**/service/**/*.java"
+  - "**/job/**/*.java"
+  - "**/batch/**/*.java"
+alwaysApply: false
+---
+
+# 性能
+
+- 核心接口与批处理须声明数据量上限、超时与降级策略。
+- 大表禁止无条件 `%keyword%`；分页与索引对齐查询条件。
+- 变更触及热点路径时对照性能预算模板。
+
+全文：`rules/shared/16-performance.md`

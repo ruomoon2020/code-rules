@@ -1,0 +1,19 @@
+---
+description: 金额、时间与精度
+globs:
+  - "src/main/java/**/*Money*.java"
+  - "src/main/java/**/*Payment*.java"
+  - "src/main/java/**/*Order*.java"
+  - "src/main/java/**/*Billing*.java"
+  - "src/main/java/**/*Settlement*.java"
+  - "src/main/java/**/*Schedule*.java"
+  - "src/main/resources/mapper/**/*.xml"
+  - "contracts/**/*.yaml"
+alwaysApply: false
+---
+
+# 金额与时间
+
+金额禁 double/float；时间须明确 UTC/时区/边界；账期、自然日、定时任务需说明闭开区间和夏令时影响。
+
+全文：`rules/shared/40-money-time-precision.md`

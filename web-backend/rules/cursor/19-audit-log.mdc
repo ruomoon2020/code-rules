@@ -1,0 +1,16 @@
+---
+description: 审计日志
+globs:
+  - "**/audit/**"
+  - "**/*Audit*.java"
+  - "**/api/**/*Controller.java"
+alwaysApply: false
+---
+
+# 审计日志
+
+敏感操作须结构化审计，禁止仅用 log.info。
+
+基于 RuoYi-Vue-Plus / RuoYi-Cloud-Plus 时，优先复用平台 `@Log`、AOP、事件、登录日志、操作日志、错误日志和监控权限；字段标准仍以 `rules/shared/27-audit-log.md` 为准，业务模块不得重复造日志系统。
+
+全文：`rules/shared/27-audit-log.md`

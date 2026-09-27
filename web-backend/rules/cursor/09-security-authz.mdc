@@ -1,0 +1,16 @@
+---
+description: 安全、鉴权、脱敏
+globs:
+  - "**/config/*Security*.java"
+  - "**/api/**/*Controller.java"
+alwaysApply: false
+---
+
+# 安全
+
+- 默认鉴权；`@PreAuthorize` 权限码与前端一致。
+- 数据权限统一实现；禁止仅前端隐藏按钮。
+- 日志/响应脱敏。
+- 敏感接口测试须覆盖未登录、无权限、跨租户、普通用户访问管理员资源。
+
+全文：`rules/shared/06-security-authz.md`

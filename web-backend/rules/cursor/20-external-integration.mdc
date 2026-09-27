@@ -1,0 +1,16 @@
+---
+description: 外部 HTTP / 第三方集成
+globs:
+  - "**/integration/**"
+  - "**/infrastructure/**/*Client*.java"
+  - "**/*RestClient*"
+  - "**/*RestTemplate*"
+  - "**/*WebClient*"
+alwaysApply: false
+---
+
+# 外部集成
+
+超时、分层、禁止事务内同步远程调用。
+
+全文：`rules/shared/28-external-integration.md`

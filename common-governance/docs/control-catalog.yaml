@@ -1,0 +1,174 @@
+schema_version: 1
+catalog_version: 1.3.0
+standards:
+  nist-ssdf:
+    version: "1.1"
+    url: https://csrc.nist.gov/pubs/sp/800/218/final
+  owasp-asvs:
+    version: 5.0.0
+    url: https://owasp.org/www-project-application-security-verification-standard/
+  openssf-osps:
+    version: "2026-02-19"
+    url: https://baseline.openssf.org/
+  slsa:
+    version: "1.1"
+    url: https://slsa.dev/spec/v1.1/
+# verification_kind:
+#   evidence  — machine check proves control outcome (artifact, schema, digest)
+#   presence  — machine check proves required assets/workflows exist; not domain proof
+#   manual    — human process with documented evidence; no domain validator in this package
+controls:
+  - id: CR-GOV-001
+    title: Requirements and security traceability
+    level: 0
+    owner_role: Product and security owners
+    standards: [NIST-SSDF-v1.1-PO.1.1, OpenSSF-OSPS-2026-02-19-DO-01.01]
+    rules: [docs/requirements-traceability.md, docs/business-correctness-review.md]
+    verification_kind: presence
+    verification: [scripts/check-project-adoption.py]
+    evidence: [requirement matrix, acceptance tests, reviewer conclusion]
+  - id: CR-SEC-001
+    title: Application authentication and access control
+    level: 1
+    owner_role: Security owner
+    standards: [OWASP-ASVS-v5.0.0-6.3.3, NIST-SSDF-v1.1-PW.1.1]
+    rules: [docs/business-correctness-review.md, docs/data-classification-matrix.md]
+    verification_kind: presence
+    verification: [scripts/check-project-adoption.py]
+    evidence: [authorization tests, tenant isolation tests, MFA configuration]
+  - id: CR-GOV-002
+    title: Time-boxed governance exceptions and risk acceptance
+    level: 1
+    owner_role: Governance owner
+    standards: [NIST-SSDF-v1.1-PO.4.1, OpenSSF-OSPS-2026-02-19-DO-01.01]
+    rules: [docs/rule-exception-process.md]
+    verification_kind: evidence
+    verification: [scripts/validate-exceptions.py]
+    evidence: [exception record, approval, compensating controls, closure evidence]
+  - id: CR-SEC-002
+    title: Injection and untrusted input controls
+    level: 1
+    owner_role: Application owner
+    standards: [OWASP-ASVS-v5.0.0-1.2.5, OWASP-ASVS-v5.0.0-5.3.2]
+    rules: [docs/ai-tool-security.md, docs/business-correctness-review.md]
+    verification_kind: presence
+    verification: [scripts/check-project-adoption.py]
+    evidence: [negative security tests, review findings, remediation record]
+  - id: CR-DATA-001
+    title: Sensitive data handling and controlled egress
+    level: 1
+    owner_role: Data owner
+    standards: [OWASP-ASVS-v5.0.0-14.2.3, OWASP-ASVS-v5.0.0-14.2.4]
+    rules: [docs/data-classification-matrix.md, docs/ai-tool-security.md]
+    verification_kind: presence
+    verification: [scripts/check-project-adoption.py]
+    evidence: [data inventory, redaction tests, egress approval]
+  - id: CR-CI-001
+    title: Least privilege and immutable CI dependencies
+    level: 2
+    owner_role: DevOps owner
+    standards: [OpenSSF-OSPS-2026-02-19-AC-03.01, NIST-SSDF-v1.1-PS.1.1]
+    rules: [docs/git-pr-governance.md, docs/branch-protection.md]
+    verification_kind: evidence
+    verification: [scripts/validate-workflow-security.py]
+    evidence: [workflow validation log, reviewed permission diff]
+  - id: CR-SCM-001
+    title: Dependency inventory and SBOM generation
+    level: 2
+    owner_role: Supply chain owner
+    standards: [NIST-SSDF-v1.1-PS.3.2, OpenSSF-OSPS-2026-02-19-QA-06.01, SLSA-v1.1-Build-L1]
+    rules: [docs/supply-chain-baseline.md]
+    verification_kind: presence
+    verification: [scripts/check-project-adoption.py]
+    evidence: [SPDX SBOM, vulnerability report, license report]
+  - id: CR-SCM-002
+    title: Build provenance and artifact attestation
+    level: 2
+    owner_role: Release engineering owner
+    standards: [SLSA-v1.1-Build-L2, NIST-SSDF-v1.1-PS.3.1]
+    rules: [docs/supply-chain-baseline.md, docs/release-evidence.md]
+    verification_kind: evidence
+    verification: [scripts/validate-release-evidence.py]
+    evidence: [artifact attestation, provenance reference, signature verification]
+  - id: CR-PLAT-001
+    title: Protected branches and organization access controls
+    level: 2
+    owner_role: Platform owner
+    standards: [OpenSSF-OSPS-2026-02-19-AC-02.01, NIST-SSDF-v1.1-PO.2.1]
+    rules: [docs/branch-protection.md, docs/codeowners-matrix.md]
+    verification_kind: presence
+    verification: [scripts/check-project-adoption.py]
+    evidence: [governance-platform-evidence.json, platform API capture]
+  - id: CR-REL-001
+    title: Immutable promotion and release evidence
+    level: 2
+    owner_role: Release owner
+    standards: [SLSA-v1.1-Build-L2, NIST-SSDF-v1.1-PS.2.1]
+    rules: [docs/environment-promotion.md, docs/release-evidence.md]
+    verification_kind: evidence
+    verification: [scripts/validate-release-evidence.py]
+    evidence: [release-evidence.yaml, artifact digest, rollback verification]
+  - id: CR-IR-001
+    title: Vulnerability and incident response closure
+    level: 2
+    owner_role: Security incident owner
+    standards: [NIST-SSDF-v1.1-RV.1.1, OpenSSF-OSPS-2026-02-19-VM-03.01]
+    rules: [docs/incident-response.md, docs/incident-postmortem-template.md]
+    verification_kind: presence
+    verification: [scripts/check-project-adoption.py]
+    evidence: [incident timeline, remediation SLA, action item closure]
+  - id: CR-AI-001
+    title: AI tool safety regression evidence
+    level: 2
+    owner_role: AI governance owner
+    standards: [NIST-SSDF-v1.1-PO.3.1, OWASP-ASVS-v5.0.0-14.2.3]
+    rules: [docs/ai-tool-security.md]
+    verification_kind: evidence
+    verification: [scripts/validate-ai-eval-results.py]
+    evidence: [suite-bound 5 of 5 result artifact, evaluator identity, model version]
+    gate: release_or_high_risk_ai_change
+  - id: CR-SCM-003
+    title: Credential and secret scanning gate
+    level: 1
+    owner_role: Security owner
+    standards: [NIST-SSDF-v1.1-PW.1.2, OpenSSF-OSPS-2026-02-19-AC-02.01]
+    rules: [docs/supply-chain-baseline.md, docs/branch-protection.md]
+    verification_kind: presence
+    verification: [common-governance/examples/ci/credential-scan-required.yml]
+    evidence: [credential-scan workflow run, remediation record]
+  - id: CR-GOV-003
+    title: Migration debt baseline non-growth
+    level: 1
+    owner_role: Engineering owner
+    standards: [NIST-SSDF-v1.1-PO.3.2, OpenSSF-OSPS-2026-02-19-QA-02.01]
+    rules: [docs/migration-baseline.md]
+    verification_kind: evidence
+    verification: [scripts/check-debt-baseline.py]
+    evidence: [migration-baseline.json metadata, debt metric delta report]
+  - id: CR-GOV-004
+    title: Pull request governance evidence
+    level: 1
+    owner_role: Engineering owner
+    standards: [NIST-SSDF-v1.1-PO.1.1, OpenSSF-OSPS-2026-02-19-DO-01.01]
+    rules: [docs/git-pr-governance.md, docs/requirements-traceability.md]
+    verification_kind: evidence
+    verification: [scripts/validate-pr-governance.py]
+    evidence: [PR description matrix, risk classification, linked requirement IDs]
+  - id: CR-OBS-001
+    title: SLO and alerting ownership
+    level: 2
+    owner_role: SRE owner
+    standards: [NIST-SSDF-v1.1-RV.1.2]
+    rules: [docs/slo-alerting-template.md]
+    verification_kind: manual
+    verification: [docs/slo-alerting-template.md]
+    evidence: [SLO dashboard link, alert Owner, review date]
+  - id: CR-PLAT-002
+    title: Cross-project governance scorecard
+    level: 3
+    owner_role: Platform governance owner
+    standards: [NIST-SSDF-v1.1-PO.2.1, OpenSSF-OSPS-2026-02-19-AC-02.01]
+    rules: [docs/adoption-scorecard.md, docs/dod-maturity-mapping.md]
+    verification_kind: presence
+    verification: [scripts/check-project-adoption.py]
+    evidence: [governance-adoption.yaml level 3 evidence, scorecard review date]

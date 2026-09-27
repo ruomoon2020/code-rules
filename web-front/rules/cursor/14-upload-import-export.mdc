@@ -1,0 +1,24 @@
+---
+description: 上传、导入、导出、模板下载
+globs:
+  - "src/views/**/*.vue"
+  - "src/views/**/*.ts"
+  - "src/api/**/*.ts"
+  - "packages/**/src/views/**/*.vue"
+  - "packages/**/src/views/**/*.ts"
+  - "packages/**/src/api/**/*.ts"
+alwaysApply: false
+---
+
+# 上传 / 导入 / 导出
+
+- 导入导出字段必须来自 schema / generated；禁止 schema 外字段。
+- 模板下载须说明字段 key、必填、类型、枚举、示例。
+- Excel / CSV / JSON / Word 按格式规则校验；CSV 禁简单 `split(',')` 解析。
+- 导入失败须提供行号、列名、字段 key、错误原因；支持错误明细下载。
+- 大文件 / 大数据量走异步任务、进度、轮询或通知；导入任务须有幂等标识。
+- 高风险导入须预校验、影响摘要、二次确认。
+- 导出字段须受权限与脱敏控制；下载链接须鉴权 / 有效期；导入导出须有审计日志。
+- 日期、金额、百分比须明确时区、格式、精度、舍入规则。
+
+全文：**`rules/shared/14-upload-import-export.md`**

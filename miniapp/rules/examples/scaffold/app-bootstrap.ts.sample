@@ -1,0 +1,12 @@
+/**
+ * 应用启动样板 — 复制为 src/app/bootstrap.ts
+ */
+import { parseLaunchScene } from '@/app/scene';
+
+export async function bootstrapApp(options?: App.LaunchShowOption): Promise<void> {
+  // 环境、日志、trace 等轻量初始化
+  const scenePayload = parseLaunchScene(options?.scene);
+  if (scenePayload) {
+    // 白名单解析后交给 auth / 路由，见 shared/20、14
+  }
+}

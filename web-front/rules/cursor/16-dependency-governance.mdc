@@ -1,0 +1,21 @@
+---
+description: 依赖治理、许可证、体积、懒加载
+globs:
+  - "package.json"
+  - "pnpm-lock.yaml"
+  - "package-lock.json"
+  - "yarn.lock"
+  - "src/**/*.{ts,vue}"
+  - "packages/**/src/**/*.{ts,vue}"
+alwaysApply: false
+---
+
+# 依赖治理
+
+- 新增依赖前先查项目已有能力；不得为单页小需求引入重型库。
+- PR 必须说明引入原因、替代方案、体积、维护状态、许可证。
+- 禁止重复功能依赖；禁止依赖未声明的 transitive dependency。
+- 图表、地图、富文本、PDF/Office、代码编辑器等默认懒加载。
+- AI 不得直接加依赖，除非用户明确要求且已说明取舍。
+
+全文：**`rules/shared/20-dependency-governance.md`**

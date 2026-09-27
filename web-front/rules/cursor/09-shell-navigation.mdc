@@ -1,0 +1,19 @@
+---
+description: 应用壳层、侧栏、面包屑与布局
+globs:
+  - "src/layouts/**/*.vue"
+  - "src/components/layout/**/*.vue"
+  - "src/router/**/*.ts"
+  - "packages/**/src/layouts/**/*.vue"
+  - "packages/**/src/components/layout/**/*.vue"
+  - "packages/**/src/router/**/*.ts"
+alwaysApply: false
+---
+
+# Shell & Navigation
+
+- 壳层在 `layouts` / `components/layout`；业务 `views` 不写全局导航。
+- 路由 `name`、meta、菜单、权限、keep-alive 对齐。
+- 登录 / Dashboard 等特殊页型见 shared。
+
+全文：**`rules/shared/17-shell-navigation.md`**、**`rules/shared/06-state-route-permission.md`**

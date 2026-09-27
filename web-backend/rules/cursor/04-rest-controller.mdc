@@ -1,0 +1,15 @@
+---
+description: REST Controller 与 DTO
+globs:
+  - "**/api/**/*Controller.java"
+  - "**/controller/**/*.java"
+  - "**/modules/**/*Controller.java"
+alwaysApply: false
+---
+
+# Controller
+
+- 仅 DTO 入出；`@Valid`；禁止 Entity、禁止注入 Mapper。
+- OpenAPI 为先。
+
+全文：`rules/shared/04-rest-api-design.md`、`rules/shared/12-dto-mapping.md`

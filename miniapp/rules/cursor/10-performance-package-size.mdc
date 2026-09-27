@@ -1,0 +1,22 @@
+---
+description: 小程序性能、主包体积、首屏与弱网
+globs:
+  - "src/pages.json"
+  - "src/pages/**"
+  - "src/subpackages/**"
+  - "src/static/**"
+  - "package.json"
+  - "vite.config.*"
+---
+
+# Performance Package Size
+
+Read `rules/shared/10-performance-package-size.md`、`rules/shared/07-pages-routing-subpackages.md`。
+
+- 主包体积必须有预算；低频业务、大图、大 JSON、大 SDK 不得进主包。
+- 首屏只加载必要接口；非关键数据延后。
+- 图片使用压缩、尺寸声明、懒加载和 CDN。
+- 列表分页加载，禁止一次渲染大量数据。
+- 启动、渲染、图片和分包优化必须给出可复现的前后指标；CI 分别记录主包、分包和总包基线。
+- `v-if` / `v-show`、深响应式、虚拟列表和预加载策略按测量证据选择。
+- 请求超时、弱网、重复点击、离页响应必须处理。

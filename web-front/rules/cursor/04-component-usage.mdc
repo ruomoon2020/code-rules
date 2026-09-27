@@ -1,0 +1,21 @@
+---
+description: views 与 components 的组件使用规则
+globs:
+  - "src/views/**/*.vue"
+  - "src/components/**/*.vue"
+  - "packages/**/src/views/**/*.vue"
+  - "packages/**/src/components/**/*.vue"
+alwaysApply: false
+---
+
+# 组件使用
+
+- `views` 使用 Base 组件；禁止 `el-*`、denylist 内 `<El*>`（如 `<ElButton>`）、`element-plus` / `element-plus/*` import。
+- 列表页分页 / 筛选 / 竞态见 `rules/shared/19-list-pagination.md`。
+- 禁止虚构 Base 的 props / events / slots；不确定时读源码。
+- Base 组件保持业务无关；页面临时组件就近放置。
+
+全文：
+
+- `rules/shared/04-ui-patterns.md`
+- `rules/shared/11-base-components-context.md`

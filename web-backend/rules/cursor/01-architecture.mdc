@@ -1,0 +1,14 @@
+---
+description: 分层架构与包结构
+globs:
+  - "src/main/java/**/*.java"
+  - "src/test/java/**/*.java"
+alwaysApply: false
+---
+
+# 架构
+
+- Controller → Service → Mapper；禁止 Controller → Mapper。
+- 业务按 `modules/{domain}` 划分。
+
+全文：`rules/shared/01-project-structure.md`

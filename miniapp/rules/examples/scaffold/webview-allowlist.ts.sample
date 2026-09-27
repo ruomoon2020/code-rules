@@ -1,0 +1,14 @@
+/**
+ * web-view URL 白名单 — 复制为 src/platform/webview-allowlist.ts
+ */
+const ALLOWED_PREFIXES = ['https://h5.example.com/'];
+
+export function assertWebViewUrl(url: string): void {
+  const ok = ALLOWED_PREFIXES.some((p) => url.startsWith(p));
+  if (!ok) {
+    throw new Error(`WEBVIEW_URL_NOT_ALLOWED: ${url}`);
+  }
+  if (import.meta.env.PROD && !url.startsWith('https://')) {
+    throw new Error('HTTPS_REQUIRED_IN_PROD');
+  }
+}

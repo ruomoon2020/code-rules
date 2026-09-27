@@ -1,0 +1,17 @@
+---
+description: 错误恢复、白屏、路由 chunk 失败
+globs:
+  - "src/**/*.{ts,vue}"
+  - "packages/**/src/**/*.{ts,vue}"
+alwaysApply: false
+---
+
+# 错误恢复
+
+- 全局错误、未处理 Promise、资源加载错误须统一捕获并上报。
+- 路由 lazy chunk 加载失败须有重试 / 刷新提示，不能永久白屏。
+- 登录过期、权限失效、租户切换失效走统一处理，不在页面散写。
+- 页面区分 loading / empty / error / permission；失败保留用户输入并提供重试。
+- 白屏监控须带 release、route、资源错误摘要，并避免无限刷新。
+
+全文：**`rules/shared/21-error-recovery.md`**

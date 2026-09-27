@@ -1,0 +1,19 @@
+---
+description: API 契约、request、登录态与手机号授权
+globs:
+  - "src/api/**"
+  - "src/auth/**"
+  - "src/services/**"
+  - "src/api/generated/**"
+  - "contracts/**"
+---
+
+# API Auth
+
+Read `rules/shared/05-api-contract-request.md`、`rules/shared/06-login-auth-session.md`、`rules/shared/09-privacy-permission.md`。
+
+- 页面禁止直接 `uni.request`，必须走统一 request。
+- API 字段来自 OpenAPI / schema / generated，禁止手改 generated。
+- `uni.login`、token 刷新、手机号授权必须统一封装。
+- 401 / session 过期进入统一登录恢复流程。
+- logout 必须清理 store、storage、缓存和待重试队列。

@@ -1,0 +1,37 @@
+<script setup lang="ts">
+/**
+ * App.vue 样板 — 应用级生命周期见 shared/20-app-runtime.md
+ */
+import { onLaunch, onShow, onHide, onError, onUnhandledRejection, onPageNotFound } from '@dcloudio/uni-app';
+import { bootstrapApp } from '@/app/bootstrap';
+import { handleAppError, handlePageNotFound } from '@/app/error-handler';
+
+onLaunch(async (options) => {
+  // 仅轻量初始化；禁止阻塞式拉全量接口
+  await bootstrapApp(options);
+});
+
+onShow(() => {
+  // 热启动：登录态、deeplink 等 — 与页面 onShow 分工
+});
+
+onHide(() => {
+  // 暂停应用级轮询等
+});
+
+onError((err) => {
+  handleAppError(err);
+});
+
+onUnhandledRejection((res) => {
+  handleAppError(res.reason);
+});
+
+onPageNotFound((res) => {
+  handlePageNotFound(res);
+});
+</script>
+
+<style>
+/* 全局样式 */
+</style>

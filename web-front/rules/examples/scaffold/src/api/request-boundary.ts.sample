@@ -1,0 +1,40 @@
+export interface RequestOptions<TBody = unknown> {
+  method: 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE';
+  url: string;
+  body?: TBody;
+  signal?: AbortSignal;
+}
+
+export interface TransportResponse<T> {
+  data: T;
+  status: number;
+  traceId?: string;
+}
+
+export interface HttpTransport {
+  request<TResponse, TBody = unknown>(
+    options: RequestOptions<TBody>,
+  ): Promise<TransportResponse<TResponse>>;
+}
+
+export interface AppError {
+  code: string;
+  message: string;
+  traceId?: string;
+  retryable: boolean;
+  cause?: unknown;
+}
+
+export type ErrorNormalizer = (cause: unknown) => AppError;
+
+export function createRequestBoundary(transport: HttpTransport, normalize: ErrorNormalizer) {
+  return async function request<TResponse, TBody = unknown>(
+    options: RequestOptions<TBody>,
+  ): Promise<TResponse> {
+    try {
+      return (await transport.request<TResponse, TBody>(options)).data;
+    } catch (cause: unknown) {
+      throw normalize(cause);
+    }
+  };
+}

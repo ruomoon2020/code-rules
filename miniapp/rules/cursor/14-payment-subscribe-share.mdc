@@ -1,0 +1,20 @@
+---
+description: 支付、订阅消息、分享和 scene 参数
+globs:
+  - "src/platform/**"
+  - "src/services/**payment**"
+  - "src/services/**share**"
+  - "src/services/**subscribe**"
+  - "src/pages/**/*.vue"
+  - "src/subpackages/**/*.vue"
+---
+
+# Payment Subscribe Share
+
+Read `rules/shared/14-payment-subscribe-share.md`、`rules/shared/06-login-auth-session.md`、`rules/shared/09-privacy-permission.md`。
+
+- 支付参数来自后端；最终状态以后端订单查询为准。
+- 支付取消、失败、处理中、重复点击必须分开处理。
+- 订阅消息必须由用户动作触发，并处理拒绝和不可用。
+- 分享参数、scene、二维码参数必须白名单校验。
+- 禁止分享 path 携带 token、手机号、地址等敏感信息。

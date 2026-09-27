@@ -1,0 +1,12 @@
+/**
+ * 打开 web-view 样板 — 复制为 src/platform/open-webview.ts
+ * 禁止向 URL 或 postMessage 传递 token。
+ */
+import { assertWebViewUrl } from '@/platform/webview-allowlist';
+
+export function openWebView(url: string): void {
+  assertWebViewUrl(url);
+  uni.navigateTo({
+    url: `/pages/webview/index?url=${encodeURIComponent(url)}`,
+  });
+}

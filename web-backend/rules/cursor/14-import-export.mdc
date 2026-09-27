@@ -1,0 +1,15 @@
+---
+description: 导入导出与文件
+globs:
+  - "**/import/**"
+  - "**/export/**"
+  - "**/*Import*.java"
+  - "**/*Export*.java"
+alwaysApply: false
+---
+
+# 导入导出
+
+- 幂等、行列级错误、下载鉴权、审计。
+
+全文：`rules/shared/14-file-import-export.md`

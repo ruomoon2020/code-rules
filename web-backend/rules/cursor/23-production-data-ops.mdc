@@ -1,0 +1,21 @@
+---
+description: 生产数据操作与手工 SQL
+globs:
+  - "src/main/java/**/*Job.java"
+  - "src/main/java/**/*Task.java"
+  - "src/main/java/**/*Runner.java"
+  - "src/main/resources/db/migration/**/*.sql"
+  - "src/main/resources/mapper/**/*.xml"
+  - "scripts/**/*.sql"
+  - "scripts/**/*.sh"
+alwaysApply: false
+---
+
+# 生产数据操作与手工 SQL
+
+- 生产数据修复必须有工单、Owner、Reviewer、dry-run、影响行数、回滚或前滚方案。
+- 禁止无 WHERE 的生产 UPDATE / DELETE；大表 DDL 须评估锁表、复制延迟与分批策略。
+- 批量修复脚本须幂等，记录 traceId / jobId、影响行数和失败原因。
+- AI 只能生成草案，必须提示人工审批，不能声称可直接生产执行。
+
+全文：`rules/shared/31-production-data-ops.md`

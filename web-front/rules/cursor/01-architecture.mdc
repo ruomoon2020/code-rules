@@ -1,0 +1,18 @@
+---
+description: 架构与目录依赖方向
+globs:
+  - "src/**/*.ts"
+  - "src/**/*.vue"
+  - "packages/**/src/**/*.ts"
+  - "packages/**/src/**/*.vue"
+alwaysApply: false
+---
+
+# 架构
+
+- 依赖：`views -> business -> base`；`packages` 不得依赖 `apps`。
+- `components/base` 禁止依赖业务 API / store。
+- `api` 不弹 UI；`store` 不操作 DOM。
+- 先复用已有 composable，再新建抽象。
+
+全文：`rules/shared/01-project-structure.md`

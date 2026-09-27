@@ -1,0 +1,15 @@
+---
+description: 事件与消息契约
+globs:
+  - "src/main/java/**/*Consumer.java"
+  - "src/main/java/**/*Producer.java"
+  - "src/main/java/**/*Listener.java"
+  - "contracts/events/**/*"
+alwaysApply: false
+---
+
+# 事件契约
+
+Topic/Event 必须有 schema、version、owner、兼容策略、幂等、死信与重放策略；消息体最小化，禁止无必要 PII。
+
+全文：`rules/shared/39-event-contracts.md`

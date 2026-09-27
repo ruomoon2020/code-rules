@@ -1,0 +1,17 @@
+---
+description: 设计 Token 与 UI 视觉约束
+globs:
+  - "src/**/*.vue"
+  - "src/**/*.scss"
+  - "packages/**/src/**/*.vue"
+  - "packages/**/src/**/*.scss"
+alwaysApply: false
+---
+
+# UI Design System
+
+- 禁止业务代码硬编码主题色；使用设计 Token。
+- 间距、圆角、阴影、z-index 使用 Token。
+- 状态语义不只靠颜色；见 `rules/shared/07-security-performance.md`。
+
+全文：**`rules/shared/16-design-tokens.md`**、**`rules/shared/04-ui-patterns.md`**

@@ -1,0 +1,27 @@
+{
+  "version": 1,
+  "baseline_commit": "0000000000000000000000000000000000000000",
+  "captured_at": "2026-09-15T12:00:00+08:00",
+  "owner": "engineering-owner",
+  "scan_command": "python common-governance/scripts/check-debt-baseline.py --config migration-baseline.json",
+  "metrics": [
+    {
+      "name": "legacy-component-usage",
+      "kind": "regex-count",
+      "root": ".",
+      "globs": ["src/**/*.vue"],
+      "pattern": "legacy-component",
+      "maximum": 12
+    },
+    {
+      "name": "legacy-paths",
+      "kind": "path-allowlist",
+      "root": ".",
+      "globs": ["src/legacy/**"],
+      "allowed": [
+        "src/legacy/compat.ts",
+        "src/legacy/LegacyTable.vue"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,170 @@
+# Monorepo：三端规则包一致性校验
+
+name: validate-rules-packages
+
+on:
+  schedule:
+    - cron: "17 2 * * 1"
+  pull_request:
+    paths:
+      - "web-backend/rules/**"
+      - "web-front/rules/**"
+      - "miniapp/rules/**"
+      - "common-governance/**"
+      - "contracts/openapi.yaml"
+      - "contracts/openapi.baseline.yaml"
+      - "README.md"
+      - "AGENTS.md"
+      - "建议.md"
+      - "scripts/**"
+      - "docs/**"
+      - "examples/**"
+      - "CODEOWNERS"
+      - "SECURITY.md"
+      - ".github/ISSUE_TEMPLATE/**"
+      - ".github/pull_request_template.md"
+      - ".github/workflows/validate-rules-packages.yml"
+  push:
+    branches: [main, master]
+    paths:
+      - "web-backend/rules/**"
+      - "web-front/rules/**"
+      - "miniapp/rules/**"
+      - "common-governance/**"
+      - "contracts/openapi.yaml"
+      - "contracts/openapi.baseline.yaml"
+      - "README.md"
+      - "AGENTS.md"
+      - "建议.md"
+      - "scripts/**"
+      - "docs/**"
+      - "examples/**"
+      - "CODEOWNERS"
+      - "SECURITY.md"
+      - ".github/ISSUE_TEMPLATE/**"
+      - ".github/pull_request_template.md"
+      - ".github/workflows/validate-rules-packages.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  validate-backend-rules:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5
+        with:
+          python-version: "3.12"
+      - uses: actions/setup-java@cf277c60eb25467037889841efdb72551f06f6c3 # v4
+        with:
+          distribution: temurin
+          java-version: "17"
+      - name: Install validator dependencies
+        run: pip install pyyaml
+      - name: Run backend validator unit tests
+        run: python -m unittest discover -s web-backend/rules/scripts/tests -v
+      - name: Validate backend rules package
+        run: python web-backend/rules/scripts/validate-rules-package.py
+
+  validate-frontend-rules:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5
+        with:
+          python-version: "3.12"
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with:
+          node-version: "22"
+      - name: Install validator dependencies
+        run: |
+          pip install pyyaml
+          npm install --global typescript@5.8.2
+      - name: Run frontend validator unit tests
+        run: python -m unittest discover -s web-front/rules/scripts/tests -v
+      - name: Validate frontend rules package
+        run: python web-front/rules/scripts/validate-rules-package.py
+
+  validate-miniapp-rules:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5
+        with:
+          python-version: "3.12"
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with:
+          node-version: "22"
+      - name: Install validator dependencies
+        run: |
+          pip install pyyaml
+          npm install --global typescript@5.8.2
+      - name: Run miniapp validator unit tests
+        run: python -m unittest discover -s miniapp/rules/scripts/tests -v
+      - name: Validate miniapp rules package
+        run: python miniapp/rules/scripts/validate-rules-package.py
+
+  validate-governance-scripts:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5
+        with:
+          python-version: "3.12"
+      - uses: actions/setup-go@40f1582b2485089dde7abd97c1529aa768e1baff # v5
+        with:
+          go-version: "1.25"
+      - name: Install validator dependencies
+        run: pip install pyyaml
+      - name: Validate repository links, YAML, and whitespace
+        run: python scripts/validate-repository.py
+      - name: Validate workflow action pins and permissions
+        run: python scripts/validate-workflow-security.py
+      - name: Validate versioned control catalog
+        run: python scripts/validate-control-catalog.py
+      - name: Validate generated rule catalogs
+        run: python scripts/generate-rule-catalog.py
+      - name: Validate governance exception expiry
+        run: python scripts/validate-exceptions.py
+      - name: Validate pull request governance evidence
+        if: github.event_name == 'pull_request'
+        run: python scripts/validate-pr-governance.py --event "$GITHUB_EVENT_PATH"
+      - name: Validate GitHub Actions semantics
+        run: >-
+          go run github.com/rhysd/actionlint/cmd/actionlint@v1.7.12
+          .github/workflows/*.yml
+          examples/ci/*.yml
+          examples/adoption-fixture/frontend/.github/workflows/*.yml
+          common-governance/examples/ci/*.yml
+          web-backend/rules/examples/ci/*.yml
+          web-front/rules/examples/ci/*.yml
+          miniapp/rules/examples/ci/*.yml
+      - name: Regenerate eval manifests (consistency check)
+        run: python scripts/generate-eval-topic-manifest.py --all
+      - name: Ensure eval manifests are committed
+        run: git diff --exit-code -- web-backend/rules/evals/topic-manifest.yaml web-front/rules/evals/topic-manifest.yaml miniapp/rules/evals/topic-manifest.yaml
+      - name: Governance script unit tests
+        run: python -m unittest discover -s scripts/tests -v
+      - name: Validate release evidence sample
+        run: python scripts/validate-release-evidence.py --file examples/release-evidence.yaml
+      - name: Validate AI tool safety result sample
+        run: >-
+          python scripts/validate-ai-eval-results.py
+          --file examples/ai-eval-results.yaml
+          --suite web-front/rules/evals/ai-tool-safety.md
+      - name: Strict governance adoption fixture
+        run: |
+          # Temporary copy only; fixture tree stays rules-only to avoid dual SSOT.
+          cp -R common-governance examples/adoption-fixture/frontend/common-governance
+          python common-governance/scripts/check-project-adoption.py --repo examples/adoption-fixture/frontend --stack frontend --level 2
+      - name: Check common governance SSOT drift
+        run: python scripts/sync-common-governance.py
+      - name: Validate distributed common governance package
+        run: python common-governance/scripts/validate-package.py
+      - name: Adoption fixture check (rules-only, no governance bundle in tree)
+        run: python scripts/check-project-adoption.py --repo examples/adoption-fixture/frontend --stack frontend --strict

@@ -1,0 +1,163 @@
+# 参考 CI 样板 — 推荐按成熟度拆分复制（Level 0 仅需 required）
+#
+#   examples/ci/backend-ci-required.yml  → .github/workflows/backend-ci-required.yml
+#   examples/ci/backend-ci-optional.yml  → .github/workflows/backend-ci-optional.yml
+#
+# 本文件 = required + optional 合并版（兼容旧引用）。门禁分级见 examples/README.md、shared/23-quality-gates.md
+#
+# verify job 自动识别 Maven / Gradle。dependency-scan、flyway-validate 为 Maven 兼容样板；Gradle Flyway 见 backend-ci-optional-gradle.yml。
+# 未启用的 job 不得在 PR 中声称已通过。
+
+name: backend-quality-gates
+
+on:
+  pull_request:
+    paths:
+      - "src/**"
+      - "contracts/**"
+      - "pom.xml"
+      - "build.gradle*"
+      - "settings.gradle*"
+      - "gradle/wrapper/**"
+      - "gradlew"
+      - ".github/workflows/backend-quality-gates.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  # --- Required ---
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    outputs:
+      openapi: ${{ steps.build.outputs.openapi }}
+      maven: ${{ steps.build.outputs.maven }}
+      migrations: ${{ steps.build.outputs.migrations }}
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+
+      - name: Detect build tool
+        id: build
+        run: |
+          if [ -f gradlew ] && { [ -f build.gradle ] || [ -f build.gradle.kts ]; }; then
+            echo "tool=gradle" >> "$GITHUB_OUTPUT"
+            echo "maven=false" >> "$GITHUB_OUTPUT"
+          elif [ -f pom.xml ]; then
+            echo "tool=maven" >> "$GITHUB_OUTPUT"
+            echo "maven=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "Expected pom.xml or Gradle wrapper (gradlew + build.gradle*)." >&2
+            exit 1
+          fi
+          if [ -f contracts/openapi.yaml ]; then echo "openapi=true" >> "$GITHUB_OUTPUT"; else echo "openapi=false" >> "$GITHUB_OUTPUT"; fi
+          if find src/main/resources/db/migration -type f -print -quit 2>/dev/null | grep -q .; then echo "migrations=true" >> "$GITHUB_OUTPUT"; else echo "migrations=false" >> "$GITHUB_OUTPUT"; fi
+
+      - uses: actions/setup-java@cf277c60eb25467037889841efdb72551f06f6c3 # v4
+        with:
+          distribution: temurin
+          java-version: "17"
+          cache: ${{ steps.build.outputs.tool }}
+
+      - name: Maven verify
+        if: steps.build.outputs.tool == 'maven'
+        run: mvn -B verify
+
+      - name: Gradle check
+        if: steps.build.outputs.tool == 'gradle'
+        run: |
+          chmod +x gradlew
+          ./gradlew check --no-daemon
+
+  # --- Required（有 contracts/openapi.yaml 时）---
+  openapi-diff:
+    needs: verify
+    runs-on: ubuntu-latest
+    if: needs.verify.outputs.openapi == 'true'
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with:
+          node-version: "20"
+
+      - name: OpenAPI diff
+        run: |
+          if [ -f contracts/openapi.baseline.yaml ]; then
+            npx @redocly/cli diff contracts/openapi.baseline.yaml contracts/openapi.yaml
+          else
+            echo "contracts/openapi.baseline.yaml not found; record this skip in the PR."
+          fi
+
+  # --- Required ---
+  secret-scan:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          fetch-depth: 0
+
+      - name: Gitleaks scan
+        uses: gitleaks/gitleaks-action@ff98106e4c7b2bc287b24eaf42907196329070c7 # v2
+
+  # --- Conditional：Maven + 合规策略；Gradle 请接 OWASP dependency-check Gradle 插件 ---
+  dependency-scan:
+    needs: verify
+    runs-on: ubuntu-latest
+    if: needs.verify.outputs.maven == 'true'
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+
+      - uses: actions/setup-java@cf277c60eb25467037889841efdb72551f06f6c3 # v4
+        with:
+          distribution: temurin
+          java-version: "17"
+          cache: maven
+
+      - name: OWASP dependency check
+        run: mvn -B org.owasp:dependency-check-maven:12.2.2:check
+
+  # --- Conditional：Maven + migration 变更；Gradle 使用 backend-ci-optional-gradle.yml ---
+  flyway-validate:
+    needs: verify
+    runs-on: ubuntu-latest
+    if: needs.verify.outputs.maven == 'true' && needs.verify.outputs.migrations == 'true'
+    services:
+      mysql:
+        image: mysql:8
+        env:
+          MYSQL_ROOT_PASSWORD: root
+          MYSQL_DATABASE: app
+        ports:
+          - 3306:3306
+        options: >-
+          --health-cmd="mysqladmin ping -h 127.0.0.1 -uroot -proot"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=10
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: app
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd="pg_isready -U postgres -d app"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=10
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+
+      - uses: actions/setup-java@cf277c60eb25467037889841efdb72551f06f6c3 # v4
+        with:
+          distribution: temurin
+          java-version: "17"
+          cache: maven
+
+      - name: Flyway validate MySQL
+        run: mvn -B -Dflyway.url=jdbc:mysql://127.0.0.1:3306/app -Dflyway.user=root -Dflyway.password=root flyway:validate
+
+      - name: Flyway validate PostgreSQL
+        run: mvn -B -Dflyway.url=jdbc:postgresql://127.0.0.1:5432/app -Dflyway.user=postgres -Dflyway.password=postgres flyway:validate

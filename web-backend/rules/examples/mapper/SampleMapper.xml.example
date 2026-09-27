@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!--
+  样板：可移植查询使用 common；方言使用 databaseId。
+  禁止：order by ${userInput}
+  允许：order by ${whitelistColumn}（whitelistColumn 来自 Java 白名单 Map）
+-->
+<mapper namespace="com.company.product.modules.system.infrastructure.mapper.UserMapper">
+
+  <select id="selectPage" resultType="com.company.product.modules.system.domain.User">
+    SELECT id, username, status, created_at
+    FROM sys_user
+    <where>
+      <if test="status != null">
+        AND status = #{status}
+      </if>
+    </where>
+    ORDER BY created_at DESC
+  </select>
+
+  <!-- 仅 PostgreSQL -->
+  <select id="searchJsonMeta" databaseId="postgresql" resultType="com.company.product.modules.system.domain.User">
+  </select>
+
+</mapper>

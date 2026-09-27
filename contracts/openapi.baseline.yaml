@@ -1,0 +1,420 @@
+openapi: 3.0.3
+info:
+  title: System API
+  version: 1.0.0
+  description: |
+    全栈契约示例（用户 CRUD + 审计日志查询 + 分页）。
+    字段对齐：web-backend/rules/docs/fullstack-contract.md
+
+servers:
+  - url: /
+
+paths:
+  /api/v1/system/users:
+    get:
+      operationId: systemUserPage
+      summary: 用户分页列表
+      tags: [SystemUser]
+      parameters:
+        - $ref: '#/components/parameters/Page'
+        - $ref: '#/components/parameters/PageSize'
+        - name: status
+          in: query
+          schema:
+            type: string
+            enum: [ENABLED, DISABLED]
+        - name: keyword
+          in: query
+          schema:
+            type: string
+            maxLength: 64
+        - name: sortField
+          in: query
+          description: 白名单字段，如 createdAt
+          schema:
+            type: string
+        - name: sortOrder
+          in: query
+          schema:
+            type: string
+            enum: [asc, desc]
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResultUserPage'
+    post:
+      operationId: systemUserCreate
+      summary: 创建用户
+      tags: [SystemUser]
+      parameters:
+        - $ref: '#/components/parameters/IdempotencyKey'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserCreateRequest'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResultUserDetail'
+
+  /api/v1/system/users/{id}:
+    get:
+      operationId: systemUserDetail
+      summary: 用户详情
+      tags: [SystemUser]
+      parameters:
+        - $ref: '#/components/parameters/IdPath'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResultUserDetail'
+    put:
+      operationId: systemUserUpdate
+      summary: 更新用户
+      tags: [SystemUser]
+      parameters:
+        - $ref: '#/components/parameters/IdPath'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserUpdateRequest'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResultUserDetail'
+    delete:
+      operationId: systemUserDelete
+      summary: 删除用户
+      tags: [SystemUser]
+      parameters:
+        - $ref: '#/components/parameters/IdPath'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResultVoid'
+
+  /api/v1/system/audit-logs:
+    get:
+      operationId: systemAuditLogPage
+      summary: 审计日志分页
+      description: 只读查询；写入由业务操作异步/同步落库，见 fullstack-contract §审计日志。
+      tags: [SystemAuditLog]
+      parameters:
+        - $ref: '#/components/parameters/Page'
+        - $ref: '#/components/parameters/PageSize'
+        - name: action
+          in: query
+          description: 动作码，如 USER_DELETE、IMPORT_USERS
+          schema:
+            type: string
+        - name: resourceType
+          in: query
+          schema:
+            type: string
+        - name: operatorId
+          in: query
+          schema:
+            type: string
+        - name: resourceId
+          in: query
+          schema:
+            type: string
+        - name: result
+          in: query
+          schema:
+            $ref: '#/components/schemas/AuditResult'
+        - name: occurredAtFrom
+          in: query
+          schema:
+            type: string
+            format: date-time
+        - name: occurredAtTo
+          in: query
+          schema:
+            type: string
+            format: date-time
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResultAuditLogPage'
+
+  /api/v1/system/audit-logs/{id}:
+    get:
+      operationId: systemAuditLogDetail
+      summary: 审计日志详情
+      tags: [SystemAuditLog]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+          description: 审计记录主键
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResultAuditLogDetail'
+
+components:
+  parameters:
+    IdPath:
+      name: id
+      in: path
+      required: true
+      schema:
+        type: string
+    Page:
+      name: page
+      in: query
+      schema:
+        type: integer
+        minimum: 1
+        default: 1
+    PageSize:
+      name: pageSize
+      in: query
+      schema:
+        type: integer
+        minimum: 1
+        maximum: 100
+        default: 20
+    IdempotencyKey:
+      name: Idempotency-Key
+      in: header
+      required: false
+      description: |
+        客户端生成的幂等键（UUID 等），用于可安全重试的写操作去重。
+        服务端建议 TTL ≥ 24h；冲突时返回与原请求一致结果或 409 + 明确 errorCode。
+      schema:
+        type: string
+        maxLength: 128
+
+  schemas:
+    ApiResultVoid:
+      allOf:
+        - $ref: '#/components/schemas/ApiResultBase'
+        - type: object
+          properties:
+            data:
+              nullable: true
+
+    ApiResultUserPage:
+      allOf:
+        - $ref: '#/components/schemas/ApiResultBase'
+        - type: object
+          properties:
+            data:
+              $ref: '#/components/schemas/UserPageData'
+
+    ApiResultUserDetail:
+      allOf:
+        - $ref: '#/components/schemas/ApiResultBase'
+        - type: object
+          properties:
+            data:
+              $ref: '#/components/schemas/UserDetailResponse'
+
+    ApiResultBase:
+      type: object
+      required: [code, message, traceId]
+      properties:
+        code:
+          type: integer
+          description: 0 表示成功
+        message:
+          type: string
+        traceId:
+          type: string
+        errorCode:
+          allOf:
+            - $ref: '#/components/schemas/BusinessErrorCode'
+          nullable: true
+          description: 失败时业务错误码；成功时为 null
+
+    UserPageData:
+      type: object
+      required: [page, pageSize, total, records]
+      properties:
+        page:
+          type: integer
+        pageSize:
+          type: integer
+        total:
+          type: integer
+          format: int64
+        records:
+          type: array
+          items:
+            $ref: '#/components/schemas/UserSummaryResponse'
+
+    UserSummaryResponse:
+      type: object
+      properties:
+        id:
+          type: string
+        username:
+          type: string
+        status:
+          type: string
+          enum: [ENABLED, DISABLED]
+        createdAt:
+          type: string
+          format: date-time
+
+    UserDetailResponse:
+      allOf:
+        - $ref: '#/components/schemas/UserSummaryResponse'
+        - type: object
+          properties:
+            email:
+              type: string
+            phoneMasked:
+              type: string
+              description: 脱敏手机号
+
+    UserCreateRequest:
+      type: object
+      required: [username, status]
+      properties:
+        username:
+          type: string
+          minLength: 2
+          maxLength: 32
+        email:
+          type: string
+          format: email
+        status:
+          type: string
+          enum: [ENABLED, DISABLED]
+
+    UserUpdateRequest:
+      type: object
+      properties:
+        email:
+          type: string
+          format: email
+        status:
+          type: string
+          enum: [ENABLED, DISABLED]
+
+    ApiResultAuditLogPage:
+      allOf:
+        - $ref: '#/components/schemas/ApiResultBase'
+        - type: object
+          properties:
+            data:
+              $ref: '#/components/schemas/AuditLogPageData'
+
+    ApiResultAuditLogDetail:
+      allOf:
+        - $ref: '#/components/schemas/ApiResultBase'
+        - type: object
+          properties:
+            data:
+              $ref: '#/components/schemas/AuditLogResponse'
+
+    AuditLogPageData:
+      type: object
+      required: [page, pageSize, total, records]
+      properties:
+        page:
+          type: integer
+        pageSize:
+          type: integer
+        total:
+          type: integer
+          format: int64
+        records:
+          type: array
+          items:
+            $ref: '#/components/schemas/AuditLogSummaryResponse'
+
+    AuditLogSummaryResponse:
+      type: object
+      required: [id, operatorId, action, resourceType, result, occurredAt]
+      properties:
+        id:
+          type: string
+        operatorId:
+          type: string
+        operatorName:
+          type: string
+          description: 展示用，由用户服务解析，非审计主存储字段
+        tenantId:
+          type: string
+        action:
+          type: string
+          description: 稳定动作码，与字典/i18n 对齐
+        resourceType:
+          type: string
+        resourceId:
+          type: string
+        requestSummary:
+          type: string
+        fileName:
+          type: string
+          description: 导入/导出文件名（可选）
+        result:
+          $ref: '#/components/schemas/AuditResult'
+        errorCode:
+          type: string
+        traceId:
+          type: string
+        occurredAt:
+          type: string
+          format: date-time
+
+    AuditLogResponse:
+      allOf:
+        - $ref: '#/components/schemas/AuditLogSummaryResponse'
+        - type: object
+          properties:
+            beforeSummary:
+              type: string
+            afterSummary:
+              type: string
+            ip:
+              type: string
+            userAgent:
+              type: string
+
+    AuditResult:
+      type: string
+      enum: [SUCCESS, FAIL]
+
+    BusinessErrorCode:
+      type: string
+      description: |
+        业务错误码（DOMAIN_REASON）。与后端 ErrorCodes、前端 normalizeError 对齐。
+        枚举仅示例；新增向后兼容，禁止静默改语义或删除已有码。
+      enum:
+        - USER_NOT_FOUND
+        - USERNAME_DUPLICATE
+        - AUDIT_LOG_NOT_FOUND
+        - CONCURRENT_MODIFICATION
+        - INTERNAL_ERROR

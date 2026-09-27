@@ -1,0 +1,15 @@
+---
+description: OpenAPI 契约
+globs:
+  - "contracts/**"
+  - "openapi/**"
+  - "**/api/**/*Request.java"
+  - "**/api/**/*Response.java"
+alwaysApply: false
+---
+
+# OpenAPI SSOT
+
+先改契约再写代码；禁止私自加字段。breaking / deprecated 见兼容策略。
+
+全文：`rules/shared/05-openapi-contract.md`、`rules/shared/04-rest-api-design.md`

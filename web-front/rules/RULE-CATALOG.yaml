@@ -1,0 +1,467 @@
+schema_version: 1
+catalog_version: 1.0.0
+id_scope: stable file-level rule topics; clause-level IDs are not assigned
+stack: frontend
+rules:
+- id: CR-FE-000
+  stack: frontend
+  title: 必须遵守的规则
+  path: shared/00-must-follow.md
+  owner_role: Frontend owner
+  strength:
+    required_markers: 41
+    recommended_markers: 0
+  routing:
+  - codex/01-before-editing.md
+  - codex/02-page-generation.md
+  - codex/AGENTS.md
+  - cursor/00-project-overview.mdc
+  eval_cases:
+  - E16
+  - E17
+  verification:
+  - scripts/validate-rules-package.py
+- id: CR-FE-001
+  stack: frontend
+  title: 项目结构规则
+  path: shared/01-project-structure.md
+  owner_role: Frontend owner
+  strength:
+    required_markers: 1
+    recommended_markers: 1
+  routing:
+  - codex/AGENTS.md
+  - cursor/01-architecture.mdc
+  eval_cases:
+  - E32
+  verification:
+  - scripts/validate-rules-package.py
+- id: CR-FE-002
+  stack: frontend
+  title: 命名规则
+  path: shared/02-naming.md
+  owner_role: Frontend owner
+  strength:
+    required_markers: 12
+    recommended_markers: 2
+  routing:
+  - codex/AGENTS.md
+  - cursor/02-vue3-typescript.mdc
+  - cursor/07-review-checklist.mdc
+  - cursor/15-naming-conventions.mdc
+  eval_cases:
+  - E28
+  - E50
+  verification:
+  - scripts/validate-rules-package.py
+- id: CR-FE-003
+  stack: frontend
+  title: 代码风格规则
+  path: shared/03-code-style.md
+  owner_role: Frontend owner
+  strength:
+    required_markers: 17
+    recommended_markers: 1
+  routing:
+  - codex/AGENTS.md
+  - cursor/02-vue3-typescript.mdc
+  eval_cases:
+  - E06
+  verification:
+  - scripts/validate-rules-package.py
+- id: CR-FE-004
+  stack: frontend
+  title: UI 模式规则
+  path: shared/04-ui-patterns.md
+  owner_role: Frontend owner
+  strength:
+    required_markers: 8
+    recommended_markers: 0
+  routing:
+  - codex/02-page-generation.md
+  - codex/AGENTS.md
+  - cursor/03-ui-design-system.mdc
+  - cursor/04-component-usage.mdc
+  eval_cases:
+  - E01
+  verification:
+  - scripts/validate-rules-package.py
+- id: CR-FE-005
+  stack: frontend
+  title: API 契约规则
+  path: shared/05-api-contract.md
+  owner_role: Frontend owner
+  strength:
+    required_markers: 11
+    recommended_markers: 0
+  routing:
+  - codex/02-page-generation.md
+  - codex/AGENTS.md
+  - cursor/05-api-state-error.mdc
+  eval_cases:
+  - E42
+  - E50
+  verification:
+  - scripts/validate-rules-package.py
+- id: CR-FE-006
+  stack: frontend
+  title: 状态、路由与权限规则
+  path: shared/06-state-route-permission.md
+  owner_role: Frontend owner
+  strength:
+    required_markers: 7
+    recommended_markers: 0
+  routing:
+  - codex/02-page-generation.md
+  - codex/AGENTS.md
+  - cursor/05-api-state-error.mdc
+  - cursor/09-shell-navigation.mdc
+  - cursor/20-form-detail.mdc
+  eval_cases:
+  - E33
+  - E35
+  - E48
+  verification:
+  - scripts/validate-rules-package.py
+- id: CR-FE-007
+  stack: frontend
+  title: 安全、无障碍与性能规则
+  path: shared/07-security-performance.md
+  owner_role: Frontend owner
+  strength:
+    required_markers: 29
+    recommended_markers: 2
+  routing:
+  - codex/AGENTS.md
+  - cursor/03-ui-design-system.mdc
+  - cursor/06-security-performance.mdc
+  eval_cases:
+  - E20
+  - E21
+  - E22
+  - E31
+  - E43
+  - E49
+  verification:
+  - scripts/validate-rules-package.py
+- id: CR-FE-008
+  stack: frontend
+  title: 质量门禁规则
+  path: shared/08-quality-gates.md
+  owner_role: Frontend owner
+  strength:
+    required_markers: 16
+    recommended_markers: 6
+  routing:
+  - codex/AGENTS.md
+  - cursor/07-review-checklist.mdc
+  - cursor/08-quality-testing.mdc
+  eval_cases:
+  - E47
+  verification:
+  - scripts/validate-rules-package.py
+- id: CR-FE-009
+  stack: frontend
+  title: AI 生成规则
+  path: shared/09-ai-generation.md
+  owner_role: Frontend owner
+  strength:
+    required_markers: 18
+    recommended_markers: 0
+  routing:
+  - codex/AGENTS.md
+  - cursor/21-ai-generation.mdc
+  eval_cases:
+  - E13
+  verification:
+  - scripts/validate-rules-package.py
+- id: CR-FE-010
+  stack: frontend
+  title: 验证清单
+  path: shared/10-verification-checklist.md
+  owner_role: Frontend owner
+  strength:
+    required_markers: 3
+    recommended_markers: 0
+  routing:
+  - codex/02-page-generation.md
+  - codex/05-verification.md
+  - codex/AGENTS.md
+  - cursor/07-review-checklist.mdc
+  - cursor/08-quality-testing.mdc
+  eval_cases:
+  - E13
+  verification:
+  - scripts/validate-rules-package.py
+- id: CR-FE-011
+  stack: frontend
+  title: 基础组件上下文（Context Pinning）
+  path: shared/11-base-components-context.md
+  owner_role: Frontend owner
+  strength:
+    required_markers: 6
+    recommended_markers: 0
+  routing:
+  - codex/01-before-editing.md
+  - codex/02-page-generation.md
+  - codex/AGENTS.md
+  - cursor/00-project-overview.mdc
+  - cursor/04-component-usage.mdc
+  - cursor/10-base-components.mdc
+  - cursor/21-ai-generation.mdc
+  eval_cases:
+  - E04
+  verification:
+  - scripts/validate-rules-package.py
+- id: CR-FE-012
+  stack: frontend
+  title: Schema 单一事实来源
+  path: shared/12-schema-ssot.md
+  owner_role: Frontend owner
+  strength:
+    required_markers: 3
+    recommended_markers: 0
+  routing:
+  - codex/01-before-editing.md
+  - codex/02-page-generation.md
+  - codex/04-api-and-schema.md
+  - codex/AGENTS.md
+  - cursor/00-project-overview.mdc
+  - cursor/05-api-state-error.mdc
+  - cursor/11-schema-ssot.mdc
+  - cursor/19-platform-boundary.mdc
+  - cursor/20-form-detail.mdc
+  - cursor/21-ai-generation.mdc
+  eval_cases:
+  - E03
+  verification:
+  - scripts/validate-rules-package.py
+- id: CR-FE-013
+  stack: frontend
+  title: 表单与详情页规则
+  path: shared/13-form-and-detail.md
+  owner_role: Frontend owner
+  strength:
+    required_markers: 0
+    recommended_markers: 1
+  routing:
+  - codex/02-page-generation.md
+  - codex/AGENTS.md
+  - cursor/20-form-detail.mdc
+  eval_cases:
+  - E41
+  verification:
+  - scripts/validate-rules-package.py
+- id: CR-FE-014
+  stack: frontend
+  title: 上传、导入与导出规则
+  path: shared/14-upload-import-export.md
+  owner_role: Frontend owner
+  strength:
+    required_markers: 33
+    recommended_markers: 0
+  routing:
+  - codex/AGENTS.md
+  - cursor/14-upload-import-export.mdc
+  eval_cases:
+  - E24
+  - E25
+  - E26
+  - E27
+  - E36
+  - E37
+  verification:
+  - scripts/validate-rules-package.py
+- id: CR-FE-015
+  stack: frontend
+  title: 测试规则
+  path: shared/15-testing.md
+  owner_role: Frontend owner
+  strength:
+    required_markers: 6
+    recommended_markers: 1
+  routing:
+  - codex/AGENTS.md
+  - cursor/08-quality-testing.mdc
+  eval_cases:
+  - E31
+  - E50
+  verification:
+  - scripts/validate-rules-package.py
+- id: CR-FE-016
+  stack: frontend
+  title: 设计 Token 规则
+  path: shared/16-design-tokens.md
+  owner_role: Frontend owner
+  strength:
+    required_markers: 4
+    recommended_markers: 0
+  routing:
+  - codex/AGENTS.md
+  - cursor/03-ui-design-system.mdc
+  eval_cases:
+  - E28
+  verification:
+  - scripts/validate-rules-package.py
+- id: CR-FE-017
+  stack: frontend
+  title: 壳层与导航规则
+  path: shared/17-shell-navigation.md
+  owner_role: Frontend owner
+  strength:
+    required_markers: 1
+    recommended_markers: 0
+  routing:
+  - codex/AGENTS.md
+  - cursor/09-shell-navigation.mdc
+  - cursor/19-platform-boundary.mdc
+  eval_cases:
+  - E32
+  verification:
+  - scripts/validate-rules-package.py
+- id: CR-FE-018
+  stack: frontend
+  title: 日志与可观测规则
+  path: shared/18-logging-observability.md
+  owner_role: Frontend owner
+  strength:
+    required_markers: 7
+    recommended_markers: 9
+  routing:
+  - codex/AGENTS.md
+  - cursor/06-security-performance.mdc
+  - cursor/12-logging-observability.mdc
+  eval_cases:
+  - E18
+  verification:
+  - scripts/validate-rules-package.py
+- id: CR-FE-019
+  stack: frontend
+  title: 列表分页与表格状态规则
+  path: shared/19-list-pagination.md
+  owner_role: Frontend owner
+  strength:
+    required_markers: 9
+    recommended_markers: 1
+  routing:
+  - codex/02-page-generation.md
+  - codex/AGENTS.md
+  - cursor/00-project-overview.mdc
+  - cursor/04-component-usage.mdc
+  - cursor/13-list-pagination.mdc
+  eval_cases:
+  - E19
+  - E20
+  - E22
+  - E23
+  verification:
+  - scripts/validate-rules-package.py
+- id: CR-FE-020
+  stack: frontend
+  title: 依赖治理规则
+  path: shared/20-dependency-governance.md
+  owner_role: Frontend owner
+  strength:
+    required_markers: 12
+    recommended_markers: 1
+  routing:
+  - codex/AGENTS.md
+  - cursor/16-dependency-governance.mdc
+  eval_cases:
+  - E29
+  verification:
+  - scripts/validate-rules-package.py
+- id: CR-FE-021
+  stack: frontend
+  title: 错误恢复与白屏治理规则
+  path: shared/21-error-recovery.md
+  owner_role: Frontend owner
+  strength:
+    required_markers: 7
+    recommended_markers: 1
+  routing:
+  - codex/AGENTS.md
+  - cursor/17-error-recovery.mdc
+  eval_cases:
+  - E30
+  verification:
+  - scripts/validate-rules-package.py
+- id: CR-FE-022
+  stack: frontend
+  title: 业务模块扩展（前端）
+  path: shared/22-business-module-extension.md
+  owner_role: Frontend owner
+  strength:
+    required_markers: 17
+    recommended_markers: 0
+  routing:
+  - codex/AGENTS.md
+  - cursor/18-business-module-extension.mdc
+  - cursor/19-platform-boundary.mdc
+  eval_cases:
+  - E32
+  - E33
+  - E34
+  - E35
+  - E36
+  - E37
+  - E38
+  - E39
+  - E40
+  verification:
+  - scripts/validate-rules-package.py
+- id: CR-FE-023
+  stack: frontend
+  title: 国际化与区域格式规则
+  path: shared/23-i18n-locale.md
+  owner_role: Frontend owner
+  strength:
+    required_markers: 10
+    recommended_markers: 1
+  routing:
+  - codex/AGENTS.md
+  - cursor/22-i18n-locale.mdc
+  eval_cases:
+  - E41
+  verification:
+  - scripts/validate-rules-package.py
+- id: CR-FE-024
+  stack: frontend
+  title: 实时通信与富文本规则
+  path: shared/24-realtime-rich-content.md
+  owner_role: Frontend owner
+  strength:
+    required_markers: 7
+    recommended_markers: 0
+  routing:
+  - codex/AGENTS.md
+  - cursor/23-realtime-rich-content.mdc
+  eval_cases:
+  - E42
+  - E43
+  verification:
+  - scripts/validate-rules-package.py
+- id: CR-FE-025
+  stack: frontend
+  title: 受监管 Web 前端加固
+  path: shared/25-regulated-web-hardening.md
+  owner_role: Frontend owner
+  strength:
+    required_markers: 8
+    recommended_markers: 0
+  routing:
+  - codex/AGENTS.md
+  - cursor/24-regulated-web-hardening.mdc
+  eval_cases:
+  - E44
+  - E45
+  - E46
+  - E47
+  - E48
+  - E49
+  verification:
+  - scripts/validate-rules-package.py
+coverage:
+  total: 26
+  routed: 26
+  with_eval_case: 26

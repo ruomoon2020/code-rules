@@ -1,0 +1,24 @@
+---
+description: 前端测试、质量门禁与发布验证
+globs:
+  - "src/**/*.test.ts"
+  - "src/**/*.spec.ts"
+  - "tests/**"
+  - "e2e/**"
+  - "contracts/**"
+  - "src/api/generated/**"
+  - "package.json"
+  - "pnpm-lock.yaml"
+  - ".github/workflows/**"
+alwaysApply: false
+---
+
+# 测试与质量门禁
+
+- 新增或修复行为须有对应单元、组件或 E2E 测试；页面至少覆盖 loading、empty、error、permission 等相关状态。
+- PR 运行项目实际配置的 `lint`、`type-check`、`test`、`build`；未配置时如实说明，禁止伪造通过。
+- schema / generated 改动追加 `schema:sync`、`api:gen`、`api:check`；业务扩展追加权限、导入导出或异步任务的场景回归。
+- 固定时钟、网络、账号与测试数据；禁止用 `sleep` 或重试把 flaky 洗绿，失败保留 trace、截图或网络记录。
+- 写链路覆盖重复点击与竞态；API 变更验证 generated 与项目声明的 N/N-1 兼容窗口。
+
+全文：`rules/shared/08-quality-gates.md`、`rules/shared/15-testing.md`、`rules/shared/10-verification-checklist.md`

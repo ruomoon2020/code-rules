@@ -1,0 +1,42 @@
+#!/usr/bin/env node
+/**
+ * 主包体积检查样板 — 复制为 scripts/check-miniapp-size.mjs
+ * 构建后检查 dist/build/mp-weixin 主包大小；阈值在 99-project-local 或下方常量配置。
+ */
+import fs from 'node:fs';
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
+const ROOT = path.resolve(__dirname, '..');
+const MAIN_PKG_DIR = path.join(ROOT, 'dist/build/mp-weixin');
+const WARN_BYTES = 1.5 * 1024 * 1024;
+const FAIL_BYTES = 1.8 * 1024 * 1024;
+
+function dirSize(dir) {
+  if (!fs.existsSync(dir)) {
+    console.error(`[size:check] 未找到构建产物: ${MAIN_PKG_DIR}`);
+    console.error('请先运行: pnpm build:mp-weixin');
+    process.exit(1);
+  }
+  let total = 0;
+  for (const name of fs.readdirSync(dir)) {
+    const p = path.join(dir, name);
+    const st = fs.statSync(p);
+    if (st.isFile()) total += st.size;
+  }
+  return total;
+}
+
+const bytes = dirSize(MAIN_PKG_DIR);
+const mb = (bytes / 1024 / 1024).toFixed(2);
+console.log(`[size:check] 主包目录体积约 ${mb} MB (${bytes} bytes)`);
+
+if (bytes > FAIL_BYTES) {
+  console.error(`[size:check] FAIL: 超过上限 ${(FAIL_BYTES / 1024 / 1024).toFixed(2)} MB`);
+  process.exit(1);
+}
+if (bytes > WARN_BYTES) {
+  console.warn(`[size:check] WARN: 超过预警 ${(WARN_BYTES / 1024 / 1024).toFixed(2)} MB`);
+}
+console.log('[size:check] OK');

@@ -1,0 +1,20 @@
+---
+description: 金融政务与高敏 Web 前端条件加固
+globs:
+  - "src/**/*iframe*.vue"
+  - "src/**/*message*.ts"
+  - "src/**/*embed*.vue"
+  - "src/**/*third-party*.ts"
+  - "vite.config.*"
+  - "public/**"
+alwaysApply: false
+---
+
+# 受监管 Web 前端加固
+
+- 高敏项目须验证生产浏览器策略、安全响应头、公开 sourcemap 和外部域。
+- 第三方脚本须登记数据流、Owner、版本、加载时机和退出清理。
+- 嵌入页面使用最小能力；跨窗口消息校验来源窗口、来源域与消息结构。
+- 高风险操作最终以后端权限和状态为准；远程配置失败走安全默认值。
+
+全文：`rules/shared/25-regulated-web-hardening.md`

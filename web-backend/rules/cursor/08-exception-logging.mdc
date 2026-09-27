@@ -1,0 +1,17 @@
+---
+description: 异常、错误码、日志
+globs:
+  - "**/exception/**/*.java"
+  - "**/web/**/*Handler*.java"
+alwaysApply: false
+---
+
+# 异常与日志
+
+- 统一 `errorCode`、`traceId`。
+- 每个失败响应的 `traceId` 必须能找到一条诊断主事件；字段含 errorCode/status/method/path/exceptionType。
+- 业务异常 WARN + exception；未知 5xx ERROR + exception；参数校验单独 400 + field:constraint，默认不打框架栈。方法级校验覆盖 `HandlerMethodValidationException`。
+- 401 / 403 / 404 / 429 只记结构化原因，不打堆栈。`path` 优先路由模板。
+- `BusinessException` 包装底层失败时保留 cause；结构化日志禁止 Token、密码、rejected value 和完整请求体。
+
+全文：`rules/shared/08-exception-errorcodes.md`、`rules/shared/09-logging-observability.md`

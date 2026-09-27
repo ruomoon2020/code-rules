@@ -1,0 +1,4 @@
+#!/bin/sh
+# Adoption fixture stub — not a full Gradle wrapper.
+echo "gradlew stub (adoption-fixture only)"
+exit 0

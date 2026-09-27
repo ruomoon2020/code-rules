@@ -1,0 +1,19 @@
+---
+description: WebSocket、SSE 与富文本安全边界
+globs:
+  - "src/**/*socket*.ts"
+  - "src/**/*websocket*.ts"
+  - "src/**/*sse*.ts"
+  - "src/**/*editor*.vue"
+  - "src/**/*rich*.vue"
+  - "src/**/*markdown*.vue"
+alwaysApply: false
+---
+
+# 实时通信与富文本
+
+- 订阅须可取消；重连有退避和上限；Token 不进 URL query。
+- 消息按 schema、版本、权限和去重规则处理；不得直接插入未校验 HTML。
+- 富文本走 sanitizer / renderer，编辑器和预览器按需加载。
+
+全文：`rules/shared/24-realtime-rich-content.md`

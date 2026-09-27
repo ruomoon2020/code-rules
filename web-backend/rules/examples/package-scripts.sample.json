@@ -1,0 +1,16 @@
+{
+  "comment": "业务仓 Maven/Gradle 参考，非可执行 JSON",
+  "mvn": {
+    "verify": "mvn -B verify",
+    "test": "mvn -B test",
+    "flyway-mysql": "mvn -B flyway:migrate -Dflyway.configFiles=flyway-mysql.conf",
+    "flyway-postgresql": "mvn -B flyway:migrate -Dflyway.configFiles=flyway-postgresql.conf"
+  },
+  "gradle": {
+    "check": "./gradlew check",
+    "test": "./gradlew test",
+    "dependency-check": "./gradlew dependencyCheckAnalyze",
+    "flyway-validate": "./gradlew flywayValidate",
+    "comment": "Flyway / OWASP：须先接对应 Gradle 插件；多库 URL / user / password 在 CI 中用 -Dflyway.* 覆盖"
+  }
+}

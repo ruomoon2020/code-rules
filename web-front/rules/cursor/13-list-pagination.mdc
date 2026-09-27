@@ -1,0 +1,19 @@
+---
+description: 列表分页、筛选与请求竞态
+globs:
+  - "src/views/**/*.vue"
+  - "src/views/**/*.ts"
+  - "packages/**/src/views/**/*.vue"
+  - "packages/**/src/views/**/*.ts"
+alwaysApply: false
+---
+
+# 列表分页与表格状态
+
+- 分页 / 筛选 / 排序须**单一数据源**；筛选或 pageSize 变化 → `page = 1`。
+- 删当前页最后一条 → 若 `page > 1` 回退再请求。
+- 批量操作成功后清空 selection；批量删除后按最新 `total` 修正页码；部分失败须反馈成功/失败数。
+- 搜索 / 翻页须 debounce + 防竞态（abort 或 ignore stale）。
+- 敏感筛选不得 sync 到 URL；cursor 分页勿硬套 page/pageSize。
+
+全文：**`rules/shared/19-list-pagination.md`**

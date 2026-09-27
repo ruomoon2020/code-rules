@@ -1,0 +1,20 @@
+---
+description: MyBatis-Plus、XML、多数据库
+globs:
+  - "**/mapper/**/*.java"
+  - "**/resources/mapper/**/*.xml"
+  - "**/db/migration/**/*.sql"
+  - "**/migration/**/*.sql"
+  - "**/sql/**/*.sql"
+alwaysApply: false
+---
+
+# MyBatis
+
+- MP：`BaseMapper`、`Wrapper`、统一 `Page` 分页。
+- XML：`#{}`；禁止用户输入 `${}`；方言用 databaseId 或 dialect 目录。
+- 支持 MySQL、PostgreSQL 等，见 sql-dialect-matrix。
+- 建表脚本须按 `rules/shared/02-naming.md`：表名、字段名、索引名、唯一约束名统一命名。
+- 查询/JOIN/排序字段评估索引；唯一约束落库；大表禁止无条件 `LIKE '%keyword%'`。
+
+全文：`rules/shared/07-persistence-mybatis.md`

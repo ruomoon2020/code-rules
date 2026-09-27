@@ -1,0 +1,15 @@
+---
+description: 富文本、UGC 与用户输入内容安全
+globs:
+  - "src/pages/**"
+  - "src/subpackages/**"
+  - "src/components/**"
+---
+
+# Content Safety
+
+Read `rules/shared/23-content-safety.md`。
+
+- rich-text 禁止直接绑不可信 HTML；须消毒或白名单。
+- UGC/评论/反馈须长度与审核策略；展示链接须 https 白名单。
+- 禁止 javascript: URL 与未审核内容直接上线。

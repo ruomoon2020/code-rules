@@ -1,0 +1,19 @@
+---
+description: 定时任务、批处理、异步补偿
+globs:
+  - "src/main/java/**/*Job.java"
+  - "src/main/java/**/*Task.java"
+  - "src/main/java/**/*Scheduler*.java"
+  - "src/main/java/**/*Runner.java"
+alwaysApply: false
+---
+
+# 定时任务 / 批处理
+
+- 定时任务须有 owner、频率、超时、重试、告警和关闭开关。
+- 多实例部署须防重：分布式锁、调度平台单实例、分片或幂等。
+- 批处理分批提交，记录任务状态、游标、失败原因。
+- 重试任务必须幂等；外部副作用需要去重键或 outbox。
+- 禁止长事务包住远程调用或大批量循环。
+
+全文：**`rules/shared/25-jobs-scheduling.md`**

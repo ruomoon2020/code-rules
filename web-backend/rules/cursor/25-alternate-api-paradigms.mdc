@@ -1,0 +1,15 @@
+---
+description: GraphQL / gRPC / WebSocket / SSE
+globs:
+  - "**/*.proto"
+  - "**/graphql/**"
+  - "**/*WebSocket*"
+  - "**/*Sse*"
+alwaysApply: false
+---
+
+# 非 REST API 范式
+
+默认 REST+OpenAPI；引入须 ADR。
+
+全文：`rules/shared/33-alternate-api-paradigms.md`

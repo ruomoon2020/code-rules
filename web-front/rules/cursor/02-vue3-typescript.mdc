@@ -1,0 +1,43 @@
+---
+description: Vue3 与 TypeScript 编码规则
+globs:
+  - "src/**/*.vue"
+  - "src/**/*.ts"
+  - "packages/**/src/**/*.vue"
+  - "packages/**/src/**/*.ts"
+alwaysApply: false
+---
+
+# Vue 3 + TypeScript
+
+## TypeScript 约定
+
+- 禁止显式 `any`；未知输入用 `unknown` + 类型守卫。
+- DTO 优先 `src/api/generated`。
+- 类型导入使用 `import type`。
+- 命名以 `rules/shared/02-naming.md` 为准。
+
+## Vue 约定
+
+- `<script setup lang="ts">`；Props/Emits 类型化。
+- 页面负责编排；复用逻辑放 composables。
+- keep-alive 须 `defineOptions({ name })` 与路由 `name` 一致。
+
+## views 边界
+
+禁止：
+
+```vue
+<el-button />
+<el-table />
+<ElButton />
+```
+
+```ts
+import { ElTable } from 'element-plus'
+import { ElButton } from 'element-plus/es/components/button'
+```
+
+须用项目 `Base*` 组件。硬门禁：`eslint-views-ban-el.mjs` + `ci-scan-views-el-tags.mjs`（含 EP PascalCase denylist，见 `rules/examples/`）。
+
+全文：`rules/shared/03-code-style.md`

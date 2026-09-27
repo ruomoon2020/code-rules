@@ -1,0 +1,15 @@
+---
+description: 数据归档与冷热分层
+globs:
+  - "**/job/**"
+  - "**/scheduler/**"
+  - "**/db/migration/**"
+  - "**/mapper/**/*.xml"
+alwaysApply: false
+---
+
+# 数据归档
+
+大表归档、冷热分层、归档任务幂等与 API 行为。
+
+全文：`rules/shared/34-data-archival.md`

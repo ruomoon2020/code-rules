@@ -1,0 +1,20 @@
+---
+description: 国际化、金额、日期与时区展示
+globs:
+  - "src/**/*i18n*.ts"
+  - "src/**/*locale*.ts"
+  - "src/**/*format*.ts"
+  - "src/**/*Form.vue"
+  - "src/**/*Detail.vue"
+  - "src/views/**/*.vue"
+alwaysApply: false
+---
+
+# 国际化与区域格式
+
+- 用户文案、枚举和错误码走 i18n / 字典；金额、日期、时区走统一 formatter。
+- 不得把浏览器 locale、系统时区当作业务事实；未知码和未知 locale 必须有 fallback。
+- 语言切换不清登录态、不丢未提交表单；须刷新字典与格式化缓存。
+- 改 i18n / 文案 PR 建议对照 eval **E41**。
+
+全文：`rules/shared/23-i18n-locale.md`

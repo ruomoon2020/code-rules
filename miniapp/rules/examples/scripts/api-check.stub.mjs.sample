@@ -1,0 +1,7 @@
+#!/usr/bin/env node
+/**
+ * API 契约检查占位 — 复制为 scripts/api-check.mjs 并替换为项目实现。
+ * 建议：对比 contracts/openapi.yaml 与 src/api/generated 是否过期。
+ */
+console.log('[api:check] stub: 请接入 openapi-diff / 自定义校验脚本');
+process.exit(0);

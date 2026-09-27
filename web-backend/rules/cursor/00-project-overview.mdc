@@ -1,0 +1,21 @@
+---
+description: Spring Boot 后端规则包概览（必读）
+alwaysApply: true
+---
+
+# 后端项目概览
+
+Spring Boot 3.x + Java 17+ + MyBatis-Plus + MySQL/PostgreSQL。Spring Boot 4.x 项目须先按 `shared/20-dependency-governance.md` 完成迁移评估。规则版本见 `rules/VERSION`。
+
+- Level 0 硬规则：`rules/shared/00-must-follow.md`（当前 27 条）；高阶主题按条件路由和项目采纳 Level 触发
+- Codex：`rules/codex/AGENTS.md` → 根 `AGENTS.md`
+- 全栈契约：`rules/docs/fullstack-contract.md`
+- Evals：P0 8/8，P1 ≥53/59（B09–B67）；日常 Smoke、发版 Full（见 `evals/README.md`）
+- 采纳分层：`rules/docs/rule-maturity-model.md`
+- Cursor 路由：`cursor/*.mdc` 按 globs 触发；**编号 ≠ shared**，对照表见 `rules/docs/cursor-shared-map.md`。常用：业务扩展 `35`、平台边界 `36`、AI `42`。处理网页 / Issue / 日志 / 工具输出时追加 `shared/26-ai-generation.md`。
+- 立项 / 架构方案 / 上线评审：读取 `common-governance/docs/architect-engineering-checklist.md`、`common-governance/docs/definition-of-done.md` 与 `common-governance/docs/dod-maturity-mapping.md`。
+- 需求 / 业务 PR / 缺陷修复：读取 `common-governance/docs/requirements-traceability.md` 与 `common-governance/docs/business-correctness-review.md`。
+- 生产发布 / 灰度 / 回滚：读取 `common-governance/docs/environment-promotion.md` 与 `common-governance/docs/release-evidence.md`。
+- 生产事故 / 安全事件 / 复盘：读取 `common-governance/docs/incident-response.md` 与 `common-governance/docs/incident-postmortem-template.md`。
+
+须能访问完整 `rules/` 目录。持久化见 shared `07`；可靠性见 `32`；安全高阶治理见 shared `35`–`42`（非 cursor/35 业务扩展）；业务扩展见 shared `43`；CI 样板须按项目裁剪（见 `examples/README.md`）。

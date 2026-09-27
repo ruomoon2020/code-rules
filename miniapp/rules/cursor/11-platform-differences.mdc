@@ -1,0 +1,14 @@
+---
+description: 平台能力 adapter 与条件编译集中
+globs:
+  - "src/platform/**"
+---
+
+# Platform Differences
+
+Read `rules/shared/11-platform-differences.md`、`rules/shared/14-payment-subscribe-share.md`（若涉及支付/分享/订阅）。
+
+- 微信 / 支付宝等差异进 `src/platform/`；页面调用统一业务方法。
+- 禁止页面散落 `#ifdef`；adapter 返回统一结果类型。
+- 平台 API 不可用须有 fallback 或隐藏入口。
+- 微信主链路正确性与合规优先于「多端凑齐」。

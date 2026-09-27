@@ -1,0 +1,17 @@
+---
+description: 上传、下载与媒体
+globs:
+  - "src/api/**"
+  - "src/platform/**"
+  - "src/subpackages/**"
+  - "src/pages/**"
+---
+
+# Upload Media
+
+Read `rules/shared/13-upload-download-media.md`、`rules/shared/09-privacy-permission.md`。
+
+- 上传下载走专门封装，不与普通 JSON request 混写。
+- 相机、相册、文件须用户触发且有隐私用途说明。
+- 图片须尺寸、压缩、懒加载；大图走 CDN，不进主包。
+- 上传失败、取消、超时须分开处理。

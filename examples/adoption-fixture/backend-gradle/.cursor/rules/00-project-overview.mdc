@@ -1,0 +1,8 @@
+---
+description: Adoption fixture overview
+alwaysApply: true
+---
+
+# Fixture
+
+Gradle backend adoption fixture for check-project-adoption.py.

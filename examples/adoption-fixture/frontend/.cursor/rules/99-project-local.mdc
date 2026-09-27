@@ -1,0 +1,23 @@
+---
+description: Adoption fixture local project settings
+globs:
+  - "**/*"
+alwaysApply: false
+---
+
+# Project Local Overrides
+
+- Stack: frontend
+- Rules path: `rules/`
+- Source path: `src/`
+- Contract path: `contracts/openapi.yaml`
+- Adoption level: 3
+
+## 测试治理参数
+
+- 覆盖率策略：Vitest lines/branches 以当前 main 基线为下限，新增代码不回退；generated 排除。
+- 兼容窗口：OpenAPI N/N-1，旧版本在下一次 major 发布后下线。
+- flaky 治理：登记到 `docs/flaky-tests.md`，QA Owner，最长隔离 14 天，重试保留首次失败。
+- 失败证据：CI 归档 JUnit、浏览器日志和截图 30 天，限项目成员访问并做敏感字段脱敏。
+- 测试数据：synthetic fixture，按 worker 隔离，afterEach 清理。
+- 风险专项：鉴权与解析器变更运行 API fuzz；其余不适用并在 PR 写明原因。

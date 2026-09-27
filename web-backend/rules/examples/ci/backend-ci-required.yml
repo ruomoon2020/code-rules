@@ -1,0 +1,87 @@
+# Required 门禁 — Level 0+ 建议复制到 .github/workflows/backend-ci-required.yml
+# verify job 自动识别 Maven（pom.xml）或 Gradle（gradlew + build.gradle*）
+# 见 examples/README.md、shared/23-quality-gates.md
+
+name: backend-ci-required
+
+on:
+  pull_request:
+    paths:
+      - "src/**"
+      - "contracts/**"
+      - "pom.xml"
+      - "build.gradle*"
+      - "settings.gradle*"
+      - "gradle/wrapper/**"
+      - "gradlew"
+      - ".github/workflows/backend-ci-required.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    outputs:
+      openapi: ${{ steps.build.outputs.openapi }}
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+
+      - name: Detect build tool
+        id: build
+        run: |
+          if [ -f gradlew ] && { [ -f build.gradle ] || [ -f build.gradle.kts ]; }; then
+            echo "tool=gradle" >> "$GITHUB_OUTPUT"
+          elif [ -f pom.xml ]; then
+            echo "tool=maven" >> "$GITHUB_OUTPUT"
+          else
+            echo "Expected pom.xml or Gradle wrapper (gradlew + build.gradle*)." >&2
+            exit 1
+          fi
+          if [ -f contracts/openapi.yaml ]; then echo "openapi=true" >> "$GITHUB_OUTPUT"; else echo "openapi=false" >> "$GITHUB_OUTPUT"; fi
+
+      - uses: actions/setup-java@cf277c60eb25467037889841efdb72551f06f6c3 # v4
+        with:
+          distribution: temurin
+          java-version: "17"
+          cache: ${{ steps.build.outputs.tool }}
+
+      - name: Maven verify
+        if: steps.build.outputs.tool == 'maven'
+        run: mvn -B verify
+
+      - name: Gradle check
+        if: steps.build.outputs.tool == 'gradle'
+        run: |
+          chmod +x gradlew
+          ./gradlew check --no-daemon
+
+  openapi-diff:
+    needs: verify
+    runs-on: ubuntu-latest
+    if: needs.verify.outputs.openapi == 'true'
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with:
+          node-version: "20"
+
+      - name: OpenAPI diff
+        run: |
+          if [ -f contracts/openapi.baseline.yaml ]; then
+            npx @redocly/cli diff contracts/openapi.baseline.yaml contracts/openapi.yaml
+          else
+            echo "contracts/openapi.baseline.yaml not found; record this skip in the PR."
+          fi
+
+  secret-scan:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          fetch-depth: 0
+
+      - name: Gitleaks scan
+        uses: gitleaks/gitleaks-action@ff98106e4c7b2bc287b24eaf42907196329070c7 # v2

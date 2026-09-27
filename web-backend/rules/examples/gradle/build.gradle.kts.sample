@@ -1,0 +1,48 @@
+// 复制为业务仓 build.gradle.kts 并按项目修改。
+// 版本号仅为样板参考，接入时对齐公司 BOM / platform。
+
+plugins {
+    java
+    id("org.springframework.boot") version "3.3.5"
+    id("io.spring.dependency-management") version "1.1.6"
+    id("org.owasp.dependencycheck") version "10.0.4"
+    id("org.flywaydb.flyway") version "10.20.0"
+}
+
+group = "com.company.product"
+version = "0.0.1-SNAPSHOT"
+
+java {
+    toolchain {
+        languageVersion.set(JavaLanguageVersion.of(17))
+    }
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation("org.springframework.boot:spring-boot-starter-web")
+    implementation("org.springframework.boot:spring-boot-starter-validation")
+
+    runtimeOnly("org.flywaydb:flyway-mysql")
+    runtimeOnly("org.flywaydb:flyway-database-postgresql")
+    runtimeOnly("com.mysql:mysql-connector-j")
+    runtimeOnly("org.postgresql:postgresql")
+
+    testImplementation("org.springframework.boot:spring-boot-starter-test")
+    testImplementation("com.tngtech.archunit:archunit-junit5:1.3.0")
+}
+
+tasks.withType<Test> {
+    useJUnitPlatform()
+}
+
+dependencyCheck {
+    failBuildOnCVSS = 7.0f
+    formats = listOf("HTML", "JSON")
+}
+
+// Flyway（多库 CI 用 -Dflyway.url / user / password 覆盖；本地可按环境拆分配置）：
+// flyway { url = "jdbc:mysql://localhost:3306/app"; user = "root"; password = "root" }

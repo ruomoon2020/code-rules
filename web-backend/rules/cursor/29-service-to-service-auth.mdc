@@ -1,0 +1,16 @@
+---
+description: 服务间认证与机器身份
+globs:
+  - "src/main/java/**/*Client.java"
+  - "src/main/java/**/*Feign*.java"
+  - "src/main/java/**/*Consumer.java"
+  - "src/main/java/**/*Job.java"
+  - "src/main/java/**/*Webhook*.java"
+alwaysApply: false
+---
+
+# 服务间认证
+
+内部调用、Webhook、MQ、Job 不得只信内网；须有机器身份、签名/Token/mTLS、最小权限、审计和可轮换凭证。
+
+全文：`rules/shared/37-service-to-service-auth.md`

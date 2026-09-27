@@ -1,0 +1,15 @@
+---
+description: 分页、排序白名单、列表查询
+globs:
+  - "**/api/**/*Controller.java"
+  - "**/application/**/*Service.java"
+  - "**/mapper/**/*.xml"
+alwaysApply: false
+---
+
+# 分页与查询
+
+- 统一 MP `Page`；响应含 `total`、`records`。
+- `sortField` 白名单映射；禁止 `order by ${userInput}`。
+
+全文：`rules/shared/19-pagination-query.md`

@@ -1,0 +1,24 @@
+---
+description: 安全、无障碍与性能
+globs:
+  - "src/**/*.vue"
+  - "src/**/*.ts"
+  - "src/**/*.scss"
+  - "packages/**/src/**/*.vue"
+  - "packages/**/src/**/*.ts"
+  - "packages/**/src/**/*.scss"
+alwaysApply: false
+---
+
+# 安全 / 无障碍 / 性能
+
+- 禁止裸 `v-html`；使用项目安全 HTML 封装。
+- 禁止密钥、生产内网地址、未脱敏敏感日志；勿公开生产 sourcemap。
+- 纯图标按钮须 `aria-label`；表单须 label；状态不单靠颜色。
+- 路由级大模块懒加载；大表格分页或虚拟滚动（>100 行参考预算）；搜索 debounce 并取消过期请求。
+- 图表 / 地图 / 富文本 / 编辑器须懒加载；构建体积异常须 bundle analyzer。
+- 改 `package.json`、`vite.config`、图表/编辑器/地图等重依赖时，必须核对 bundle 预算、性能 Owner 与看板。
+- 列表、详情、复制、下载、打印、缓存、埋点使用同一数据分级与脱敏策略；剪贴板和下载视为数据出站。
+- 浏览器矩阵、CSP 和外部域须来自项目本地基线，不得猜测。
+
+全文：`rules/shared/07-security-performance.md` · 日志：`rules/shared/18-logging-observability.md`

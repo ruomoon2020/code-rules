@@ -1,0 +1,27 @@
+---
+description: 成熟后台业务模块扩展
+globs:
+  - "**/modules/**"
+  - "**/ruoyi-modules/**"
+  - "**/yudao-module-*/**"
+  - "**/src/main/resources/mapper/**/modules/**"
+  - "**/resources/mapper/**/modules/**"
+  - "**/mapper/**/modules/**"
+  - "**/db/migration/**"
+  - "**/sql/**/*menu*.sql"
+alwaysApply: false
+---
+
+# 业务模块扩展
+
+基于 RuoYi-Vue-Plus / RuoYi-Cloud-Plus / ruoyi-vue-pro / JeecgBoot 等成熟后台时，新增业务默认只扩展业务模块。
+
+- 禁止为单个业务需求污染 `common`、`framework`、`core`、`starter`、`system`。
+- 优先复用平台用户、角色、菜单、权限、部门、岗位、字典、配置、文件、日志、审计、任务、租户、数据权限、代码生成能力。
+- 代码生成只是起点，必须补权限、数据权限、审计、错误码、性能和测试。
+- 后端权限注解、菜单权限码、前端按钮权限码须一致或可追踪。
+- 模块名、表前缀、权限码、错误码、字典 type 前缀须统一；全局表须说明非租户隔离原因。
+- 数据权限注解 / 拦截器 / Mapper 条件 / 租户插件须在当前路径实际生效。
+- 树表 / 主子表须补父子归属、事务、循环关系和跨租户测试；禁止为单业务改 generator 全局模板。
+
+全文：`rules/shared/43-business-module-extension.md`、`rules/docs/business-feature-playbook.md`

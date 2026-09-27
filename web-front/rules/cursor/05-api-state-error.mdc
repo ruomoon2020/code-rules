@@ -1,0 +1,28 @@
+---
+description: API、状态、路由、权限与错误处理
+globs:
+  - "src/api/**/*.ts"
+  - "src/composables/**/*.ts"
+  - "src/store/**/*.ts"
+  - "src/router/**/*.ts"
+  - "src/views/**/*.vue"
+  - "packages/**/src/api/**/*.ts"
+  - "packages/**/src/composables/**/*.ts"
+  - "packages/**/src/store/**/*.ts"
+  - "packages/**/src/router/**/*.ts"
+  - "packages/**/src/views/**/*.vue"
+alwaysApply: false
+---
+
+# API / 状态 / 路由 / 权限
+
+- 组件内禁止直接 `axios` / `fetch`；走 `src/api` 与 request wrapper。
+- 字段来自 schema / generated；登出须 `resetAllStores()` 等等价清理。
+- keep-alive：`defineOptions({ name })` 与路由 `name` 一致。
+- 前端权限仅 UI 收敛，后端须鉴权。
+
+全文：
+
+- `rules/shared/05-api-contract.md`
+- `rules/shared/06-state-route-permission.md`
+- `rules/shared/12-schema-ssot.md`

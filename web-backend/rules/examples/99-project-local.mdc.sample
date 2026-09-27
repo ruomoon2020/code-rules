@@ -1,0 +1,32 @@
+---
+description: 本项目路径与栈（复制到业务仓 .cursor/rules/99-project-local.mdc）
+alwaysApply: true
+---
+
+# 本项目约定（示例，请按实际修改）
+
+- 业务模块路径：`src/main/java/com/acme/modules/{biz}/`
+- 公共层路径：`src/main/java/com/acme/{common,framework,system,generator}/`
+- 成熟后台栈：RuoYi-Vue-Plus 5.x（非 RuoYi 项目请删除 `35-business-module-extension.mdc` 或收窄其 globs）
+- OpenAPI SSOT：`contracts/openapi.yaml`
+- 采纳 Level：1（见 `rules/docs/rule-maturity-model.md`）
+- 构建工具：`mvn verify` 或 `./gradlew check`（CI 见 `rules/examples/ci/backend-ci-required.yml`）
+- 新增 CRUD PR 建议跑 evals Business Extension B55–B63
+- 新增业务模块 / CRUD / 菜单 / 字典 / 导入导出时启用业务扩展；仅修 bug、改单字段或改样式类展示接口时不强制按业务扩展处理
+- 改 `common` / `system` / `generator` 时 Cursor 会命中 `36-platform-boundary.mdc`
+- 性能 Owner：后端负责人 / 业务负责人 / SRE（按项目填写）
+- 核心接口 P95 / P99：例如 P95 500ms，P99 1500ms（按接口分级）
+- 慢 SQL 阈值：例如 500ms / 1s
+- 单页最大 pageSize：例如 100
+- 导出最大行数：例如 100_000，超过走异步任务
+- 线程池 / 连接池饱和告警：例如 active > 80%
+- 性能看板 / 告警渠道：按项目填写
+
+## 测试治理参数（按采纳 Level 与风险填写）
+
+- 覆盖率策略：填写指标、增量阈值或基线不回退策略，以及 generated 等排除项；不使用统一固定百分比。
+- 兼容窗口：填写 API / 事件 / 数据库的 N/N-1、起止版本与到期日；不适用须写原因。
+- flaky 治理：填写登记路径、Owner、最长隔离天数；重试须保留首次失败证据。
+- 失败证据：填写测试报告、日志与关联 run/test id 的归档路径、保留期、访问控制与脱敏要求。
+- 测试数据：填写 synthetic / 脱敏来源、用例/租户/并行隔离和清理方式，禁止生产 PII 进入 fixture。
+- 风险专项：填写属性/模糊/变异/DAST/故障演练的触发条件、命令与 Owner；不适用须写原因。

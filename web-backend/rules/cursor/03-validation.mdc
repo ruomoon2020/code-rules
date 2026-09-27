@@ -1,0 +1,14 @@
+---
+description: Bean Validation 与参数校验
+globs:
+  - "**/api/**/*Request.java"
+  - "**/api/**/*Controller.java"
+alwaysApply: false
+---
+
+# 校验
+
+- Controller 入参 `@Valid` / `@Validated`。
+- 跨字段业务规则在 Service，返回 `errorCode`。
+
+全文：`rules/shared/13-validation.md`

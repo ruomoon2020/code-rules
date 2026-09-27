@@ -1,0 +1,17 @@
+---
+description: 弱网离线、统一错误恢复与页面重试
+globs:
+  - "src/pages/**"
+  - "src/subpackages/**"
+  - "src/services/**"
+  - "src/composables/**"
+---
+
+# Error Recovery
+
+Read `rules/shared/22-error-recovery-offline.md`、`rules/shared/06-login-auth-session.md`。
+
+- 401/登录过期走统一 recovery，禁止每页各自 reLaunch。
+- 弱网/离线须有统一提示与重试边界。
+- 列表/详情/表单 error 态须可重试；禁止空 catch。
+- 支付/授权中断须可恢复路径。

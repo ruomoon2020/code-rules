@@ -1,0 +1,19 @@
+---
+description: 写 views 前必读 Base 组件锚定规则
+globs:
+  - "src/views/**/*.vue"
+  - "packages/**/src/views/**/*.vue"
+alwaysApply: false
+---
+
+# Base Components（Context Pinning）
+
+修改 `views` 前必读：**`rules/shared/11-base-components-context.md`**（或目标仓库 Base 源码）。
+
+要点：
+
+- 禁止虚构 props / slots / events
+- 禁止回退为原生 Element Plus
+- 唯一契约来源是仓库内组件源码；不确定则打开文件核对，禁止猜测
+
+Monorepo 中 Base 组件可能在 `packages/*/src/components/base/`。

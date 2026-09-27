@@ -1,0 +1,22 @@
+---
+description: 平台公共层边界
+globs:
+  - "**/common/**"
+  - "**/framework/**"
+  - "**/core/**"
+  - "**/starter/**"
+  - "**/system/**"
+  - "**/generator/**"
+  - "**/gen/**"
+alwaysApply: false
+---
+
+# 平台公共层边界
+
+修改 `common`、`framework`、`core`、`starter`、`system`、`generator` 前，先判断是平台级通用能力还是单个业务需求。
+
+- 单个业务需求禁止进入公共 / 系统 / generator 全局模板。
+- 确需改平台能力时，必须补 Owner、ADR、兼容策略、迁移脚本、回滚方案和回归用例。
+- 新增业务默认扩展业务模块，并复用平台用户、权限、字典、日志、文件、任务、租户、数据权限和代码生成能力。
+
+全文：`rules/shared/43-business-module-extension.md`、`rules/shared/30-ownership-adr.md`

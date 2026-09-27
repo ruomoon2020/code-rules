@@ -1,0 +1,14 @@
+---
+description: SLO、降级、RTO/RPO、故障演练
+globs:
+  - "**/application/**/*.java"
+  - "**/integration/**"
+  - "**/resources/application*.yml"
+alwaysApply: false
+---
+
+# 服务可靠性
+
+SLO、错误预算、熔断降级、RTO/RPO、告警与复盘。
+
+全文：`rules/shared/32-service-reliability.md`

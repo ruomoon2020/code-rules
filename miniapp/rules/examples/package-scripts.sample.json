@@ -1,0 +1,14 @@
+{
+  "scripts": {
+    "lint": "eslint .",
+    "type-check": "vue-tsc --noEmit",
+    "test": "vitest run",
+    "test:unit": "vitest run",
+    "build:mp-weixin": "uni build -p mp-weixin",
+    "dev:mp-weixin": "uni dev -p mp-weixin",
+    "api:gen": "node scripts/api-gen.mjs",
+    "api:check": "node scripts/api-check.mjs",
+    "size:check": "node scripts/check-miniapp-size.mjs",
+    "audit": "pnpm audit --audit-level=high"
+  }
+}

@@ -1,0 +1,21 @@
+schema_version: 1
+id: EXC-2026-001
+status: closed
+rule: web-front/rules/shared/07-security-performance.md LCP budget
+reason: Legacy reporting page required a bounded migration window
+scope: route /reports/legacy only
+owner: frontend-owner
+risk_acceptor: engineering-manager
+compensating_controls:
+  - Route-level lazy loading and error-rate alert
+  - Internal-role access restriction
+starts_at: 2026-06-01
+expires_at: 2026-08-29
+review_due: 2026-08-22
+close_condition: LCP P75 meets the approved project budget
+approvals:
+  - role: engineering-manager
+    approver: release-owner
+    approved_at: "2026-05-30T10:00:00+08:00"
+closed_at: 2026-08-15
+closure_evidence: PR-123 and performance report PERF-2026-08

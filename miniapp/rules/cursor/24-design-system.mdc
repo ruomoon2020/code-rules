@@ -1,0 +1,21 @@
+---
+description: 移动设计 Token、Base 组件与触控热区
+globs:
+  - "src/base/**"
+  - "src/components/**"
+  - "src/styles/**"
+  - "src/pages/**/*.vue"
+  - "src/subpackages/**/*.vue"
+---
+
+# Design System Mobile
+
+Read `rules/shared/02-naming.md`、`rules/shared/03-vue3-typescript-uniapp.md`、`rules/shared/16-testing-quality-gates.md`、`rules/shared/24-design-system-mobile.md`。
+
+- 使用 Token，禁止页面魔法数样式。
+- 空/错/骨架/加载用 base 组件，与四态一致。
+- 样式按基础值、语义主题值、Base 组件、业务页面分层；组件使用 BEM 与受控 variant。
+- 运行时主题由单一 composable/store 管理，定义持久化、fallback、原生区域同步和首屏防闪烁。
+- Base 组件不依赖业务 API/store/路由，须同步契约文档、测试和迁移说明。
+- 可点击热区与表单错误提示符合移动规范。
+- 页面样式改动不得绕过 Base 组件、Token、安全区和移动触控规范。

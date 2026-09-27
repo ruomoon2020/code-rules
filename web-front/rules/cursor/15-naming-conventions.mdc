@@ -1,0 +1,19 @@
+---
+description: 命名规范、目录、文件、变量、样式、环境变量
+globs:
+  - "src/**/*.{ts,vue,scss,css}"
+  - "packages/**/src/**/*.{ts,vue,scss,css}"
+  - ".env*"
+alwaysApply: false
+---
+
+# 命名规范
+
+- `src/views/**` 目录与 URL path 使用 kebab-case；路由 `name` 使用 PascalCase。
+- Vue 组件 PascalCase；composable 使用 `useXxx.ts`；测试文件与被测文件同名加 `.spec.ts` / `.test.ts`。
+- 变量、函数语义明确；布尔值用 `is` / `has` / `can` / `should`；禁 `data` / `info` / `obj` / `temp` / `flag` 等模糊名。
+- Type / Interface / Enum 使用 PascalCase；enum 成员风格全项目统一。
+- class 使用 kebab-case 或统一 BEM；禁止 `.red-button`、`.left-box` 这类视觉命名。
+- Vite 环境变量使用 `VITE_` + `UPPER_SNAKE_CASE`；禁止放密钥。
+
+全文：**`rules/shared/02-naming.md`**

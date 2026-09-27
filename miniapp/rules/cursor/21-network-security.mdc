@@ -1,0 +1,17 @@
+---
+description: 网络域名白名单、HTTPS、web-view 与上传下载安全
+globs:
+  - "src/api/**"
+  - "src/platform/**"
+  - "src/pages/**"
+  - "src/subpackages/**"
+---
+
+# Network Security
+
+Read `rules/shared/21-network-security.md`、`rules/shared/05-api-contract-request.md`。
+
+- request/upload/download 须经封装并校验白名单域名；生产 HTTPS。
+- 禁止动态拼接非白名单 URL；baseURL 仅来自构建环境变量。
+- web-view 仅白名单 URL；禁止向 H5 透传 token。
+- 新第三方 SDK 须登记域名与隐私影响。

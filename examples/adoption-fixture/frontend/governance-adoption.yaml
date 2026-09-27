@@ -1,0 +1,35 @@
+schema_version: 1
+level: 3
+owner: fixture-platform
+review_due: "2099-12-31"
+checks:
+  rules_adoption:
+    evidence: .github/workflows/rules-adoption.yml
+  credential_scan:
+    evidence: .github/workflows/credential-scan-required.yml
+  supply_chain:
+    evidence: .github/workflows/supply-chain-required.yml
+  artifact_trust:
+    evidence: .github/workflows/artifact-trust-required.yml
+branch_protection:
+  enabled: true
+  evidence: governance-platform-evidence.json
+level3:
+  scorecard: docs/adoption-scorecard.md
+  evidence:
+    - area: architecture-governance
+      owner: fixture-platform
+      status: complete
+      review_due: "2099-12-31"
+      evidence: docs/branch-protection-evidence.md
+    - area: release-governance
+      owner: fixture-release
+      status: complete
+      review_due: "2099-12-31"
+      evidence: .github/workflows/rules-adoption.yml
+    - area: security-governance
+      owner: fixture-security
+      status: complete
+      review_due: "2099-12-31"
+      evidence: .github/workflows/credential-scan-required.yml
+

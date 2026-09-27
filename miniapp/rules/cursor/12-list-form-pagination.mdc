@@ -1,0 +1,16 @@
+---
+description: 列表、表单、分页与四态
+globs:
+  - "src/pages/**/*.vue"
+  - "src/subpackages/**/*.vue"
+  - "src/composables/**"
+---
+
+# List Form Pagination
+
+Read `rules/shared/12-list-form-pagination.md`、`rules/shared/04-page-ui-lifecycle.md`。
+
+- 列表须含加载、空、错误、正常、分页到底、下拉刷新。
+- 分页字段与 OpenAPI 一致；筛选变化回第一页；删末条回退页码。
+- 写操作防重复提交；弱网/超时有边界。
+- 高频输入须防抖/节流。

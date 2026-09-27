@@ -1,0 +1,10 @@
+{
+  "name": "adoption-fixture-frontend",
+  "private": true,
+  "scripts": {
+    "lint": "eslint .",
+    "type-check": "vue-tsc --noEmit",
+    "build": "vite build",
+    "api:check": "openapi-generator validate -i contracts/openapi.yaml"
+  }
+}

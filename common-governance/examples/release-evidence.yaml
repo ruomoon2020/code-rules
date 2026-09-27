@@ -1,0 +1,45 @@
+schema_version: 2
+release:
+  id: REL-2026-001
+  version: 1.8.0
+  environment: production
+  owner: team-platform
+  change_ref: PR-123
+  commit_sha: 0123456789abcdef0123456789abcdef01234567
+  artifact_digest: sha256:0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef
+  approved_at: "2026-08-14T10:00:00+08:00"
+  rules_versions:
+    common-governance: 2.0.0
+    frontend: 1.8.0
+artifact_trust:
+  sbom_ref: https://github.example.invalid/org/repo/attestations/sbom/123
+  provenance_ref: https://github.example.invalid/org/repo/attestations/provenance/123
+  signature_ref: https://github.example.invalid/org/repo/attestations/signature/123
+  builder_id: https://github.example.invalid/org/repo/actions/runs/123
+  verification_command: gh attestation verify artifact.tgz --repo org/repo
+  verified_at: "2026-08-14T10:05:00+08:00"
+requirements:
+  - id: REQ-123
+    acceptance_evidence: https://ci.example.invalid/runs/123
+risk:
+  level: high
+  summary: Changes order cancellation state transitions.
+  rollout_evidence: https://deploy.example.invalid/canary/123
+rollback:
+  tested: true
+  command_or_runbook: runbooks/order-release-rollback.md
+  owner: team-platform
+observability:
+  dashboards:
+    - https://monitor.example.invalid/d/order
+  alerts:
+    - order-error-rate
+  observation_window_minutes: 1440
+gates:
+  code: passed
+  contract: passed
+  security: passed
+  data: passed
+  observability: passed
+  release: passed
+exceptions: []

@@ -1,0 +1,23 @@
+/**
+ * 出站域名白名单样板 — 复制为 src/api/allowed-hosts.ts
+ * request / uploadFile / downloadFile 入口必须调用 assertAllowedUrl。
+ */
+const ALLOWED_HOSTS = new Set([
+  'api.example.com',
+  'upload.example.com',
+]);
+
+export function assertAllowedUrl(url: string): void {
+  let host: string;
+  try {
+    host = new URL(url).hostname;
+  } catch {
+    throw new Error('INVALID_URL');
+  }
+  if (!ALLOWED_HOSTS.has(host)) {
+    throw new Error(`HOST_NOT_ALLOWED: ${host}`);
+  }
+  if (import.meta.env.PROD && !url.startsWith('https://')) {
+    throw new Error('HTTPS_REQUIRED_IN_PROD');
+  }
+}

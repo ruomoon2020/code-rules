@@ -1,0 +1,16 @@
+---
+description: App.vue 应用级生命周期、全局错误与 scene 初始化
+globs:
+  - "src/App.vue"
+  - "src/app/**"
+  - "src/main.ts"
+---
+
+# App Runtime
+
+Read `rules/shared/20-app-runtime.md`、`rules/shared/14-payment-subscribe-share.md`（若涉及 scene/分享）。
+
+- `onLaunch` 禁止阻塞式重业务；scene/分享入参白名单后交给 auth/路由服务。
+- `onError`、`onUnhandledRejection` 须统一上报，禁止仅 console。
+- `onPageNotFound` 须跳转兜底页。
+- `UpdateManager` 封装在 platform 或 app 模块。

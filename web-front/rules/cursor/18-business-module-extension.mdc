@@ -1,0 +1,23 @@
+---
+description: 成熟后台新增业务页面 / CRUD / 菜单权限
+globs:
+  - "src/views/**/*.vue"
+  - "src/views/**/*.ts"
+  - "src/router/**"
+  - "src/store/**/permission*"
+  - "packages/**/src/views/**/*.vue"
+  - "packages/**/src/views/**/*.ts"
+alwaysApply: false
+---
+
+# 业务模块扩展（前端）
+
+基于 RuoYi / Jeecg 等成熟后台新增业务页时：
+
+- 先确认后端 OpenAPI、权限码、菜单已就绪；再 `schema:sync` + `api:gen` + `api:check`。
+- 复用平台菜单、路由、权限指令、字典、壳层；禁止重复实现全局权限 / 菜单体系。
+- 路由 `name`、按钮权限码与后端一致；禁止仅隐藏 UI。
+- 列表须 Base 组件 + 四态 + 分页竞态；CodeGen 页不得直接上线。
+- 导入 / 导出须权限、脱敏、操作记录刷新。
+
+全文：**`rules/shared/22-business-module-extension.md`**、步骤 **`rules/docs/business-feature-playbook-frontend.md`**

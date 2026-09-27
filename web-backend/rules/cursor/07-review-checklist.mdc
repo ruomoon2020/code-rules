@@ -1,0 +1,16 @@
+---
+description: 收尾 Review
+globs:
+  - "src/main/java/**/*.java"
+  - "src/main/resources/**/*.xml"
+alwaysApply: false
+---
+
+# Review
+
+1. Controller 无 Mapper；无 Entity 出 API。
+2. OpenAPI 与实现一致；分页含 total。
+3. XML 无危险 `${}`；多库方言已登记。
+4. 日志无敏感信息。
+
+全文：`rules/shared/10-verification-checklist.md`

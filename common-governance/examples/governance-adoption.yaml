@@ -1,0 +1,16 @@
+schema_version: 1
+level: 2
+owner: platform-governance
+review_due: "2099-12-31"
+checks:
+  rules_adoption:
+    evidence: .github/workflows/rules-adoption.yml
+  credential_scan:
+    evidence: .github/workflows/credential-scan-required.yml
+  supply_chain:
+    evidence: .github/workflows/supply-chain-required.yml
+  artifact_trust:
+    evidence: .github/workflows/artifact-trust-required.yml
+branch_protection:
+  enabled: true
+  evidence: governance-platform-evidence.json

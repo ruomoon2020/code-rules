@@ -1,0 +1,19 @@
+---
+description: 云原生运行时
+globs:
+  - "Dockerfile"
+  - "**/Dockerfile"
+  - "deploy/**/*.yaml"
+  - "deploy/**/*.yml"
+  - "helm/**/*.yaml"
+  - "charts/**/*.yaml"
+  - "terraform/**/*.tf"
+  - "k8s/**/*.yaml"
+alwaysApply: false
+---
+
+# 云原生运行时
+
+镜像禁止 latest/root/内含密钥；K8s 须有 probes、资源限制、优雅停机；IaC 涉及公网/权限/Secret 须 Review。
+
+全文：`rules/shared/38-cloud-native-runtime.md`

@@ -1,0 +1,17 @@
+---
+description: 结构化日志与监控
+globs:
+  - "src/**/*.ts"
+  - "src/**/*.vue"
+  - "packages/**/src/**/*.ts"
+  - "packages/**/src/**/*.vue"
+alwaysApply: false
+---
+
+# 日志与监控
+
+- 生产禁止散落 `console.*`；走项目 logger / monitor。
+- 错误日志须结构化：`event`（`domain.resource.action.result`）、`level`、`module`、`route`、`traceId` 等。
+- 禁止写入 Token、密码、完整手机号/证件号、完整请求响应体。
+
+全文：**`rules/shared/18-logging-observability.md`**

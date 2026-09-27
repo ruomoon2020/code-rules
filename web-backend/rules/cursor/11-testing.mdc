@@ -1,0 +1,20 @@
+---
+description: 单测、集成、稳定性、并发幂等与兼容测试
+globs:
+  - "src/test/**/*.java"
+  - "**/src/test/**/*.java"
+  - "src/main/resources/db/migration/**"
+  - "contracts/**"
+  - ".github/workflows/**"
+alwaysApply: false
+---
+
+# 测试
+
+- Service 单测 Mock Mapper；复杂 SQL 优先 Testcontainers。
+- 敏感接口覆盖未登录、无权限、跨租户越权用例。
+- 禁止依赖共享脏数据或 `@Order` 隐式顺序。
+- 固定时钟、随机与依赖；禁止用重试掩盖 flaky，失败须保留可诊断证据。
+- 写链路覆盖重复提交/消息重放；契约、事件和迁移变更覆盖项目声明的兼容窗口。
+
+全文：`rules/shared/15-testing.md`

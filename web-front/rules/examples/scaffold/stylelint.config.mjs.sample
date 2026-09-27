@@ -1,0 +1,8 @@
+export default {
+  extends: ['stylelint-config-standard-scss', 'stylelint-config-recommended-vue/scss'],
+  ignoreFiles: ['dist/**', 'coverage/**', 'src/api/generated/**'],
+  rules: {
+    'color-no-invalid-hex': true,
+    'declaration-block-no-duplicate-properties': true,
+  },
+};

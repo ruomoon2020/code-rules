@@ -1,0 +1,13 @@
+# Contract Adoption Baseline
+
+- 当前契约来源：`<path or none>`
+- 目标契约来源：`<path>`
+- 消费端生成目录：`<paths>`
+- 当前响应、分页、鉴权事实：`<project-specific facts>`
+- 目标差距：`<gaps>`
+- 迁移兼容窗口：`<start and expiry>`
+- 责任人：`<owner>`
+
+## 迁移原则
+
+新接口遵守目标契约；存量接口通过可追踪的适配层兼容。禁止在通用规则中硬编码某个项目的响应字段、分页字段、权限注解或目录名。

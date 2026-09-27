@@ -1,0 +1,17 @@
+---
+description: pages.json、页面栈、分包与主包边界
+globs:
+  - "src/pages.json"
+  - "src/pages/**"
+  - "src/subpackages/**"
+---
+
+# Pages Subpackages
+
+Read `rules/shared/07-pages-routing-subpackages.md`、`rules/shared/10-performance-package-size.md`。
+
+- 新业务页默认进入 `src/subpackages/{domain}/`。
+- 主包只放启动、登录、tabBar、基础组件和核心公共逻辑。
+- 新页面必须同步 `pages.json` 的 path、style、分包和预下载策略。
+- 分包不得依赖其他业务分包。
+- 禁止无限 `navigateTo` 叠页面栈。

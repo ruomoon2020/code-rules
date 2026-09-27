@@ -1,0 +1,18 @@
+---
+description: 隐私合规、敏感权限与 manifest 配置
+globs:
+  - "src/privacy/**"
+  - "src/platform/**"
+  - "src/manifest.json"
+  - "src/pages/**/*.vue"
+  - "src/subpackages/**/*.vue"
+---
+
+# Privacy Permission
+
+Read `rules/shared/09-privacy-permission.md`、`rules/shared/11-platform-differences.md`。
+
+- 手机号、位置、相机、相册、麦克风、剪贴板、订阅消息必须有用途说明。
+- 用户拒绝授权后必须有降级体验或重新授权入口。
+- 隐私政策、manifest 配置、代码调用和埋点字段必须一致。
+- 禁止在埋点中上传手机号、身份证、详细地址、token。

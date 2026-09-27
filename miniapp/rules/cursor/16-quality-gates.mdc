@@ -1,0 +1,32 @@
+---
+description: 测试、CI 与发布验证
+globs:
+  - "package.json"
+  - ".github/**"
+  - "vitest.config.*"
+  - "eslint.config.*"
+  - "src/**/*.test.ts"
+  - "src/**/*.spec.ts"
+  - "tests/**"
+  - "e2e/**"
+  - "contracts/**"
+  - "src/api/generated/**"
+  - "src/components/**"
+  - "src/base/**"
+  - "src/styles/**"
+---
+
+# Quality Gates
+
+Read `rules/shared/16-testing-quality-gates.md`、`rules/shared/19-release-ops.md`、`rules/codex/05-verification.md`。
+
+- PR 须跑 lint、type-check、build:mp-weixin、api:check（以 package.json 为准）。
+- 主包体积超阈值须 fail 或 Owner 审批。
+- 改依赖 / 锁文件时同步读取 `rules/shared/25-dependency-supply-chain.md`，并说明 audit、许可证、体积和平台兼容。
+- 改生产构建、远程配置、实验、第三方 SDK 或多平台能力矩阵时同步读取 `rules/shared/26-security-hardening-risk.md`。
+- 缺少脚本时如实说明，禁止伪造通过。
+- 公共组件覆盖 props、emits、slots、v-model、关键状态与资源清理；快照不能代替行为断言。
+- 固定时钟、网络、数据和平台版本；禁止重试洗绿，失败保留 trace、截图或脱敏日志。
+- 支付、提交、上传和回调覆盖重复执行/重放；API 变更验证 generated 与兼容窗口。
+- 主题基础值变更须运行主题/关键组件测试，并在目标平台做视觉验证。
+- 发版前见 `docs/compliance-wechat-checklist.md`。

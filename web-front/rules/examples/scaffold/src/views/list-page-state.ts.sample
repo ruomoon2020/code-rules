@@ -1,0 +1,104 @@
+export type LoadState = 'idle' | 'loading' | 'success' | 'empty' | 'error' | 'forbidden';
+
+export interface PageResult<T> {
+  records: T[];
+  total: number;
+}
+
+export interface ListPageState<T, TFilter> {
+  records: T[];
+  total: number;
+  page: number;
+  pageSize: number;
+  filter: TFilter;
+  loadState: LoadState;
+  error: unknown;
+  requestId: number;
+}
+
+export function createListPageState<T, TFilter>(filter: TFilter): ListPageState<T, TFilter> {
+  return {
+    records: [],
+    total: 0,
+    page: 1,
+    pageSize: 20,
+    filter,
+    loadState: 'idle',
+    error: null,
+    requestId: 0,
+  };
+}
+
+export function resetToFirstPage<T, TFilter>(state: ListPageState<T, TFilter>): void {
+  state.page = 1;
+}
+
+export function updateFilter<T, TFilter>(
+  state: ListPageState<T, TFilter>,
+  filter: TFilter,
+): void {
+  state.filter = filter;
+  state.page = 1;
+}
+
+export function updatePageSize<T, TFilter>(
+  state: ListPageState<T, TFilter>,
+  pageSize: number,
+): void {
+  if (!Number.isInteger(pageSize) || pageSize <= 0) {
+    throw new RangeError('pageSize must be a positive integer');
+  }
+  state.pageSize = pageSize;
+  state.page = 1;
+}
+
+export function beginListRequest<T, TFilter>(state: ListPageState<T, TFilter>): number {
+  state.loadState = 'loading';
+  state.error = null;
+  state.requestId += 1;
+  return state.requestId;
+}
+
+export function commitListResult<T, TFilter>(
+  state: ListPageState<T, TFilter>,
+  requestId: number,
+  result: PageResult<T>,
+): boolean {
+  if (requestId !== state.requestId) return false;
+  state.records = result.records;
+  state.total = result.total;
+  state.error = null;
+  state.loadState = result.records.length === 0 ? 'empty' : 'success';
+  return true;
+}
+
+export function commitListError<T, TFilter>(
+  state: ListPageState<T, TFilter>,
+  requestId: number,
+  error: unknown,
+): boolean {
+  if (requestId !== state.requestId) return false;
+  state.error = error;
+  state.loadState = 'error';
+  return true;
+}
+
+export function commitListForbidden<T, TFilter>(
+  state: ListPageState<T, TFilter>,
+  requestId: number,
+): boolean {
+  if (requestId !== state.requestId) return false;
+  state.records = [];
+  state.total = 0;
+  state.error = null;
+  state.loadState = 'forbidden';
+  return true;
+}
+
+export function moveToPreviousPageAfterDelete<T, TFilter>(
+  state: ListPageState<T, TFilter>,
+): boolean {
+  if (state.records.length > 0 || state.page <= 1) return false;
+  state.page -= 1;
+  return true;
+}

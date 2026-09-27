@@ -1,0 +1,15 @@
+---
+description: Pinia、storage、缓存与登录态清理
+globs:
+  - "src/stores/**"
+  - "src/composables/**"
+---
+
+# State Storage
+
+Read `rules/shared/08-state-storage-cache.md`、`rules/shared/06-login-auth-session.md`。
+
+- Pinia 只存跨页面状态；页面局部状态留在页面或 composable。
+- storage key 集中管理；禁止持久化敏感明文。
+- logout / 账号切换须清理 store、storage、缓存、待重试队列。
+- 缓存须说明 TTL；禁止用过期缓存伪装最新成功。

@@ -1,0 +1,112 @@
+import { readdir, readFile, stat } from 'node:fs/promises';
+import { join, relative } from 'node:path';
+import { gzipSync } from 'node:zlib';
+
+function optionalBudget(name, fallbackName) {
+  const raw = process.env[name] ?? (fallbackName ? process.env[fallbackName] : undefined);
+  if (raw === undefined || raw === '') return null;
+  const value = Number(raw);
+  if (!Number.isFinite(value) || value <= 0) {
+    console.error(`${name} must be a positive number when set.`);
+    process.exit(2);
+  }
+  return value;
+}
+
+const totalBudgetKb = optionalBudget('BUNDLE_TOTAL_BUDGET_KB', 'BUNDLE_BUDGET_KB');
+const initialBudgetKb = optionalBudget('BUNDLE_INITIAL_BUDGET_KB');
+const chunkBudgetKb = optionalBudget('BUNDLE_CHUNK_BUDGET_KB');
+if (totalBudgetKb === null && initialBudgetKb === null && chunkBudgetKb === null) {
+  console.error('Set at least one bundle budget: TOTAL, INITIAL, or CHUNK.');
+  process.exit(2);
+}
+
+const root = join(process.cwd(), 'dist', 'assets');
+const manifestPath = join(process.cwd(), 'dist', '.vite', 'manifest.json');
+
+async function filesUnder(dir) {
+  const entries = await readdir(dir, { withFileTypes: true });
+  const nested = await Promise.all(
+    entries.map((entry) =>
+      entry.isDirectory() ? filesUnder(join(dir, entry.name)) : [join(dir, entry.name)],
+    ),
+  );
+  return nested.flat();
+}
+
+try {
+  await stat(root);
+} catch {
+  console.error('dist/assets does not exist; run the production build first.');
+  process.exit(2);
+}
+
+const assets = (await filesUnder(root)).filter((file) => /\.(js|css)$/.test(file));
+if (assets.length === 0) {
+  console.error('dist/assets contains no JavaScript or CSS assets.');
+  process.exit(2);
+}
+const rows = await Promise.all(
+  assets.map(async (file) => ({
+    file: relative(process.cwd(), file),
+    gzipBytes: gzipSync(await readFile(file)).byteLength,
+  })),
+);
+const totalBytes = rows.reduce((sum, row) => sum + row.gzipBytes, 0);
+const totalKb = totalBytes / 1024;
+const maxChunkKb = Math.max(0, ...rows.map((row) => row.gzipBytes / 1024));
+
+async function initialAssetPaths() {
+  let manifest;
+  try {
+    manifest = JSON.parse(await readFile(manifestPath, 'utf8'));
+  } catch (error) {
+    if (initialBudgetKb !== null) {
+      console.error(`Initial budget requires a valid Vite manifest at ${manifestPath}: ${error.message}`);
+      process.exit(2);
+    }
+    return new Set();
+  }
+
+  const files = new Set();
+  const visit = (key) => {
+    const item = manifest[key];
+    if (!item || files.has(`@${key}`)) return;
+    files.add(`@${key}`);
+    if (item.file) files.add(join(process.cwd(), 'dist', item.file));
+    for (const css of item.css ?? []) files.add(join(process.cwd(), 'dist', css));
+    for (const imported of item.imports ?? []) visit(imported);
+  };
+  for (const [key, item] of Object.entries(manifest)) {
+    if (item.isEntry) visit(key);
+  }
+  const resolved = new Set([...files].filter((file) => !file.startsWith('@')));
+  if (initialBudgetKb !== null && resolved.size === 0) {
+    console.error('Vite manifest contains no entry assets for the initial bundle budget.');
+    process.exit(2);
+  }
+  return resolved;
+}
+
+const initialFiles = await initialAssetPaths();
+const initialBytes = rows
+  .filter((row) => initialFiles.has(join(process.cwd(), row.file)))
+  .reduce((sum, row) => sum + row.gzipBytes, 0);
+const initialKb = initialBytes / 1024;
+
+console.table(rows.map((row) => ({ ...row, gzipKb: (row.gzipBytes / 1024).toFixed(1) })));
+if (totalBudgetKb !== null) {
+  console.log(`Total gzip: ${totalKb.toFixed(1)} KB / budget ${totalBudgetKb.toFixed(1)} KB`);
+}
+if (initialBudgetKb !== null) {
+  console.log(`Initial gzip: ${initialKb.toFixed(1)} KB / budget ${initialBudgetKb.toFixed(1)} KB`);
+}
+if (chunkBudgetKb !== null) {
+  console.log(`Largest chunk gzip: ${maxChunkKb.toFixed(1)} KB / budget ${chunkBudgetKb.toFixed(1)} KB`);
+}
+
+const passed =
+  (totalBudgetKb === null || totalKb <= totalBudgetKb) &&
+  (initialBudgetKb === null || initialKb <= initialBudgetKb) &&
+  (chunkBudgetKb === null || maxChunkKb <= chunkBudgetKb);
+process.exit(passed ? 0 : 1);

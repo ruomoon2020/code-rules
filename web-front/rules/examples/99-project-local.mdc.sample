@@ -1,0 +1,32 @@
+---
+description: 本项目路径与栈（复制到业务仓 .cursor/rules/99-project-local.mdc）
+alwaysApply: true
+---
+
+# 本项目约定（示例，请按实际修改）
+
+- 业务页面：`src/views/{module}/`
+- 业务扩展页面：`src/views/crm/**`、`src/views/order/**`（示例；请替换为真实业务域，非此路径默认不按成熟后台二开）
+- Base 组件：`src/components/base`
+- API generated：`src/api/generated`（禁止手改）
+- 契约：`contracts/schema.json` 或 `contracts/openapi.yaml`
+- 成熟后台二开：读 `shared/22` + `docs/business-feature-playbook-frontend.md`；Cursor 命中 `18-business-module-extension.mdc`
+- 仅改样式、修 bug、单字段展示或非业务域页面时，走普通 views 任务包，不强制业务扩展
+- 脚本：`pnpm lint`、`pnpm type-check`、`pnpm api:check`（以 `package.json` 为准）
+- 性能 Owner：前端负责人 / 业务负责人（按项目填写）
+- LCP P75 阈值：例如 2.5s
+- INP P75 阈值：例如 200ms
+- CLS P75 阈值：例如 0.1
+- 首屏 JS gzip 阈值：例如 250KB；单路由 chunk gzip 阈值：例如 150KB
+- bundle 增量阈值：例如 30KB gzip / PR
+- 首屏关键 API P95 阈值：例如 800ms
+- 性能看板 / 告警渠道：按项目填写
+
+## 测试治理参数（按采纳 Level 与风险填写）
+
+- 覆盖率策略：填写指标、增量阈值或基线不回退策略，以及 generated 等排除项；不使用统一固定百分比。
+- 兼容窗口：填写 API / generated 的 N/N-1 起止版本与到期日；不适用须写原因。
+- flaky 治理：填写登记路径、Owner、最长隔离天数；重试须保留首次失败证据。
+- 失败证据：填写测试报告、浏览器日志、截图/视频的归档路径、保留期、访问控制与脱敏要求。
+- 测试数据：填写 synthetic / 脱敏来源、用例/租户/并行隔离和清理方式，禁止生产 PII 进入 fixture。
+- 风险专项：填写属性/模糊/变异/DAST 等测试的触发条件、命令与 Owner；不适用须写原因。

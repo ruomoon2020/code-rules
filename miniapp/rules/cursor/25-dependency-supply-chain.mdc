@@ -1,0 +1,18 @@
+---
+description: 依赖、锁文件、第三方 SDK 与供应链治理
+globs:
+  - "package.json"
+  - "pnpm-lock.yaml"
+  - "yarn.lock"
+  - "package-lock.json"
+  - "vite.config.*"
+---
+
+# Dependency Supply Chain
+
+Read `rules/shared/25-dependency-supply-chain.md`、`rules/shared/10-performance-package-size.md`、`rules/shared/21-network-security.md`（第三方 SDK 涉及域名时）。
+
+- 新依赖须说明用途、体积、平台兼容性、许可证、维护状态和替代方案。
+- 禁止使用 `latest` 浮动版本进生产分支；锁文件必须提交。
+- 第三方 SDK 须登记网络域名、隐私采集范围和主包体积影响。
+- 高危漏洞须修复或有书面例外；不得提交手改 `node_modules`。

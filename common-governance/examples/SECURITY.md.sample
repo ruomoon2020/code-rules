@@ -1,0 +1,23 @@
+# Security Policy
+
+## Supported Versions
+
+| Version | Supported |
+|---|---|
+| 当前生产版本 | Yes |
+| 已结束维护版本 | No |
+
+## Reporting a Vulnerability
+
+请勿通过公开 Issue、PR、日志或聊天群提交漏洞细节、凭据和生产数据。
+
+- 私密报告渠道：`<security-contact-or-private-form>`
+- 首次响应 SLA：`<hours>`
+- 严重级别与修复 SLA：`<link-or-table>`
+- 负责人：`<security-owner>`
+
+报告应包含受影响版本、复现条件、影响范围和最小必要证据。禁止使用真实用户数据扩大验证范围。
+
+## Credential Exposure
+
+发现凭据进入 Git、构建产物或日志后，先吊销和轮换，再清理历史与缓存，并按 `docs/compliance-evidence-log.md` 留存处置证据。仅删除文件或提交记录不视为完成。

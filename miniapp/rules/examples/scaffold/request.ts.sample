@@ -1,0 +1,57 @@
+/**
+ * 统一 request 样板 — 复制为 src/api/request.ts 并按项目调整。
+ * 页面禁止直接 uni.request。
+ */
+import { assertAllowedUrl } from '@/api/allowed-hosts';
+import type { ApiErrorBody, ApiResult } from '@/api/generated/common';
+
+const BASE_URL = import.meta.env.VITE_API_BASE_URL;
+
+function createTraceId(): string {
+  return `${Date.now()}-${Math.random().toString(36).slice(2, 10)}`;
+}
+
+function resolveUrl(path: string): string {
+  const url = path.startsWith('http') ? path : `${BASE_URL}${path}`;
+  assertAllowedUrl(url);
+  return url;
+}
+
+export async function request<T>(options: {
+  url: string;
+  method?: 'GET' | 'POST' | 'PUT' | 'DELETE';
+  data?: unknown;
+  idempotencyKey?: string;
+}): Promise<T> {
+  const traceId = createTraceId();
+  const token = ''; // 从 auth store 读取，勿明文写死
+  const url = resolveUrl(options.url);
+
+  const res = await new Promise<UniApp.RequestSuccessCallbackResult>((resolve, reject) => {
+    uni.request({
+      url,
+      method: options.method ?? 'GET',
+      data: options.data,
+      header: {
+        'X-Trace-Id': traceId,
+        Authorization: token ? `Bearer ${token}` : '',
+        ...(options.idempotencyKey ? { 'Idempotency-Key': options.idempotencyKey } : {}),
+      },
+      success: resolve,
+      fail: reject,
+    });
+  });
+
+  const body = res.data as ApiResult<T>;
+  if (res.statusCode === 401) {
+    throw Object.assign(new Error('UNAUTHORIZED'), { traceId, errorCode: 'UNAUTHORIZED' });
+  }
+  if (!body || (body as ApiErrorBody).errorCode) {
+    const err = body as ApiErrorBody;
+    throw Object.assign(new Error(err.message ?? '请求失败'), {
+      traceId: err.traceId ?? traceId,
+      errorCode: err.errorCode,
+    });
+  }
+  return (body as ApiResult<T>).data as T;
+}

@@ -1,0 +1,16 @@
+export type StoreReset = () => void | Promise<void>;
+
+const resetters = new Set<StoreReset>();
+
+export function registerStoreReset(reset: StoreReset): () => void {
+  resetters.add(reset);
+  return () => resetters.delete(reset);
+}
+
+export async function resetAllStores(): Promise<void> {
+  const results = await Promise.allSettled([...resetters].map((reset) => reset()));
+  const failures = results.filter((result) => result.status === 'rejected');
+  if (failures.length > 0) {
+    throw new Error(`Failed to reset ${failures.length} store(s)`);
+  }
+}

@@ -1,0 +1,13 @@
+# CODEOWNERS（code-rules 源仓）
+# 当前仓库由 GitHub 账号 ruomoon2020 承担最终 Review 责任；扩展为组织团队时须同步更新平台分支保护证据。
+
+*                                      @ruomoon2020
+/contracts/                            @ruomoon2020
+/web-backend/rules/                    @ruomoon2020
+/web-front/rules/                      @ruomoon2020
+/miniapp/rules/                        @ruomoon2020
+/common-governance/                    @ruomoon2020
+/docs/                                 @ruomoon2020
+/SECURITY.md                           @ruomoon2020
+/CODEOWNERS                            @ruomoon2020
+/.github/                              @ruomoon2020

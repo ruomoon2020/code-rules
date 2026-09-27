@@ -1,0 +1,15 @@
+{
+  "scripts": {
+    "lint": "eslint . && pnpm lint:views-el",
+    "lint:views-el": "node ./rules/examples/ci-scan-views-el-tags.mjs",
+    "type-check": "vue-tsc --noEmit",
+    "test": "vitest run",
+    "test:unit": "vitest run",
+    "test:e2e": "playwright test",
+    "build": "vite build",
+    "schema:sync": "node scripts/sync-schema.mjs",
+    "api:gen": "node scripts/api-gen.mjs",
+    "api:check": "node scripts/api-check.mjs",
+    "size:check": "node scripts/check-bundle-budget.mjs"
+  }
+}

@@ -1,0 +1,21 @@
+---
+description: 隐私与数据生命周期
+globs:
+  - "src/main/java/**/*Export*.java"
+  - "src/main/java/**/*Import*.java"
+  - "src/main/java/**/*Privacy*.java"
+  - "src/main/java/**/*User*.java"
+  - "src/test/**/*.java"
+  - "src/main/resources/**/*.yml"
+  - "src/main/resources/**/*.yaml"
+  - "src/main/resources/mapper/**/*.xml"
+alwaysApply: false
+---
+
+# 隐私与数据生命周期
+
+- PII 分级；测试禁用生产数据；fixture 须脱敏。
+- 日志 / 缓存 / MQ / 备份中的敏感数据生命周期与 TTL。
+- 禁止缓存 key 明文手机号；导出须脱敏与鉴权。
+
+全文：`rules/shared/29-data-privacy-lifecycle.md`

@@ -1,0 +1,18 @@
+---
+description: 消息队列与异步处理
+globs:
+  - "**/mq/**/*.java"
+  - "**/messaging/**/*.java"
+  - "**/listener/**/*.java"
+  - "**/consumer/**/*.java"
+  - "**/producer/**/*.java"
+alwaysApply: false
+---
+
+# 消息与异步
+
+- 消费须幂等；重试有上限与死信策略。
+- 禁止事务内同步外部 HTTP；异步出站保留审计与关联 ID。
+- 与事件契约、服务间认证规则一并遵守。
+
+全文：`rules/shared/17-messaging-async.md`、`rules/shared/18-idempotency-concurrency.md`

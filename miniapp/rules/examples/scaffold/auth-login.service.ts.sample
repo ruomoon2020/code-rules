@@ -1,0 +1,24 @@
+/**
+ * 登录服务样板 — 复制为 src/auth/login.service.ts
+ * 页面禁止直接 uni.login。
+ */
+import { request } from '@/api/request';
+
+export async function loginWithWeixin(): Promise<void> {
+  const { code } = await new Promise<UniApp.LoginRes>((resolve, reject) => {
+    uni.login({ provider: 'weixin', success: resolve, fail: reject });
+  });
+  if (!code) {
+    throw new Error('获取登录 code 失败');
+  }
+  await request<{ accessToken: string }>({
+    url: '/api/v1/auth/weixin/session',
+    method: 'POST',
+    data: { code },
+  });
+  // 将 token 写入 auth store（短期/安全方案见 shared/06），禁止明文长期 storage
+}
+
+export async function logout(): Promise<void> {
+  // 清理 auth store、storage、缓存、待重试队列 — 见 shared/08
+}

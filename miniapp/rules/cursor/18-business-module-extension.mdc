@@ -1,0 +1,18 @@
+---
+description: 新业务分包扩展（二开）
+globs:
+  - "src/subpackages/**"
+  - "src/pages.json"
+---
+
+# Business Module Extension
+
+> **触发说明**：glob 覆盖所有分包文件；仅当任务为**新业务域 / 新 CRUD / 新支付·订阅·分享链路 / pages.json 新增业务分包**时强制读本规则。修 bug、样式、文案、单字段展示以 `00` + 对应场景 shared 为准（业务仓可在 `99-project-local.mdc` 写明）。
+
+Read `rules/shared/18-business-module-extension.md`、`rules/docs/business-feature-playbook-miniapp.md`。
+
+- 新业务默认 `src/subpackages/{domain}/`；不污染主包 auth/platform。
+- 契约先行：OpenAPI → api:gen → api:check。
+- 禁止跨业务分包依赖；公共能力上提主包。
+- 涉及支付/分享/隐私时同步 `14`、`09`。
+- PR 建议跑 evals M21–M29。

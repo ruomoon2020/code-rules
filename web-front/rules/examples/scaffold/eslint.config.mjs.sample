@@ -1,0 +1,19 @@
+import js from '@eslint/js';
+import pluginVue from 'eslint-plugin-vue';
+import tseslint from 'typescript-eslint';
+import { viewsBanElementPlus } from './rules/examples/eslint-views-ban-el.mjs';
+
+export default tseslint.config(
+  { ignores: ['dist/**', 'coverage/**', 'src/api/generated/**'] },
+  js.configs.recommended,
+  ...tseslint.configs.recommended,
+  ...pluginVue.configs['flat/recommended'],
+  {
+    files: ['src/**/*.{ts,tsx,vue}', 'packages/**/*.{ts,tsx,vue}'],
+    rules: {
+      '@typescript-eslint/no-explicit-any': 'error',
+      '@typescript-eslint/no-unused-vars': ['error', { argsIgnorePattern: '^_' }],
+    },
+  },
+  viewsBanElementPlus,
+);

@@ -1,0 +1,16 @@
+---
+description: 日志、埋点与监控
+globs:
+  - "src/utils/**"
+  - "src/services/**"
+  - "src/api/**"
+---
+
+# Logging Observability
+
+Read `rules/shared/15-logging-observability.md`。
+
+- 日志含 traceId、页面、匿名用户标识、平台、版本、错误码。
+- 禁止上报 token、手机号、身份证、详细地址、支付凭证。
+- 用户可见提示与技术日志分离。
+- 生产禁止 console.log 与调试面板。

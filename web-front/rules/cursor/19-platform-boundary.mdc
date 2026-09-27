@@ -1,0 +1,21 @@
+---
+description: 平台壳层与生成代码边界
+globs:
+  - "src/layouts/**"
+  - "src/router/**"
+  - "src/store/**"
+  - "src/components/base/**"
+  - "src/api/generated/**"
+  - "packages/**/src/layouts/**"
+  - "packages/**/src/components/base/**"
+alwaysApply: false
+---
+
+# 平台边界（前端）
+
+- 业务需求默认只扩展 `src/views/{biz}/`；不得为单一业务修改全局壳层、路由守卫、权限 store、Base 组件或 generator 模板。
+- 确需改平台能力时，PR 必须说明 Owner、受影响模块、兼容方案、回滚方案与回归范围；业务差异优先用配置、组合或业务组件解决。
+- `src/api/generated/**` 只由生成流程修改；改 schema / OpenAPI 后运行项目 `api:gen` / `api:check`。
+- 平台权限、字典、文件、审计和任务状态优先复用既有能力，禁止在业务页复制第二套全局实现。
+
+全文：`rules/shared/22-business-module-extension.md`、`rules/shared/17-shell-navigation.md`、`rules/shared/12-schema-ssot.md`

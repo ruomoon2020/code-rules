@@ -1,0 +1,19 @@
+---
+description: API / 表单 / 表格字段须以 schema 为唯一来源
+globs:
+  - "src/views/**/*.vue"
+  - "src/api/**/*.ts"
+  - "packages/**/src/views/**/*.vue"
+  - "packages/**/src/api/**/*.ts"
+alwaysApply: false
+---
+
+# Schema SSOT
+
+写字段、表单、表格、API 前必读：**`rules/shared/12-schema-ssot.md`**。
+
+要点：
+
+- 先读 `contracts/schema.json` 与 `src/api/generated`
+- 禁止添加 schema 中不存在的字段
+- 禁止手改 generated；枚举须有 unknown fallback

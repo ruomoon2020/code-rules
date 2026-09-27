@@ -1,0 +1,22 @@
+---
+description: 企业安全加固、风控、source map、远程配置、实验和多平台能力矩阵
+globs:
+  - "package.json"
+  - "vite.config.*"
+  - ".github/**"
+  - "src/platform/**"
+  - "src/config/**"
+  - "src/app/**"
+  - "src/App.vue"
+  - "src/manifest.json"
+---
+
+# Security Hardening Risk
+
+Read `rules/shared/26-security-hardening-risk.md`、`rules/shared/19-release-ops.md`、`rules/shared/21-network-security.md`。涉及第三方 SDK 时追加 `rules/shared/25-dependency-supply-chain.md`，涉及隐私能力时追加 `rules/shared/09-privacy-permission.md`。
+
+- 生产构建禁止公开 source map、调试包、mock 数据、测试资源、内部调试页和审计绕过入口。
+- 支付、退款、余额、优惠券、实名、地址、权限变更等高风险操作，最终状态以后端鉴权、状态机和风控结果为准。
+- 第三方 SDK 须登记用途、包体积、域名、采集字段、初始化时机、隐私影响和退出清理方式。
+- 功能开关、灰度和 A/B 实验必须有 Owner、默认值、失败降级、回滚路径、观察指标和清理计划。
+- 多平台能力差异必须进入 `src/platform/` adapter，并维护平台矩阵；禁止页面用条件编译绕过安全校验。

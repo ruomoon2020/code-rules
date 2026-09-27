@@ -1,0 +1,16 @@
+---
+description: Application Service 与事务
+globs:
+  - "**/application/**/*Service.java"
+  - "**/service/**/*.java"
+  - "**/modules/**/*Service.java"
+alwaysApply: false
+---
+
+# Service
+
+- `@Transactional` 写操作；只读 `readOnly=true`。
+- 编排 Mapper；禁止拼接 SQL。
+- 禁止事务内同步外部 HTTP/MQ；分布式锁须过期时间与 value 校验。
+
+全文：`rules/shared/07-persistence-mybatis.md`、`rules/shared/18-idempotency-concurrency.md`、`rules/shared/28-external-integration.md`

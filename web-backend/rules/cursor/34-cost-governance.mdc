@@ -1,0 +1,18 @@
+---
+description: 成本治理
+globs:
+  - "src/main/java/**/*Client.java"
+  - "src/main/java/**/*Export*.java"
+  - "src/main/java/**/*Report*.java"
+  - "src/main/resources/**/*.yml"
+  - "src/main/resources/**/*.yaml"
+  - "deploy/**/*"
+  - "terraform/**/*"
+alwaysApply: false
+---
+
+# 成本治理
+
+付费外部调用、大导出、大查询、日志/审计/备份保留、云资源新增须说明成本、限额、Owner 与清理策略。
+
+全文：`rules/shared/42-cost-governance.md`
