@@ -8,7 +8,7 @@
 
 ## 契约与安全
 
-- [ ] 字段来自 schema / generated；未手改 generated
+- [ ] 字段来自 `contracts/openapi.yaml` 及其同步生成类型；未手改 schema / client 生成物
 - [ ] 后端鉴权与前端权限展示一致
 - [ ] 无密钥、生产地址、未脱敏敏感信息
 

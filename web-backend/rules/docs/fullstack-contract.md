@@ -16,12 +16,26 @@ contracts/openapi.yaml
 | 字段 | 后端 | 管理端 | 小程序 |
 |---|---|---|---|
 | `traceId` | MDC + 响应头 `X-Trace-Id`（名以项目为准） | request wrapper、logger | request header + 日志（`miniapp/rules/shared/15`） |
-| `errorCode` | `BusinessException` / `ErrorCodes` | `normalizeError` | 统一错误处理；枚举见 OpenAPI |
-| `message` | 用户可读文案 | 提示 UI | toast / 模态 |
-| 分页 `page` / `pageSize` | `Page` 查询 | `19-list-pagination` | `12-list-form-pagination` |
+| `errorCode` | `BusinessException` / `ErrorCodes`；稳定业务契约 | `normalizeError` 后映射 i18n / 字典 | 统一错误处理后映射端侧文案；枚举见 OpenAPI |
+| `message` | fallback / 诊断文案，不保证语言和长期稳定性 | 仅作项目允许的 fallback，禁止据此分支 | 仅作项目允许的 fallback，禁止据此分支 |
+| 排序 `sortField` / `sortOrder` | 白名单列；`sortOrder` 仅 `asc` / `desc` | 组件的 `ascending` / `descending` 映射后再请求 | 同管理端 |
 | 分页 `total` / `records` | `IPage` 转换 | `useTable` | 列表 composable |
 | 权限码 | `@PreAuthorize` | 按钮权限指令 | 后端鉴权为主；不单靠 UI 隐藏 |
 | `Idempotency-Key` | 可重试写操作 Header | 支付/下单/创建类请求 | 同上；重试复用同一键 |
+
+## HTTP 语义与安全契约
+
+接口风格未声明时默认使用 `GET_POST_COMPAT`；公网开放接口、标准 REST 网关或跨组织集成显式使用 `RESOURCE_REST`，并写入 OpenAPI 顶层 `x-api-style`。兼容风格是 HTTP 命令接口，不宣称为纯 REST，但仍保留资源路径、HTTP 状态、认证授权和错误契约。
+
+| 场景 | 契约要求 |
+|---|---|
+| 创建资源 | `201 Created` + `Location`；若不支持安全重试，OpenAPI 显式说明 |
+| 部分更新 | `RESOURCE_REST` 使用 `PATCH /resources/{id}`；`GET_POST_COMPAT` 使用 `POST /resources/{id}/update` |
+| 删除资源 | `RESOURCE_REST` 使用 `DELETE /resources/{id}`；`GET_POST_COMPAT` 使用 `POST /resources/{id}/delete`；成功可返回 `204 No Content` |
+| 错误 | operation 显式列出主要 `4xx` / `5xx`，复用 `ApiError` / `components.responses` |
+| 认证 | `securitySchemes` + 顶层或 operation `security`；公开接口显式 `security: []` |
+| 授权 | OpenAPI 表达认证方式，Controller 仍须用 `@PreAuthorize` 或等价机制校验权限码 |
+| 资源主键 | 路径、查询和响应使用 `string`。雪花 ID 不用 `integer` / `int64`，避免生成客户端按数字截断 |
 
 ## 错误响应示例
 
@@ -42,15 +56,15 @@ contracts/openapi.yaml
 | 目标字段 | 要求 |
 |---|---|
 | `code` | 保留稳定数字码 |
-| `message` | 用户可读文案（由现有文案字段映射） |
+| `message` | fallback / 诊断文案（由现有文案字段映射）；不是稳定业务契约 |
 | `errorCode` | 稳定业务语义码 `DOMAIN_REASON`；禁止只靠文案做分支 |
 | `traceId` | 响应体或约定响应头（名写入项目本地覆盖） |
 
-前端经 `normalizeError`（或等价）归一化后再做 UI / i18n / 日志。平台特有字段名、成功码取值写在 `99-project-local`，不进各端通用 `shared/`。
+客户端经 `normalizeError`（或等价）归一化后，必须按 `errorCode` 决定 i18n 文案和恢复行为；禁止按 `message` 分支或自行拼接业务句。未知码展示通用文案与 `traceId`。平台特有字段名、成功码取值写在 `99-project-local`，不进各端通用 `shared/`。
 
 ## 发布顺序
 
-1. OpenAPI PR + openapi-diff
+1. OpenAPI PR + lint + openapi-diff + 契约/脚手架对齐检查
 2. 后端发布（兼容旧前端）
 3. 前端 `api:gen` + 联调
 
@@ -91,7 +105,7 @@ contracts/openapi.yaml
 | 字段 | 类型（建议） | 后端含义 | 前端展示 |
 |---|---|---|---|
 | `operatorId` | string | 操作人 ID | 操作人（可联表 `operatorName` 仅展示，不入库审计主字段） |
-| `tenantId` | string | 租户 ID（多租户必填） | 租户列（多租户项目） |
+| `tenantId` | string | 租户 ID（租户模型不是 `NONE` 时必填） | 租户列（非 `NONE` 项目） |
 | `action` | string | 稳定动作码，如 `USER_DELETE`、`IMPORT_USERS` | 操作类型（走字典 / i18n，**禁止**前端硬编码文案与后端码不一致） |
 | `resourceType` | string | 资源类型，如 `User`、`ImportTask` | 模块 / 资源类型 |
 | `resourceId` | string | 资源主键 | 资源 ID（列表可省略或折叠） |
@@ -170,12 +184,12 @@ Java 样板 DTO / Controller 见 `examples/scaffold/java/modules/system/api/` �
 | 权限码 | OpenAPI / 常量 / `@PreAuthorize` 与菜单按钮码一致（如 `system:xxx:create`） | 按钮权限指令 / helper；路由守卫；**禁止**仅隐藏 UI |
 | 菜单 / 路由 | 平台菜单注册（SQL 或管理端配置）；API 路径稳定 | 路由 `name` PascalCase = keep-alive；菜单与权限码对齐（`06-state-route-permission`） |
 | 字典 / 枚举 | OpenAPI 枚举 + 平台字典；禁止静默改语义（`41`） | 字典组件 + unknown fallback；禁止硬编码与后端 action 文案不一致 |
-| 列表 / 详情 | 分页、排序白名单、租户 + 数据权限 + BOLA（`24`、`06`） | `useTable` 四态；删除末条回退页码；与后端分页字段一致 |
-| 树表 / 主子表 | 父子归属、同事务、跨租户与循环关系校验；禁止跨租户挂父节点（`43`） | 树选择禁选非法父节点；主子表错误明细；失败态与后端回滚一致（`22` §树表/主子表） |
+| 列表 / 详情 | 分页、排序白名单、数据权限 + BOLA（`24`、`06`）。租户模型不是 `NONE` 时同时校验租户 | `useTable` 四态；删除末条回退页码；与后端分页字段一致 |
+| 树表 / 主子表 | 父子归属、同事务与循环关系校验；非 `NONE` 时禁止跨租户挂父节点（`43`） | 树选择禁选非法父节点；主子表错误明细；失败态与后端回滚一致（`22` §树表/主子表） |
 | 导入 / 导出 | 平台文件/OSS、幂等、审计、下载鉴权（`14`、`27`） | 模板下载、错误明细、操作记录刷新（`14-upload-import-export`） |
 | 任务 / 批处理 | 平台调度、防重、幂等、任务日志（`25`、`43`） | 任务状态页、轮询/通知；禁止前端伪造成功 |
 | 审计 | 写库 `action` / `resourceType` 稳定码 | 操作记录列表/详情；`action` 走字典/i18n，与后端码一致 |
-| 测试 | 越权、跨租户、导出、Job、树表/主子表；evals **Business Extension** B55–B63 | 权限、列表四态、树表/主子表；evals **Business Extension** E32–E40；i18n/实时/富文本 PR 加 **Platform Extension** E41–E43（无后端 B 对称项） |
+| 测试 | 越权、导出、Job、树表/主子表；非 `NONE` 时另覆盖跨租户。evals **Business Extension** B55–B63 | 权限、列表四态、树表/主子表；evals **Business Extension** E32–E40；i18n/实时/富文本 PR 加 **Platform Extension** E41–E43（无后端 B 对称项） |
 
 发布顺序仍为：OpenAPI PR → 后端兼容发布 → 前端 `api:gen` + 菜单/权限配置 + 联调。
 
@@ -187,7 +201,7 @@ Java 样板 DTO / Controller 见 `examples/scaffold/java/modules/system/api/` �
 
 | 主题 | 后端 | 管理端 |
 |---|---|---|
-| i18n / 区域格式 | `errorCode`、枚举、审计 `action` 稳定码；时区与账期边界 | 文案走 i18n / 字典；金额日期用 formatter；禁止 `errorCode` 直出（`23`） |
+| i18n / 区域格式 | `errorCode`、枚举、审计 `action` 稳定码；时区与账期边界 | 文案走 i18n / 字典；金额日期用 formatter；禁止 `errorCode` 直出（`web-front/rules/shared/23-i18n-locale.md`） |
 | WebSocket / SSE | 握手鉴权、会话与权限校验；消息 schema 与幂等 | 禁止长期 Token 放 URL query；卸载取消订阅；未知消息安全降级（`24`） |
 | 富文本 / 编辑器 | 存储格式、消毒策略、下载鉴权 | 禁止裸 `v-html`；sanitizer；编辑器按需加载（`24`） |
 | 测试 | 接口鉴权、消息越权、存储型 XSS 边界 | evals **Platform Extension** E41–E43 |
@@ -225,10 +239,10 @@ Java 样板 DTO / Controller 见 `examples/scaffold/java/modules/system/api/` �
 |---|---|---|---|
 | 08 | 异常与错误码 | 质量门禁 | `shared/08-exception-errorcodes.md` + `web-front/rules/shared/08-quality-gates.md` |
 | 09 | 日志与可观测 | AI 生成 | `shared/09-logging-observability.md` + `web-front/rules/shared/09-ai-generation.md` |
-| 18 | 幂等与并发 | 日志与可观测 | `shared/18-idempotency-concurrency.md` + `web-front/rules/shared/18-logging-observability.md` |
+| `CR-BE-018` / `CR-FE-018` | 幂等与并发 | 日志与可观测 | `shared/18-idempotency-concurrency.md` + `web-front/rules/shared/18-logging-observability.md` |
 | 22 | 可运维性 | 业务模块扩展 | `shared/22-operability.md` + `web-front/rules/shared/22-business-module-extension.md` |
-| 23 | — | i18n / 区域格式 | `web-front/rules/shared/23-i18n-locale.md` + `miniapp/rules/shared/23-content-safety.md`（UGC/富文本；**非同主题**） |
-| 24 | — | 实时 / 富文本 | `web-front/rules/shared/24-realtime-rich-content.md` + `miniapp/rules/shared/24-design-system-mobile.md`（**非同主题**） |
+| `CR-FE-023` / `CR-MA-023` | — | i18n / 区域格式 | `web-front/rules/shared/23-i18n-locale.md` + `miniapp/rules/shared/23-content-safety.md`（UGC/富文本；**非同主题**） |
+| `CR-FE-024` / `CR-MA-024` | — | 实时 / 富文本 | `web-front/rules/shared/24-realtime-rich-content.md` + `miniapp/rules/shared/24-design-system-mobile.md`（**非同主题**） |
 | 43 / 22 | 后端业务模块扩展 | 管理端业务模块扩展 | `shared/43-business-module-extension.md` + `web-front/rules/shared/22-business-module-extension.md` |
 
 管理端 evals **E41–E43**（Platform Extension）仅适用于 `web-front/rules`；小程序无对称 M 套件，富文本/UGC 见 **M35–M38**（Resilience Extension）。
@@ -242,5 +256,5 @@ Java 样板 DTO / Controller 见 `examples/scaffold/java/modules/system/api/` �
 | 操作记录 UI | — | `shared/13-form-and-detail.md` | — |
 | 日志 traceId | `shared/09-logging-observability.md` | `shared/18-logging-observability.md` | `miniapp/rules/shared/15-logging-observability.md` |
 | 业务模块扩展 | `shared/43` + playbook | `shared/22` + playbook-frontend | `miniapp/rules/shared/18` + playbook-miniapp |
-| i18n / 实时 / 富文本 | `errorCode`、枚举稳定码 | `shared/23`、`shared/24`；evals **E41–E43** | `shared/23-content-safety`（UGC）；**无 E41–E43** |
-| 网络 / App | — | — | `miniapp/rules/shared/21`、`20` |
+| i18n / 实时 / 富文本 | `errorCode`、枚举稳定码 | `web-front/rules/shared/23-i18n-locale.md`、`24-realtime-rich-content.md`；evals **E41–E43** | `miniapp/rules/shared/23-content-safety.md`（UGC）；**无 E41–E43** |
+| 网络 / App | — | — | `miniapp/rules/shared/21-network-security.md`、`20-app-runtime.md` |

@@ -1,4 +1,4 @@
-# 16 Testing Quality Gates
+# 测试与质量门禁规则
 
 ## 必跑检查
 

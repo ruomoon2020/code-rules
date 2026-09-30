@@ -9,9 +9,10 @@
 - [ ] 测试失败可凭报告和 run/test id 定位；flaky 有期限，禁止重试洗绿
 - [ ] 若改写链路或契约：重复点击、竞态恢复与 N/N-1 兼容用例已运行
 - [ ] API breaking change 有兼容窗口、消费方确认和回滚顺序
+- [ ] generated client 已与 OpenAPI `x-api-style` 对齐：`RESOURCE_REST` 使用 PATCH/DELETE，`GET_POST_COMPAT` 使用显式 POST 动作端点；`201/202/204`、错误体和认证声明已同步，`204` 不再按 JSON 响应体解析
 - [ ] bundle 增量未超预算，或已有 Owner、原因和复测日期
 - [ ] 生产 sourcemap 不公开；错误平台上传步骤已验证
-- [ ] Feature Flag 有 Owner、默认值、观察指标、清理日期和失败回退值
+- [ ] Feature Flag / 灰度 / 实验配置通过 `common-governance/docs/environment-promotion.md` 的统一生命周期清单
 - [ ] 受监管 Web 场景已验证生产响应头、第三方脚本数据流、嵌入通信来源和 Enterprise Hardening E44–E49
 - [ ] 新增数据展示、复制、下载、缓存或埋点已按分级检查
 - [ ] 发布版本、Git commit、变更范围和回滚版本可追溯

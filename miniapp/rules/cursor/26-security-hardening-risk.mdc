@@ -18,5 +18,5 @@ Read `rules/shared/26-security-hardening-risk.md`、`rules/shared/19-release-ops
 - 生产构建禁止公开 source map、调试包、mock 数据、测试资源、内部调试页和审计绕过入口。
 - 支付、退款、余额、优惠券、实名、地址、权限变更等高风险操作，最终状态以后端鉴权、状态机和风控结果为准。
 - 第三方 SDK 须登记用途、包体积、域名、采集字段、初始化时机、隐私影响和退出清理方式。
-- 功能开关、灰度和 A/B 实验必须有 Owner、默认值、失败降级、回滚路径、观察指标和清理计划。
+- 功能开关、灰度和 A/B 实验必须满足 `common-governance/docs/environment-promotion.md` 的统一生命周期清单，并验证小程序端安全失败行为。
 - 多平台能力差异必须进入 `src/platform/` adapter，并维护平台矩阵；禁止页面用条件编译绕过安全校验。

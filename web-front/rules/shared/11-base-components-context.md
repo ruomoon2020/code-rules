@@ -34,7 +34,7 @@ Monorepo 中若在 `packages/ui` 等目录，以该包内 `components/base/` 为
 ## 行为期望（非 prop 契约）
 
 - 表格：loading、empty、error、行操作、分页组合（行为见 `19-list-pagination.md`）。
-- 表单：字段来自 schema / generated DTO；提交有 loading。
+- 表单：字段来自 `contracts/openapi.yaml` 同步生成的 DTO；提交有 loading。
 - 筛选：搜索、重置、页码重置。
 - 弹窗 / 抽屉：脏数据关闭提示、焦点管理。
 

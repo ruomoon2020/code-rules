@@ -14,6 +14,19 @@ SPEC.loader.exec_module(validator)
 
 
 class ValidateRulesPackageTests(unittest.TestCase):
+    def test_shared_titles_require_chinese_without_repeated_number(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            shared = root / "shared"
+            shared.mkdir()
+            (shared / "00-must-follow.md").write_text("# Must Follow\n", encoding="utf-8")
+            (shared / "01-project-structure.md").write_text("# 01 项目结构规则\n", encoding="utf-8")
+            (shared / "02-naming.md").write_text("# 命名规则\n", encoding="utf-8")
+            errors: list[str] = []
+            validator.check_shared_titles(root, errors)
+
+        self.assertEqual(len(errors), 2)
+
     def test_project_local_sample_requires_testing_governance_markers(self):
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
@@ -157,6 +170,36 @@ class ValidateRulesPackageTests(unittest.TestCase):
             ["README.md file inventory missing shared/99-missing-from-readme.md"],
         )
 
+    def test_entry_docs_reject_ambiguous_openapi_schema_wording(self):
+        rules_root = Path(__file__).parents[2]
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            (root / "codex").mkdir(parents=True)
+            (root / "shared").mkdir()
+            (root / "docs").mkdir()
+            for rel in (
+                "README.md",
+                "codex/AGENTS.md",
+                "codex/01-before-editing.md",
+                "codex/04-api-and-schema.md",
+                "shared/12-schema-ssot.md",
+                "shared/13-form-and-detail.md",
+                "shared/14-upload-import-export.md",
+                "docs/onboarding-new-project.md",
+                "examples/.github/pull_request_template.md",
+            ):
+                source = rules_root / rel
+                target = root / rel
+                target.parent.mkdir(parents=True, exist_ok=True)
+                target.write_text(source.read_text(encoding="utf-8"), encoding="utf-8")
+            readme = root / "README.md"
+            readme.write_text(readme.read_text(encoding="utf-8") + "\nOpenAPI / schema\n", encoding="utf-8")
+            errors: list[str] = []
+
+            validator.check_openapi_ssot_wording(root, errors)
+
+        self.assertTrue(any("ambiguous OpenAPI SSOT wording" in error for error in errors))
+
     def test_topic_manifest_matches_live_evals(self):
         rules_root = Path(__file__).parents[2]
         repo_scripts = rules_root.parent.parent / "scripts"
@@ -230,3 +273,20 @@ class ValidateRulesPackageTests(unittest.TestCase):
             errors,
             ["00-must-follow.md L0 hard rule count 1, expected 34"],
         )
+
+    def test_v2_regression_coverage_rejects_missing_iframe_allowlist(self):
+        rules_root = Path(__file__).parents[2]
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            shutil.copytree(rules_root, root, dirs_exist_ok=True)
+            summary = root / "cursor/09-shell-navigation.mdc"
+            summary.write_text(
+                summary.read_text(encoding="utf-8").replace(
+                    "iframe 只加载项目登记的 HTTPS 来源", "iframe 可加载任意来源", 1
+                ),
+                encoding="utf-8",
+            )
+            errors: list[str] = []
+            validator.check_v2_regression_coverage(root, errors)
+
+        self.assertTrue(any("iframe 只加载项目登记的 HTTPS 来源" in error for error in errors))

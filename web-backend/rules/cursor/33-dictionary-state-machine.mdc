@@ -1,16 +1,15 @@
 ---
-description: 字典、枚举与状态机
+description: 显式生命周期与状态机
 globs:
-  - "src/main/java/**/*Status*.java"
-  - "src/main/java/**/*State*.java"
-  - "src/main/java/**/*Enum*.java"
-  - "src/main/java/**/*Dict*.java"
-  - "contracts/**/*.yaml"
+  - "src/main/java/**/*StateMachine*.java"
+  - "src/main/java/**/*Workflow*.java"
+  - "src/main/java/**/*Lifecycle*.java"
+  - "src/main/java/**/*Transition*.java"
 alwaysApply: false
 ---
 
 # 字典与状态机
 
-字典/枚举/状态码是契约；状态流转须有合法迁移表、权限、审计和并发控制，禁止随意 setStatus。
+仅在聚合存在显式生命周期或受控状态流转时加载：状态流转须有合法迁移表、权限、审计和并发控制，禁止随意 `setStatus`。静默改变既有字典 / 枚举语义的 Level 0 禁令已由 `rules/shared/00-must-follow.md` 常驻提供。
 
 全文：`rules/shared/41-dictionary-state-machine.md`

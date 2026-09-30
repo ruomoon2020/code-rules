@@ -1,4 +1,4 @@
-# Logging & Observability
+# 日志与可观测规则
 
 与前端 `18-logging-observability.md` 字段对齐。
 

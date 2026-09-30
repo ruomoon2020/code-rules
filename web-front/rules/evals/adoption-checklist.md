@@ -44,7 +44,7 @@
 - [ ] CI 扫描 `views` 模板 `<el-*>`（`ci-scan-views-el-tags.mjs`，**勿**加 `--allow-empty`）
 - [ ] 已跑 `node rules/examples/run-ci-scan-fixtures.mjs`（规则包发版 / 升级后）
 - [ ] `@typescript-eslint/no-explicit-any`
-- [ ] `contracts/schema.json` + `api:check`
+- [ ] `contracts/openapi.yaml` 为 SSOT；`schema:sync` + `api:gen` + `api:check`，生成的 schema / client 无手工修改
 - [ ] CI：`lint` / `type-check` / `build`
 - [ ] `resetAllStores()` 登出实现
 

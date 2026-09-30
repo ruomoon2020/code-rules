@@ -1,4 +1,16 @@
-# Monorepo 脚本
+# 仓库治理与接入脚本
+
+本目录提供两类命令：一类供业务仓验收规则与治理接入，另一类供 `code-rules` 维护者生成目录、同步发布包并检查仓库一致性。脚本是确定性门禁，不会自动判断业务流程是否正确。
+
+## 按角色选择
+
+| 角色 | 优先命令 |
+|---|---|
+| 业务仓负责人 | `check-project-adoption.py`、`check-debt-baseline.py` |
+| 发布负责人 | `validate-release-evidence.py`、`validate-exceptions.py` |
+| 安全 / 平台负责人 | `validate-workflow-security.py`、`validate-control-catalog.py` |
+| 规则维护者 | `validate-repository.py`、`generate-rule-catalog.py`、`sync-common-governance.py` |
+| AI 评测维护者 | `prepare-ai-eval-run.py`、`validate-ai-eval-results.py`、`generate-eval-topic-manifest.py` |
 
 | 脚本 | 用途 |
 |---|---|
@@ -17,9 +29,11 @@
 | [`generate-rule-catalog.py`](generate-rule-catalog.py) | 校验三端编码规则目录与路由、评测文本引用；语义覆盖仍须人工审查 |
 | [`validate-repository.py`](validate-repository.py) | 校验维护文件尾随空白、Markdown 本地链接和 YAML 语法 |
 
-CI 自测：`examples/adoption-fixture/frontend/`、`examples/adoption-fixture/backend-gradle/` + `python -m unittest discover -s scripts/tests`。
+CI 自测使用 `examples/adoption-fixture/frontend/`、`examples/adoption-fixture/backend-gradle/` 和 `python -m unittest discover -s scripts/tests -v`。
 
-## 业务仓接入检查
+## 业务仓接入流程
+
+先在报告模式查看差距，再完善业务仓配置并执行正式门禁。`--level 2` 及以上会检查治理资产，但仍需人工核对平台上的分支保护、Required Checks 和生产权限是否真实启用。
 
 ```bash
 # 前端仓
@@ -59,7 +73,7 @@ python scripts/validate-exceptions.py
 python scripts/sync-common-governance.py
 ```
 
-## Eval topic manifest
+## AI 评测清单维护
 
 改 `evals/prompts.md` 或 `rubric.md` 后：
 
@@ -69,6 +83,13 @@ python web-front/rules/scripts/validate-rules-package.py
 ```
 
 依赖：`pip install pyyaml`（CI 已装 Python 3.12；若缺 PyYAML 见 workflow）。
+
+## 完成标准
+
+- 命令退出码为 0，并保存 CI 日志或发布证据。
+- 没有通过跳过条件、空目录或占位配置制造“绿色”。
+- 业务变更另有需求追踪、测试和人工业务正确性评审。
+- 规则维护变更完成生成物同步、包校验、单元测试和 `git diff --check`。
 
 ## 治理文档
 

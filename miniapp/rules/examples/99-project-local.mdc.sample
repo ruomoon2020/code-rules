@@ -10,7 +10,7 @@ alwaysApply: true
 - 主包页面：`src/pages/{home,login,mine}/`。
 - 业务分包：`src/subpackages/order/**`、`src/subpackages/member/**`、`src/subpackages/coupon/**`。
 - API generated：`src/api/generated`（禁止手改）。
-- 契约：`contracts/openapi.yaml` 或 `contracts/schema.json`。
+- 权威契约：`contracts/openapi.yaml`。`contracts/schema.json` 与 `src/api/generated` 均为生成结果，禁止手改或作为第二份源头。
 - 平台能力：`src/platform/**`；页面禁止直接调用支付、分享、订阅消息、手机号授权。
 - 登录态：`src/auth/**` + `src/stores/auth.ts`。
 - 隐私授权：`src/privacy/**`，新增敏感能力必须同步 manifest / 隐私说明。

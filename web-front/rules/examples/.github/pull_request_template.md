@@ -2,7 +2,7 @@
 
 ## 变更与契约
 
-- [ ] schema / generated 已同步，未手改 generated
+- [ ] `contracts/openapi.yaml`（或项目声明的等价 OpenAPI 路径）已更新，schema / client 生成物已同步且未手改
 - [ ] 菜单、路由、按钮权限与后端一致（若适用）
 
 ## 验证

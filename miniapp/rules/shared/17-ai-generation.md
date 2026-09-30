@@ -1,10 +1,10 @@
-# 17 AI Generation
+# AI 生成规则
 
 ## AI 写代码前
 
 1. 先确认任务类型：页面、App 运行时、API/网络、登录态、分包、隐私、支付、分享、性能、发版环境。
 2. 先读 `00-must-follow.md`，再按任务读取对应 shared。
-3. 涉及字段时先读 OpenAPI / schema / generated 类型。
+3. 涉及字段时先读 `contracts/openapi.yaml`，再核对生成后的类型。不要手改 `schema.json` 或 generated。
 4. 涉及平台能力时先读 `11-platform-differences.md` 和对应能力规则。
 
 ## 禁止 AI 行为

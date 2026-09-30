@@ -1,6 +1,14 @@
-# Rules Evals（规则回归评测）
+# 小程序 AI 规则回归评测
 
-用于验证 AI 是否遵守 `miniapp/rules/` 约束。建议每季度或规则大版本发布前跑一轮。
+本目录用于验证 AI 是否稳定遵守小程序规则，重点覆盖契约、登录与隐私、分包、支付、弱网恢复、内容安全和多平台边界。评测不替代真机验证、平台审核、目标端构建和真实支付/回调测试。
+
+## 什么时候运行
+
+| 变更场景 | 最小套件 |
+|---|---|
+| 日常规则或路由调整 | Smoke |
+| 登录、支付、分包、安全或组件工程 | 对应专项套件 + Smoke |
+| 规则包发布或大版本升级 | Full + AI Tool Safety |
 
 ## 前置条件
 
@@ -8,12 +16,14 @@
 2. 已配置 Cursor `.cursor/rules/` 或 Codex 根目录 `AGENTS.md`。
 3. 测试仓库具备最小结构：`src/pages`、`src/subpackages`、`src/api`、`contracts/openapi.yaml`（可用 fixture）。
 
-## 如何执行
+## 执行流程
 
 1. 打开 `prompts.md`，按编号依次向 AI 发送**固定提示词**（不要改措辞）。
 2. 对照 `rubric.md` 判定 Pass / Fail / Partial。
 3. 填写 `results-template.md`（复制为带日期的结果文件）。
-4. Fail 项回流修改 `shared/` 或 `cursor/`，并更新 `CHANGELOG.md`。
+4. 保存模型版本、执行时间、评测人和失败证据。
+5. Fail 项回流检查 `shared/`、Codex/Cursor 路由或场景边界，并更新 `CHANGELOG.md`。
+6. 重跑失败项和相关套件；若生成代码，还须在真实业务仓运行 lint、type-check、目标平台构建、契约和包体积检查。
 
 ## 通过标准
 

@@ -1,23 +1,35 @@
-# Backend Evals
+# 后端 AI 规则回归评测
 
-## 前置
+本目录用固定提示词和判定标准验证 AI 是否遵守后端规则，适用于规则维护、重大架构调整和规则包发布。评测通过只能说明 AI 输出满足当前 rubric，不能证明接口、事务、权限、数据范围或迁移脚本在真实业务中正确。
+
+## 什么时候运行
+
+| 变更场景 | 最小套件 |
+|---|---|
+| 日常规则或路由调整 | Smoke |
+| 鉴权、契约、架构或业务模块扩展 | 对应专项套件 + Smoke |
+| 规则包发布或大版本升级 | Full + AI Tool Safety |
+
+## 前置条件
 
 1. 业务仓已落地完整 `rules/`。
 2. 具备 Spring Boot 最小结构：`modules/*/api`、`application`、`mapper`。
 3. 有 `contracts/openapi.yaml`（可用 fixture）。
 
-## 执行
+## 执行流程
 
-1. `prompts.md` 固定提示词。
-2. `rubric.md` 判定。
-3. `results-template.md` 记录。
+1. 从 `prompts.md` 复制固定提示词，不改措辞或补充隐含条件。
+2. 使用相同模型配置执行选定套件。
+3. 按 `rubric.md` 判定 Pass / Fail / Partial，并保存原始输出。
+4. 用 `results-template.md` 记录模型、时间、评测人和失败证据。
+5. 修复规则或路由后重跑失败项与相关套件；生成的代码还须进入真实项目的构建、测试和业务评审。
 
 ## 门槛
 
 | 级别 | 范围 | 门槛 |
 |---|---|---|
 | P0 | B01–B08 | **8/8** |
-| P1 | B09–B67 | **至少 53/59** |
+| P1 | B09–B71 | **至少 57/63** |
 
 ## 回归套件（企业分层）
 
@@ -26,10 +38,11 @@
 | **Smoke** | B01–B08 + 核心 P1 21 条 | P0 8/8；核心 P1 ≥18/21 | 日常 PR、AI 快速回归 |
 | **Security** | B06、B21、B26、B31、B34、B39、B40、B43、B44、B45、B52、B53 | 建议 12/12 | 鉴权 / 安全 / 隐私 / 外部集成 PR |
 | **Contract** | B03、B11、B25、B47、B51、B65 | 建议 6/6 | OpenAPI / 事件契约 / 幂等头 / 多范式 API PR |
+| **Architecture** | B01、B10、B55、B67、B68、B69 | 建议 6/6 | 默认轻量分层、按场景升级、模块边界、表的写入方、事务和公共层 PR |
 | **Business Extension** | B55–B63 | 建议 9/9 | 成熟后台新增业务 / CRUD / 树表主子表 / CodeGen PR |
 | **Testing Governance** | B29、B42 | 建议 2/2 | 测试基础设施、稳定性、兼容性或故障演练规则变更 |
 | **AI Tool Safety** | BAT01–BAT05（独立文件） | **5/5 Required** | AI 读取外部内容、调用工具或执行外部动作 |
-| **Full** | B01–B67 | P0 8/8；P1 ≥53/59 | **发版**、规则包升级、大版本 |
+| **Full** | B01–B71 | P0 8/8；P1 ≥57/63 | **发版**、规则包升级、大版本 |
 
 索引（不复制正文）：`smoke-prompts.md`（**不计入** `### Bxx` 提示词计数；校验见 `scripts/validate-rules-package.py`）。
 
@@ -51,7 +64,7 @@ python common-governance/scripts/validate-ai-eval-results.py --file evidence/ai-
 
 B09、B11、B12、B21、B25、B27、B28、B29、B31、B34、B36、B39、B40、B43、B44、B45、B48、B51、B52、B55、B58。
 
-发版前仍须跑 **Full**（B01–B67）。
+发版前仍须跑 **Full**（B01–B71）。
 
 ### 与前端 Business Extension 对照（联调 / 双端 PR）
 
@@ -78,7 +91,7 @@ B09、B11、B12、B21、B25、B27、B28、B29、B31、B34、B36、B39、B40、B4
 | B28 vs B36 | B28：事务内同步外部调用；B36：Feign/HTTP 超时与重试边界 |
 | B18 并发 vs B38 | B18：方言/SQL 登记；B38：分布式锁释放须校验 owner token |
 | B29 vs B31 | B29：测试环境隔离、确定性、失败证据及幂等/兼容测试；B31：fixture PII、缓存 key 明文等隐私生命周期 |
-| B43 vs B45 | B43：高风险入口威胁建模；B45：服务间机器身份认证 |
+| B43 vs B45 | B43：高风险入口威胁建模；B45：服务调用要证明调用方身份 |
 | B44 vs B37 | B44：密码/Token/密钥；B37：普通配置外部化 |
 | B27 vs B52 | B27：审计字段；B52：对象级授权（BOLA/IDOR） |
 | B28 vs B53 | B28：事务内外部调用；B53：用户可控 URL 出站（SSRF） |

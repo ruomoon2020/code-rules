@@ -1,4 +1,4 @@
-# Audit Log Rules
+# 审计日志规则
 
 企业后台须对高风险操作留**不可篡改、可检索**的审计记录。与业务日志（`09-logging-observability.md`）分离：审计面向合规与追责，业务日志面向排障。
 
@@ -22,7 +22,7 @@
 | 字段 | 说明 |
 |---|---|
 | `operatorId` | 操作人 ID |
-| `tenantId` | 租户 ID（多租户必填） |
+| `tenantId` | 租户 ID（租户模型不是 `NONE` 时必填） |
 | `action` | 稳定动作码，如 `USER_DELETE` |
 | `resourceType` | 资源类型，如 `User` |
 | `resourceId` | 资源主键 |

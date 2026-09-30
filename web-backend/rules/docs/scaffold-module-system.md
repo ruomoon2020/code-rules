@@ -2,6 +2,12 @@
 
 可复制为首个业务域模板。
 
+本样板用轻量分层：应用服务直接调用 Mapper（`CRUD_LITE`）。核心业务如果改成六边形，仓储接口放在领域层，由 infrastructure 实现，不要在这个样板上再加一层只做转发的类。
+
+接口对象默认用 Request / Response（`ENTITY_REQUEST_RESPONSE`），与 `examples/99-project-local.mdc.sample`、`examples/AGENTS.project-section.md.sample` 一致。旧项目已经稳定使用 DO / DTO / BO / VO（`DO_DTO_BO_VO_QUERY`）时，保持原来的名字和转换关系。新项目不要为了凑齐这些后缀再加一层对象，旧项目也不要只为了统一后缀做大规模改名。
+
+可执行样板默认采用单租户（`NONE`），用户、审计、数据库和 OpenAPI 均不含租户字段。项目已有 `tenant_id`、租户插件或拦截器时改为共享表加租户列（`SHARED_COLUMN`），并在实体、所有查询与写入入口、审计、索引、契约和隔离测试中成套适配。逻辑删除用 `isDeleted` 过滤，`deleteToken` 保证未删除用户名唯一，`deletedAt` 只记录删除时间。
+
 ## 目录
 
 ```text
@@ -64,6 +70,12 @@ src/main/resources/
 ## 契约
 
 接口定义以 `contracts/openapi.yaml` 中 `systemUser*` 为准。
+
+- 当前样板声明 `x-api-style: GET_POST_COMPAT`，适配只放行 GET/POST 的企业网关。
+- 创建：`201 Created` + `Location`。
+- 部分更新：`POST /users/{id}/update`。
+- 删除：`POST /users/{id}/delete`，成功 `204 No Content` + 可选 `X-Trace-Id`。
+- 用户与审计接口均有 `@PreAuthorize`；权限码须与菜单、前端按钮和项目 OpenAPI 可追溯。
 
 ## 可复制源码
 

@@ -81,5 +81,5 @@ pnpm api:check
 3. 每次发布必须有关联 release、Git commit、sourcemap。
 4. 发布前确认回滚方式。
 5. 高峰期、结算窗口、重大活动期间冻结非紧急发布。
-6. Feature Flag 必须有 owner、默认值、创建原因和清理日期。
+6. Feature Flag、灰度和实验配置必须通过 `common-governance/docs/environment-promotion.md` 的统一生命周期清单；前端必须实现已登记的安全失败值和回滚路径。
 7. 发布前确认错误恢复与白屏监控策略，见 `21-error-recovery.md`。

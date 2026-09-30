@@ -7,9 +7,9 @@ rules:
   title: 必须遵守的规则
   path: web-front/rules/shared/00-must-follow.md
   owner_role: Frontend owner
-  strength:
-    required_markers: 41
-    recommended_markers: 0
+  wording_stats:
+    normative_markers: 42
+    advisory_markers: 0
   routing:
   - web-front/rules/codex/01-before-editing.md
   - web-front/rules/codex/02-page-generation.md
@@ -25,9 +25,9 @@ rules:
   title: 项目结构规则
   path: web-front/rules/shared/01-project-structure.md
   owner_role: Frontend owner
-  strength:
-    required_markers: 1
-    recommended_markers: 1
+  wording_stats:
+    normative_markers: 7
+    advisory_markers: 1
   routing:
   - web-front/rules/codex/AGENTS.md
   - web-front/rules/cursor/01-architecture.mdc
@@ -40,9 +40,9 @@ rules:
   title: 命名规则
   path: web-front/rules/shared/02-naming.md
   owner_role: Frontend owner
-  strength:
-    required_markers: 12
-    recommended_markers: 2
+  wording_stats:
+    normative_markers: 12
+    advisory_markers: 2
   routing:
   - web-front/rules/codex/AGENTS.md
   - web-front/rules/cursor/02-vue3-typescript.mdc
@@ -58,9 +58,9 @@ rules:
   title: 代码风格规则
   path: web-front/rules/shared/03-code-style.md
   owner_role: Frontend owner
-  strength:
-    required_markers: 17
-    recommended_markers: 1
+  wording_stats:
+    normative_markers: 17
+    advisory_markers: 1
   routing:
   - web-front/rules/codex/AGENTS.md
   - web-front/rules/cursor/02-vue3-typescript.mdc
@@ -73,9 +73,9 @@ rules:
   title: UI 模式规则
   path: web-front/rules/shared/04-ui-patterns.md
   owner_role: Frontend owner
-  strength:
-    required_markers: 8
-    recommended_markers: 0
+  wording_stats:
+    normative_markers: 8
+    advisory_markers: 0
   routing:
   - web-front/rules/codex/02-page-generation.md
   - web-front/rules/codex/AGENTS.md
@@ -83,6 +83,7 @@ rules:
   - web-front/rules/cursor/04-component-usage.mdc
   eval_cases:
   - E01
+  - E08
   verification:
   - web-front/rules/scripts/validate-rules-package.py
 - id: CR-FE-005
@@ -90,9 +91,9 @@ rules:
   title: API 契约规则
   path: web-front/rules/shared/05-api-contract.md
   owner_role: Frontend owner
-  strength:
-    required_markers: 11
-    recommended_markers: 0
+  wording_stats:
+    normative_markers: 10
+    advisory_markers: 0
   routing:
   - web-front/rules/codex/02-page-generation.md
   - web-front/rules/codex/AGENTS.md
@@ -107,9 +108,9 @@ rules:
   title: 状态、路由与权限规则
   path: web-front/rules/shared/06-state-route-permission.md
   owner_role: Frontend owner
-  strength:
-    required_markers: 7
-    recommended_markers: 0
+  wording_stats:
+    normative_markers: 7
+    advisory_markers: 0
   routing:
   - web-front/rules/codex/02-page-generation.md
   - web-front/rules/codex/AGENTS.md
@@ -127,9 +128,9 @@ rules:
   title: 安全、无障碍与性能规则
   path: web-front/rules/shared/07-security-performance.md
   owner_role: Frontend owner
-  strength:
-    required_markers: 29
-    recommended_markers: 2
+  wording_stats:
+    normative_markers: 29
+    advisory_markers: 2
   routing:
   - web-front/rules/codex/AGENTS.md
   - web-front/rules/cursor/03-ui-design-system.mdc
@@ -148,9 +149,9 @@ rules:
   title: 质量门禁规则
   path: web-front/rules/shared/08-quality-gates.md
   owner_role: Frontend owner
-  strength:
-    required_markers: 16
-    recommended_markers: 6
+  wording_stats:
+    normative_markers: 17
+    advisory_markers: 6
   routing:
   - web-front/rules/codex/AGENTS.md
   - web-front/rules/cursor/07-review-checklist.mdc
@@ -164,9 +165,9 @@ rules:
   title: AI 生成规则
   path: web-front/rules/shared/09-ai-generation.md
   owner_role: Frontend owner
-  strength:
-    required_markers: 18
-    recommended_markers: 0
+  wording_stats:
+    normative_markers: 19
+    advisory_markers: 0
   routing:
   - web-front/rules/codex/AGENTS.md
   - web-front/rules/cursor/21-ai-generation.mdc
@@ -179,9 +180,9 @@ rules:
   title: 验证清单
   path: web-front/rules/shared/10-verification-checklist.md
   owner_role: Frontend owner
-  strength:
-    required_markers: 3
-    recommended_markers: 0
+  wording_stats:
+    normative_markers: 4
+    advisory_markers: 0
   routing:
   - web-front/rules/codex/02-page-generation.md
   - web-front/rules/codex/05-verification.md
@@ -197,9 +198,9 @@ rules:
   title: 基础组件上下文（Context Pinning）
   path: web-front/rules/shared/11-base-components-context.md
   owner_role: Frontend owner
-  strength:
-    required_markers: 6
-    recommended_markers: 0
+  wording_stats:
+    normative_markers: 6
+    advisory_markers: 0
   routing:
   - web-front/rules/codex/01-before-editing.md
   - web-front/rules/codex/02-page-generation.md
@@ -214,12 +215,12 @@ rules:
   - web-front/rules/scripts/validate-rules-package.py
 - id: CR-FE-012
   stack: frontend
-  title: Schema 单一事实来源
+  title: OpenAPI 契约单一事实来源
   path: web-front/rules/shared/12-schema-ssot.md
   owner_role: Frontend owner
-  strength:
-    required_markers: 3
-    recommended_markers: 0
+  wording_stats:
+    normative_markers: 5
+    advisory_markers: 0
   routing:
   - web-front/rules/codex/01-before-editing.md
   - web-front/rules/codex/02-page-generation.md
@@ -240,15 +241,17 @@ rules:
   title: 表单与详情页规则
   path: web-front/rules/shared/13-form-and-detail.md
   owner_role: Frontend owner
-  strength:
-    required_markers: 0
-    recommended_markers: 1
+  wording_stats:
+    normative_markers: 15
+    advisory_markers: 1
   routing:
   - web-front/rules/codex/02-page-generation.md
   - web-front/rules/codex/AGENTS.md
+  - web-front/rules/cursor/05-api-state-error.mdc
   - web-front/rules/cursor/20-form-detail.mdc
   eval_cases:
   - E41
+  - E50
   verification:
   - web-front/rules/scripts/validate-rules-package.py
 - id: CR-FE-014
@@ -256,9 +259,9 @@ rules:
   title: 上传、导入与导出规则
   path: web-front/rules/shared/14-upload-import-export.md
   owner_role: Frontend owner
-  strength:
-    required_markers: 33
-    recommended_markers: 0
+  wording_stats:
+    normative_markers: 34
+    advisory_markers: 0
   routing:
   - web-front/rules/codex/AGENTS.md
   - web-front/rules/cursor/14-upload-import-export.mdc
@@ -276,9 +279,9 @@ rules:
   title: 测试规则
   path: web-front/rules/shared/15-testing.md
   owner_role: Frontend owner
-  strength:
-    required_markers: 6
-    recommended_markers: 1
+  wording_stats:
+    normative_markers: 8
+    advisory_markers: 1
   routing:
   - web-front/rules/codex/AGENTS.md
   - web-front/rules/cursor/08-quality-testing.mdc
@@ -292,9 +295,9 @@ rules:
   title: 设计 Token 规则
   path: web-front/rules/shared/16-design-tokens.md
   owner_role: Frontend owner
-  strength:
-    required_markers: 4
-    recommended_markers: 0
+  wording_stats:
+    normative_markers: 4
+    advisory_markers: 0
   routing:
   - web-front/rules/codex/AGENTS.md
   - web-front/rules/cursor/03-ui-design-system.mdc
@@ -307,15 +310,17 @@ rules:
   title: 壳层与导航规则
   path: web-front/rules/shared/17-shell-navigation.md
   owner_role: Frontend owner
-  strength:
-    required_markers: 1
-    recommended_markers: 0
+  wording_stats:
+    normative_markers: 7
+    advisory_markers: 0
   routing:
   - web-front/rules/codex/AGENTS.md
   - web-front/rules/cursor/09-shell-navigation.mdc
   - web-front/rules/cursor/19-platform-boundary.mdc
   eval_cases:
+  - E08
   - E32
+  - E45
   verification:
   - web-front/rules/scripts/validate-rules-package.py
 - id: CR-FE-018
@@ -323,9 +328,9 @@ rules:
   title: 日志与可观测规则
   path: web-front/rules/shared/18-logging-observability.md
   owner_role: Frontend owner
-  strength:
-    required_markers: 7
-    recommended_markers: 9
+  wording_stats:
+    normative_markers: 7
+    advisory_markers: 9
   routing:
   - web-front/rules/codex/AGENTS.md
   - web-front/rules/cursor/06-security-performance.mdc
@@ -339,9 +344,9 @@ rules:
   title: 列表分页与表格状态规则
   path: web-front/rules/shared/19-list-pagination.md
   owner_role: Frontend owner
-  strength:
-    required_markers: 9
-    recommended_markers: 1
+  wording_stats:
+    normative_markers: 13
+    advisory_markers: 1
   routing:
   - web-front/rules/codex/02-page-generation.md
   - web-front/rules/codex/AGENTS.md
@@ -360,9 +365,9 @@ rules:
   title: 依赖治理规则
   path: web-front/rules/shared/20-dependency-governance.md
   owner_role: Frontend owner
-  strength:
-    required_markers: 12
-    recommended_markers: 1
+  wording_stats:
+    normative_markers: 12
+    advisory_markers: 1
   routing:
   - web-front/rules/codex/AGENTS.md
   - web-front/rules/cursor/16-dependency-governance.mdc
@@ -375,11 +380,12 @@ rules:
   title: 错误恢复与白屏治理规则
   path: web-front/rules/shared/21-error-recovery.md
   owner_role: Frontend owner
-  strength:
-    required_markers: 7
-    recommended_markers: 1
+  wording_stats:
+    normative_markers: 10
+    advisory_markers: 1
   routing:
   - web-front/rules/codex/AGENTS.md
+  - web-front/rules/cursor/05-api-state-error.mdc
   - web-front/rules/cursor/17-error-recovery.mdc
   eval_cases:
   - E30
@@ -390,9 +396,9 @@ rules:
   title: 业务模块扩展（前端）
   path: web-front/rules/shared/22-business-module-extension.md
   owner_role: Frontend owner
-  strength:
-    required_markers: 17
-    recommended_markers: 0
+  wording_stats:
+    normative_markers: 19
+    advisory_markers: 0
   routing:
   - web-front/rules/codex/AGENTS.md
   - web-front/rules/cursor/18-business-module-extension.mdc
@@ -414,9 +420,9 @@ rules:
   title: 国际化与区域格式规则
   path: web-front/rules/shared/23-i18n-locale.md
   owner_role: Frontend owner
-  strength:
-    required_markers: 10
-    recommended_markers: 1
+  wording_stats:
+    normative_markers: 11
+    advisory_markers: 1
   routing:
   - web-front/rules/codex/AGENTS.md
   - web-front/rules/cursor/22-i18n-locale.mdc
@@ -429,9 +435,9 @@ rules:
   title: 实时通信与富文本规则
   path: web-front/rules/shared/24-realtime-rich-content.md
   owner_role: Frontend owner
-  strength:
-    required_markers: 7
-    recommended_markers: 0
+  wording_stats:
+    normative_markers: 7
+    advisory_markers: 0
   routing:
   - web-front/rules/codex/AGENTS.md
   - web-front/rules/cursor/23-realtime-rich-content.mdc
@@ -445,9 +451,9 @@ rules:
   title: 受监管 Web 前端加固
   path: web-front/rules/shared/25-regulated-web-hardening.md
   owner_role: Frontend owner
-  strength:
-    required_markers: 8
-    recommended_markers: 0
+  wording_stats:
+    normative_markers: 9
+    advisory_markers: 0
   routing:
   - web-front/rules/codex/AGENTS.md
   - web-front/rules/cursor/24-regulated-web-hardening.mdc
@@ -462,60 +468,73 @@ rules:
   - web-front/rules/scripts/validate-rules-package.py
 - id: CR-BE-000
   stack: backend
-  title: Must Follow Rules（后端）
+  title: 必须遵守的规则（后端）
   path: web-backend/rules/shared/00-must-follow.md
   owner_role: Backend owner
-  strength:
-    required_markers: 35
-    recommended_markers: 0
+  wording_stats:
+    normative_markers: 38
+    advisory_markers: 0
   routing:
   - web-backend/rules/codex/01-before-editing.md
   - web-backend/rules/codex/AGENTS.md
   - web-backend/rules/cursor/00-project-overview.mdc
+  - web-backend/rules/cursor/32-money-time-precision.mdc
+  - web-backend/rules/cursor/33-dictionary-state-machine.mdc
   eval_cases:
   - B01
+  - B44
+  - B48
+  - B52
+  - B57
+  - B68
   verification:
   - web-backend/rules/scripts/validate-rules-package.py
 - id: CR-BE-001
   stack: backend
-  title: Project Structure Rules
+  title: 项目结构规则
   path: web-backend/rules/shared/01-project-structure.md
   owner_role: Backend owner
-  strength:
-    required_markers: 2
-    recommended_markers: 1
+  wording_stats:
+    normative_markers: 16
+    advisory_markers: 2
   routing:
+  - web-backend/rules/codex/AGENTS.md
   - web-backend/rules/cursor/01-architecture.mdc
   eval_cases:
   - B01
   - B10
+  - B68
+  - B69
   verification:
   - web-backend/rules/scripts/validate-rules-package.py
 - id: CR-BE-002
   stack: backend
-  title: Naming Rules（Java / Spring）
+  title: 命名规则（Java / Spring）
   path: web-backend/rules/shared/02-naming.md
   owner_role: Backend owner
-  strength:
-    required_markers: 25
-    recommended_markers: 1
+  wording_stats:
+    normative_markers: 31
+    advisory_markers: 1
   routing:
+  - web-backend/rules/codex/AGENTS.md
   - web-backend/rules/cursor/02-java-style.mdc
   - web-backend/rules/cursor/06-persistence-mybatis.mdc
   - web-backend/rules/cursor/15-naming-conventions.mdc
   eval_cases:
   - B20
   - B64
+  - B68
+  - B70
   verification:
   - web-backend/rules/scripts/validate-rules-package.py
 - id: CR-BE-003
   stack: backend
-  title: Code Style Rules（Java）
+  title: 代码风格规则（Java）
   path: web-backend/rules/shared/03-code-style.md
   owner_role: Backend owner
-  strength:
-    required_markers: 7
-    recommended_markers: 0
+  wording_stats:
+    normative_markers: 7
+    advisory_markers: 0
   routing:
   - web-backend/rules/cursor/02-java-style.mdc
   eval_cases:
@@ -524,33 +543,36 @@ rules:
   - web-backend/rules/scripts/validate-rules-package.py
 - id: CR-BE-004
   stack: backend
-  title: REST API Design Rules
+  title: REST API 设计规则
   path: web-backend/rules/shared/04-rest-api-design.md
   owner_role: Backend owner
-  strength:
-    required_markers: 5
-    recommended_markers: 3
+  wording_stats:
+    normative_markers: 15
+    advisory_markers: 3
   routing:
   - web-backend/rules/codex/AGENTS.md
   - web-backend/rules/cursor/04-rest-controller.mdc
   - web-backend/rules/cursor/12-openapi-contract.mdc
   eval_cases:
   - B07
+  - B11
   - B25
   - B51
   - B67
+  - B68
   verification:
   - web-backend/rules/scripts/validate-rules-package.py
 - id: CR-BE-005
   stack: backend
-  title: OpenAPI Contract（SSOT）
+  title: OpenAPI 契约（SSOT）
   path: web-backend/rules/shared/05-openapi-contract.md
   owner_role: Backend owner
-  strength:
-    required_markers: 6
-    recommended_markers: 2
+  wording_stats:
+    normative_markers: 15
+    advisory_markers: 1
   routing:
   - web-backend/rules/codex/AGENTS.md
+  - web-backend/rules/cursor/04-rest-controller.mdc
   - web-backend/rules/cursor/12-openapi-contract.mdc
   eval_cases:
   - B03
@@ -558,16 +580,17 @@ rules:
   - B25
   - B51
   - B65
+  - B71
   verification:
   - web-backend/rules/scripts/validate-rules-package.py
 - id: CR-BE-006
   stack: backend
-  title: Security & Authorization
+  title: 安全与授权规则
   path: web-backend/rules/shared/06-security-authz.md
   owner_role: Backend owner
-  strength:
-    required_markers: 13
-    recommended_markers: 2
+  wording_stats:
+    normative_markers: 13
+    advisory_markers: 2
   routing:
   - web-backend/rules/codex/04-security-integration.md
   - web-backend/rules/codex/AGENTS.md
@@ -589,12 +612,12 @@ rules:
   - web-backend/rules/scripts/validate-rules-package.py
 - id: CR-BE-007
   stack: backend
-  title: Persistence Rules（MyBatis-Plus + 多数据库）
+  title: 持久化规则（MyBatis-Plus 与多数据库）
   path: web-backend/rules/shared/07-persistence-mybatis.md
   owner_role: Backend owner
-  strength:
-    required_markers: 33
-    recommended_markers: 1
+  wording_stats:
+    normative_markers: 44
+    advisory_markers: 1
   routing:
   - web-backend/rules/codex/03-domain-persistence.md
   - web-backend/rules/codex/AGENTS.md
@@ -611,16 +634,18 @@ rules:
   - B30
   - B62
   - B64
+  - B70
+  - B71
   verification:
   - web-backend/rules/scripts/validate-rules-package.py
 - id: CR-BE-008
   stack: backend
-  title: Exception & Error Codes
+  title: 异常与错误码规则
   path: web-backend/rules/shared/08-exception-errorcodes.md
   owner_role: Backend owner
-  strength:
-    required_markers: 8
-    recommended_markers: 0
+  wording_stats:
+    normative_markers: 10
+    advisory_markers: 0
   routing:
   - web-backend/rules/codex/02-api-implementation.md
   - web-backend/rules/codex/AGENTS.md
@@ -631,12 +656,12 @@ rules:
   - web-backend/rules/scripts/validate-rules-package.py
 - id: CR-BE-009
   stack: backend
-  title: Logging & Observability
+  title: 日志与可观测规则
   path: web-backend/rules/shared/09-logging-observability.md
   owner_role: Backend owner
-  strength:
-    required_markers: 7
-    recommended_markers: 0
+  wording_stats:
+    normative_markers: 7
+    advisory_markers: 0
   routing:
   - web-backend/rules/codex/02-api-implementation.md
   - web-backend/rules/codex/AGENTS.md
@@ -649,12 +674,12 @@ rules:
   - web-backend/rules/scripts/validate-rules-package.py
 - id: CR-BE-010
   stack: backend
-  title: Verification Checklist
+  title: 验证清单
   path: web-backend/rules/shared/10-verification-checklist.md
   owner_role: Backend owner
-  strength:
-    required_markers: 0
-    recommended_markers: 0
+  wording_stats:
+    normative_markers: 0
+    advisory_markers: 0
   routing:
   - web-backend/rules/codex/05-verification.md
   - web-backend/rules/codex/AGENTS.md
@@ -665,28 +690,29 @@ rules:
   - web-backend/rules/scripts/validate-rules-package.py
 - id: CR-BE-011
   stack: backend
-  title: Domain Model
+  title: 领域模型规则
   path: web-backend/rules/shared/11-domain-model.md
   owner_role: Backend owner
-  strength:
-    required_markers: 1
-    recommended_markers: 0
+  wording_stats:
+    normative_markers: 6
+    advisory_markers: 0
   routing:
   - web-backend/rules/codex/03-domain-persistence.md
   - web-backend/rules/codex/AGENTS.md
   - web-backend/rules/cursor/10-domain-model.mdc
   eval_cases:
   - B67
+  - B68
   verification:
   - web-backend/rules/scripts/validate-rules-package.py
 - id: CR-BE-012
   stack: backend
-  title: DTO Mapping
+  title: DTO 映射规则
   path: web-backend/rules/shared/12-dto-mapping.md
   owner_role: Backend owner
-  strength:
-    required_markers: 6
-    recommended_markers: 1
+  wording_stats:
+    normative_markers: 11
+    advisory_markers: 1
   routing:
   - web-backend/rules/codex/AGENTS.md
   - web-backend/rules/cursor/04-rest-controller.mdc
@@ -697,12 +723,12 @@ rules:
   - web-backend/rules/scripts/validate-rules-package.py
 - id: CR-BE-013
   stack: backend
-  title: Validation
+  title: 参数校验规则
   path: web-backend/rules/shared/13-validation.md
   owner_role: Backend owner
-  strength:
-    required_markers: 2
-    recommended_markers: 0
+  wording_stats:
+    normative_markers: 14
+    advisory_markers: 0
   routing:
   - web-backend/rules/codex/02-api-implementation.md
   - web-backend/rules/codex/AGENTS.md
@@ -714,12 +740,12 @@ rules:
   - web-backend/rules/scripts/validate-rules-package.py
 - id: CR-BE-014
   stack: backend
-  title: File Import / Export
+  title: 文件导入与导出规则
   path: web-backend/rules/shared/14-file-import-export.md
   owner_role: Backend owner
-  strength:
-    required_markers: 5
-    recommended_markers: 0
+  wording_stats:
+    normative_markers: 5
+    advisory_markers: 0
   routing:
   - web-backend/rules/codex/04-security-integration.md
   - web-backend/rules/codex/AGENTS.md
@@ -734,12 +760,12 @@ rules:
   - web-backend/rules/scripts/validate-rules-package.py
 - id: CR-BE-015
   stack: backend
-  title: Testing
+  title: 测试规则
   path: web-backend/rules/shared/15-testing.md
   owner_role: Backend owner
-  strength:
-    required_markers: 11
-    recommended_markers: 2
+  wording_stats:
+    normative_markers: 13
+    advisory_markers: 2
   routing:
   - web-backend/rules/codex/AGENTS.md
   - web-backend/rules/cursor/11-testing.mdc
@@ -751,12 +777,12 @@ rules:
   - web-backend/rules/scripts/validate-rules-package.py
 - id: CR-BE-016
   stack: backend
-  title: Performance
+  title: 性能规则
   path: web-backend/rules/shared/16-performance.md
   owner_role: Backend owner
-  strength:
-    required_markers: 9
-    recommended_markers: 0
+  wording_stats:
+    normative_markers: 9
+    advisory_markers: 0
   routing:
   - web-backend/rules/codex/AGENTS.md
   - web-backend/rules/cursor/37-performance.mdc
@@ -767,29 +793,31 @@ rules:
   - web-backend/rules/scripts/validate-rules-package.py
 - id: CR-BE-017
   stack: backend
-  title: Messaging & Async（可选）
+  title: 消息与异步规则（可选）
   path: web-backend/rules/shared/17-messaging-async.md
   owner_role: Backend owner
-  strength:
-    required_markers: 3
-    recommended_markers: 1
+  wording_stats:
+    normative_markers: 6
+    advisory_markers: 1
   routing:
   - web-backend/rules/codex/AGENTS.md
   - web-backend/rules/cursor/38-messaging-async.mdc
   eval_cases:
   - B47
+  - B60
   verification:
   - web-backend/rules/scripts/validate-rules-package.py
 - id: CR-BE-018
   stack: backend
-  title: Idempotency & Concurrency
+  title: 幂等与并发规则
   path: web-backend/rules/shared/18-idempotency-concurrency.md
   owner_role: Backend owner
-  strength:
-    required_markers: 9
-    recommended_markers: 0
+  wording_stats:
+    normative_markers: 11
+    advisory_markers: 0
   routing:
   - web-backend/rules/codex/AGENTS.md
+  - web-backend/rules/cursor/04-rest-controller.mdc
   - web-backend/rules/cursor/05-service-transaction.mdc
   - web-backend/rules/cursor/38-messaging-async.mdc
   eval_cases:
@@ -799,16 +827,17 @@ rules:
   - B38
   - B51
   - B62
+  - B71
   verification:
   - web-backend/rules/scripts/validate-rules-package.py
 - id: CR-BE-019
   stack: backend
-  title: Pagination & Query
+  title: 分页与查询规则
   path: web-backend/rules/shared/19-pagination-query.md
   owner_role: Backend owner
-  strength:
-    required_markers: 3
-    recommended_markers: 0
+  wording_stats:
+    normative_markers: 11
+    advisory_markers: 0
   routing:
   - web-backend/rules/codex/02-api-implementation.md
   - web-backend/rules/codex/AGENTS.md
@@ -822,15 +851,16 @@ rules:
   - web-backend/rules/scripts/validate-rules-package.py
 - id: CR-BE-020
   stack: backend
-  title: Dependency Governance
+  title: 依赖治理规则
   path: web-backend/rules/shared/20-dependency-governance.md
   owner_role: Backend owner
-  strength:
-    required_markers: 4
-    recommended_markers: 1
+  wording_stats:
+    normative_markers: 4
+    advisory_markers: 1
   routing:
   - web-backend/rules/codex/AGENTS.md
   - web-backend/rules/cursor/00-project-overview.mdc
+  - web-backend/rules/cursor/13-pagination-query.mdc
   eval_cases:
   - B09
   - B32
@@ -839,28 +869,27 @@ rules:
   - web-backend/rules/scripts/validate-rules-package.py
 - id: CR-BE-021
   stack: backend
-  title: Configuration & Secrets
+  title: 配置与密钥规则
   path: web-backend/rules/shared/21-configuration-secrets.md
   owner_role: Backend owner
-  strength:
-    required_markers: 5
-    recommended_markers: 0
+  wording_stats:
+    normative_markers: 7
+    advisory_markers: 0
   routing:
   - web-backend/rules/codex/AGENTS.md
   - web-backend/rules/cursor/39-configuration-secrets.mdc
   eval_cases:
   - B37
-  - B44
   verification:
   - web-backend/rules/scripts/validate-rules-package.py
 - id: CR-BE-022
   stack: backend
-  title: Operability
+  title: 可运维性规则
   path: web-backend/rules/shared/22-operability.md
   owner_role: Backend owner
-  strength:
-    required_markers: 3
-    recommended_markers: 0
+  wording_stats:
+    normative_markers: 4
+    advisory_markers: 0
   routing:
   - web-backend/rules/codex/AGENTS.md
   - web-backend/rules/cursor/40-operability.mdc
@@ -873,12 +902,12 @@ rules:
   - web-backend/rules/scripts/validate-rules-package.py
 - id: CR-BE-023
   stack: backend
-  title: Quality Gates and CI Rules
+  title: 质量门禁与 CI 规则
   path: web-backend/rules/shared/23-quality-gates.md
   owner_role: Backend owner
-  strength:
-    required_markers: 22
-    recommended_markers: 3
+  wording_stats:
+    normative_markers: 26
+    advisory_markers: 3
   routing:
   - web-backend/rules/codex/AGENTS.md
   - web-backend/rules/cursor/16-quality-gates.mdc
@@ -890,12 +919,12 @@ rules:
   - web-backend/rules/scripts/validate-rules-package.py
 - id: CR-BE-024
   stack: backend
-  title: Data Access, Tenancy, and Cache Rules
+  title: 数据访问、租户与缓存规则
   path: web-backend/rules/shared/24-data-access-cache.md
   owner_role: Backend owner
-  strength:
-    required_markers: 15
-    recommended_markers: 0
+  wording_stats:
+    normative_markers: 15
+    advisory_markers: 0
   routing:
   - web-backend/rules/codex/AGENTS.md
   - web-backend/rules/cursor/17-data-access-cache.mdc
@@ -910,12 +939,12 @@ rules:
   - web-backend/rules/scripts/validate-rules-package.py
 - id: CR-BE-025
   stack: backend
-  title: Jobs and Scheduling Rules
+  title: 任务与调度规则
   path: web-backend/rules/shared/25-jobs-scheduling.md
   owner_role: Backend owner
-  strength:
-    required_markers: 10
-    recommended_markers: 0
+  wording_stats:
+    normative_markers: 15
+    advisory_markers: 0
   routing:
   - web-backend/rules/codex/AGENTS.md
   - web-backend/rules/cursor/18-jobs-scheduling.mdc
@@ -927,12 +956,12 @@ rules:
   - web-backend/rules/scripts/validate-rules-package.py
 - id: CR-BE-026
   stack: backend
-  title: AI Generation Rules
+  title: AI 工具安全边界
   path: web-backend/rules/shared/26-ai-generation.md
   owner_role: Backend owner
-  strength:
-    required_markers: 10
-    recommended_markers: 0
+  wording_stats:
+    normative_markers: 3
+    advisory_markers: 0
   routing:
   - web-backend/rules/codex/AGENTS.md
   - web-backend/rules/cursor/00-project-overview.mdc
@@ -943,12 +972,12 @@ rules:
   - web-backend/rules/scripts/validate-rules-package.py
 - id: CR-BE-027
   stack: backend
-  title: Audit Log Rules
+  title: 审计日志规则
   path: web-backend/rules/shared/27-audit-log.md
   owner_role: Backend owner
-  strength:
-    required_markers: 9
-    recommended_markers: 1
+  wording_stats:
+    normative_markers: 9
+    advisory_markers: 1
   routing:
   - web-backend/rules/codex/AGENTS.md
   - web-backend/rules/cursor/19-audit-log.mdc
@@ -957,16 +986,17 @@ rules:
   - B33
   - B43
   - B59
+  - B70
   verification:
   - web-backend/rules/scripts/validate-rules-package.py
 - id: CR-BE-028
   stack: backend
-  title: External Integration Rules
+  title: 外部集成规则
   path: web-backend/rules/shared/28-external-integration.md
   owner_role: Backend owner
-  strength:
-    required_markers: 12
-    recommended_markers: 0
+  wording_stats:
+    normative_markers: 21
+    advisory_markers: 0
   routing:
   - web-backend/rules/codex/AGENTS.md
   - web-backend/rules/cursor/05-service-transaction.mdc
@@ -980,12 +1010,12 @@ rules:
   - web-backend/rules/scripts/validate-rules-package.py
 - id: CR-BE-029
   stack: backend
-  title: Data Privacy & Lifecycle
+  title: 数据隐私与生命周期规则
   path: web-backend/rules/shared/29-data-privacy-lifecycle.md
   owner_role: Backend owner
-  strength:
-    required_markers: 8
-    recommended_markers: 0
+  wording_stats:
+    normative_markers: 8
+    advisory_markers: 0
   routing:
   - web-backend/rules/codex/AGENTS.md
   - web-backend/rules/cursor/21-data-privacy-lifecycle.mdc
@@ -997,12 +1027,12 @@ rules:
   - web-backend/rules/scripts/validate-rules-package.py
 - id: CR-BE-030
   stack: backend
-  title: Ownership and ADR
+  title: 归属与 ADR 规则
   path: web-backend/rules/shared/30-ownership-adr.md
   owner_role: Backend owner
-  strength:
-    required_markers: 9
-    recommended_markers: 1
+  wording_stats:
+    normative_markers: 9
+    advisory_markers: 1
   routing:
   - web-backend/rules/codex/AGENTS.md
   - web-backend/rules/cursor/22-ownership-adr.mdc
@@ -1016,12 +1046,12 @@ rules:
   - web-backend/rules/scripts/validate-rules-package.py
 - id: CR-BE-031
   stack: backend
-  title: Production Data Operations
+  title: 生产数据操作规则
   path: web-backend/rules/shared/31-production-data-ops.md
   owner_role: Backend owner
-  strength:
-    required_markers: 17
-    recommended_markers: 0
+  wording_stats:
+    normative_markers: 25
+    advisory_markers: 0
   routing:
   - web-backend/rules/codex/AGENTS.md
   - web-backend/rules/cursor/23-production-data-ops.mdc
@@ -1033,29 +1063,30 @@ rules:
   - web-backend/rules/scripts/validate-rules-package.py
 - id: CR-BE-032
   stack: backend
-  title: Service Reliability
+  title: 服务可靠性规则
   path: web-backend/rules/shared/32-service-reliability.md
   owner_role: Backend owner
-  strength:
-    required_markers: 8
-    recommended_markers: 1
+  wording_stats:
+    normative_markers: 10
+    advisory_markers: 1
   routing:
   - web-backend/rules/codex/04-security-integration.md
   - web-backend/rules/codex/AGENTS.md
   - web-backend/rules/cursor/24-service-reliability.mdc
   eval_cases:
+  - B36
   - B42
   - B54
   verification:
   - web-backend/rules/scripts/validate-rules-package.py
 - id: CR-BE-033
   stack: backend
-  title: Alternate API Paradigms（GraphQL / gRPC / WebSocket / SSE）
+  title: 其他 API 范式（GraphQL / gRPC / WebSocket / SSE）
   path: web-backend/rules/shared/33-alternate-api-paradigms.md
   owner_role: Backend owner
-  strength:
-    required_markers: 5
-    recommended_markers: 0
+  wording_stats:
+    normative_markers: 5
+    advisory_markers: 0
   routing:
   - web-backend/rules/codex/02-api-implementation.md
   - web-backend/rules/codex/AGENTS.md
@@ -1066,12 +1097,12 @@ rules:
   - web-backend/rules/scripts/validate-rules-package.py
 - id: CR-BE-034
   stack: backend
-  title: Data Archival & Cold / Hot Tiering
+  title: 数据归档与冷热分层规则
   path: web-backend/rules/shared/34-data-archival.md
   owner_role: Backend owner
-  strength:
-    required_markers: 3
-    recommended_markers: 0
+  wording_stats:
+    normative_markers: 3
+    advisory_markers: 0
   routing:
   - web-backend/rules/codex/AGENTS.md
   - web-backend/rules/cursor/26-data-archival.mdc
@@ -1081,12 +1112,12 @@ rules:
   - web-backend/rules/scripts/validate-rules-package.py
 - id: CR-BE-035
   stack: backend
-  title: Threat Modeling
+  title: 威胁建模规则
   path: web-backend/rules/shared/35-threat-modeling.md
   owner_role: Backend owner
-  strength:
-    required_markers: 3
-    recommended_markers: 0
+  wording_stats:
+    normative_markers: 3
+    advisory_markers: 0
   routing:
   - web-backend/rules/codex/AGENTS.md
   - web-backend/rules/cursor/27-threat-modeling.mdc
@@ -1098,12 +1129,12 @@ rules:
   - web-backend/rules/scripts/validate-rules-package.py
 - id: CR-BE-036
   stack: backend
-  title: Crypto and Key Management
+  title: 密码学与密钥管理规则
   path: web-backend/rules/shared/36-crypto-key-management.md
   owner_role: Backend owner
-  strength:
-    required_markers: 11
-    recommended_markers: 0
+  wording_stats:
+    normative_markers: 11
+    advisory_markers: 0
   routing:
   - web-backend/rules/codex/AGENTS.md
   - web-backend/rules/cursor/28-crypto-key-management.mdc
@@ -1113,28 +1144,29 @@ rules:
   - web-backend/rules/scripts/validate-rules-package.py
 - id: CR-BE-037
   stack: backend
-  title: Service-to-Service Authentication
+  title: 服务间身份认证规则
   path: web-backend/rules/shared/37-service-to-service-auth.md
   owner_role: Backend owner
-  strength:
-    required_markers: 10
-    recommended_markers: 0
+  wording_stats:
+    normative_markers: 11
+    advisory_markers: 0
   routing:
   - web-backend/rules/codex/AGENTS.md
   - web-backend/rules/cursor/29-service-to-service-auth.mdc
   eval_cases:
   - B43
   - B45
+  - B47
   verification:
   - web-backend/rules/scripts/validate-rules-package.py
 - id: CR-BE-038
   stack: backend
-  title: Cloud Native Runtime
+  title: 云原生运行时规则
   path: web-backend/rules/shared/38-cloud-native-runtime.md
   owner_role: Backend owner
-  strength:
-    required_markers: 7
-    recommended_markers: 1
+  wording_stats:
+    normative_markers: 7
+    advisory_markers: 1
   routing:
   - web-backend/rules/cursor/30-cloud-native-runtime.mdc
   eval_cases:
@@ -1143,28 +1175,30 @@ rules:
   - web-backend/rules/scripts/validate-rules-package.py
 - id: CR-BE-039
   stack: backend
-  title: Event and Message Contracts
+  title: 事件与消息契约规则
   path: web-backend/rules/shared/39-event-contracts.md
   owner_role: Backend owner
-  strength:
-    required_markers: 7
-    recommended_markers: 1
+  wording_stats:
+    normative_markers: 11
+    advisory_markers: 1
   routing:
   - web-backend/rules/codex/AGENTS.md
   - web-backend/rules/cursor/31-event-contracts.mdc
   eval_cases:
   - B47
+  - B69
   verification:
   - web-backend/rules/scripts/validate-rules-package.py
 - id: CR-BE-040
   stack: backend
-  title: Money, Time, and Precision
+  title: 金额、时间与精度规则
   path: web-backend/rules/shared/40-money-time-precision.md
   owner_role: Backend owner
-  strength:
-    required_markers: 8
-    recommended_markers: 1
+  wording_stats:
+    normative_markers: 9
+    advisory_markers: 0
   routing:
+  - web-backend/rules/codex/AGENTS.md
   - web-backend/rules/cursor/32-money-time-precision.mdc
   eval_cases:
   - B48
@@ -1172,13 +1206,14 @@ rules:
   - web-backend/rules/scripts/validate-rules-package.py
 - id: CR-BE-041
   stack: backend
-  title: Dictionary and State Machine
+  title: 字典与状态机规则
   path: web-backend/rules/shared/41-dictionary-state-machine.md
   owner_role: Backend owner
-  strength:
-    required_markers: 7
-    recommended_markers: 0
+  wording_stats:
+    normative_markers: 7
+    advisory_markers: 0
   routing:
+  - web-backend/rules/codex/AGENTS.md
   - web-backend/rules/cursor/33-dictionary-state-machine.mdc
   eval_cases:
   - B49
@@ -1186,14 +1221,15 @@ rules:
   - web-backend/rules/scripts/validate-rules-package.py
 - id: CR-BE-042
   stack: backend
-  title: Cost Governance
+  title: 成本治理规则
   path: web-backend/rules/shared/42-cost-governance.md
   owner_role: Backend owner
-  strength:
-    required_markers: 4
-    recommended_markers: 1
+  wording_stats:
+    normative_markers: 4
+    advisory_markers: 1
   routing:
   - web-backend/rules/codex/AGENTS.md
+  - web-backend/rules/cursor/13-pagination-query.mdc
   - web-backend/rules/cursor/34-cost-governance.mdc
   eval_cases:
   - B50
@@ -1201,12 +1237,12 @@ rules:
   - web-backend/rules/scripts/validate-rules-package.py
 - id: CR-BE-043
   stack: backend
-  title: Business Module Extension Rules
+  title: 业务模块扩展规则
   path: web-backend/rules/shared/43-business-module-extension.md
   owner_role: Backend owner
-  strength:
-    required_markers: 16
-    recommended_markers: 0
+  wording_stats:
+    normative_markers: 24
+    advisory_markers: 0
   routing:
   - web-backend/rules/codex/AGENTS.md
   - web-backend/rules/cursor/35-business-module-extension.mdc
@@ -1221,16 +1257,17 @@ rules:
   - B61
   - B62
   - B63
+  - B69
   verification:
   - web-backend/rules/scripts/validate-rules-package.py
 - id: CR-MA-000
   stack: miniapp
-  title: 00 Must Follow
+  title: 必须遵守的规则（小程序）
   path: miniapp/rules/shared/00-must-follow.md
   owner_role: Miniapp owner
-  strength:
-    required_markers: 1
-    recommended_markers: 0
+  wording_stats:
+    normative_markers: 1
+    advisory_markers: 0
   routing:
   - miniapp/rules/codex/05-verification.md
   - miniapp/rules/codex/AGENTS.md
@@ -1241,12 +1278,12 @@ rules:
   - miniapp/rules/scripts/validate-rules-package.py
 - id: CR-MA-001
   stack: miniapp
-  title: 01 Project Structure
+  title: 项目结构规则
   path: miniapp/rules/shared/01-project-structure.md
   owner_role: Miniapp owner
-  strength:
-    required_markers: 7
-    recommended_markers: 1
+  wording_stats:
+    normative_markers: 7
+    advisory_markers: 1
   routing:
   - miniapp/rules/codex/AGENTS.md
   - miniapp/rules/cursor/00-project-overview.mdc
@@ -1256,12 +1293,12 @@ rules:
   - miniapp/rules/scripts/validate-rules-package.py
 - id: CR-MA-002
   stack: miniapp
-  title: 02 Naming
+  title: 命名规则
   path: miniapp/rules/shared/02-naming.md
   owner_role: Miniapp owner
-  strength:
-    required_markers: 4
-    recommended_markers: 1
+  wording_stats:
+    normative_markers: 4
+    advisory_markers: 1
   routing:
   - miniapp/rules/codex/AGENTS.md
   - miniapp/rules/cursor/00-project-overview.mdc
@@ -1273,12 +1310,12 @@ rules:
   - miniapp/rules/scripts/validate-rules-package.py
 - id: CR-MA-003
   stack: miniapp
-  title: 03 Vue3 TypeScript uni-app
+  title: Vue 3、TypeScript 与 uni-app 规则
   path: miniapp/rules/shared/03-vue3-typescript-uniapp.md
   owner_role: Miniapp owner
-  strength:
-    required_markers: 11
-    recommended_markers: 0
+  wording_stats:
+    normative_markers: 11
+    advisory_markers: 0
   routing:
   - miniapp/rules/codex/AGENTS.md
   - miniapp/rules/cursor/02-vue3-uniapp.mdc
@@ -1291,12 +1328,12 @@ rules:
   - miniapp/rules/scripts/validate-rules-package.py
 - id: CR-MA-004
   stack: miniapp
-  title: 04 Page UI Lifecycle
+  title: 页面、UI 与生命周期规则
   path: miniapp/rules/shared/04-page-ui-lifecycle.md
   owner_role: Miniapp owner
-  strength:
-    required_markers: 8
-    recommended_markers: 2
+  wording_stats:
+    normative_markers: 8
+    advisory_markers: 2
   routing:
   - miniapp/rules/codex/AGENTS.md
   - miniapp/rules/cursor/02-vue3-uniapp.mdc
@@ -1310,12 +1347,12 @@ rules:
   - miniapp/rules/scripts/validate-rules-package.py
 - id: CR-MA-005
   stack: miniapp
-  title: 05 API Contract Request
+  title: API 契约与请求规则
   path: miniapp/rules/shared/05-api-contract-request.md
   owner_role: Miniapp owner
-  strength:
-    required_markers: 8
-    recommended_markers: 0
+  wording_stats:
+    normative_markers: 11
+    advisory_markers: 0
   routing:
   - miniapp/rules/codex/07-network-security.md
   - miniapp/rules/codex/AGENTS.md
@@ -1332,12 +1369,12 @@ rules:
   - miniapp/rules/scripts/validate-rules-package.py
 - id: CR-MA-006
   stack: miniapp
-  title: 06 Login Auth Session
+  title: 登录、认证与会话规则
   path: miniapp/rules/shared/06-login-auth-session.md
   owner_role: Miniapp owner
-  strength:
-    required_markers: 15
-    recommended_markers: 0
+  wording_stats:
+    normative_markers: 15
+    advisory_markers: 0
   routing:
   - miniapp/rules/codex/AGENTS.md
   - miniapp/rules/cursor/05-api-auth.mdc
@@ -1353,12 +1390,12 @@ rules:
   - miniapp/rules/scripts/validate-rules-package.py
 - id: CR-MA-007
   stack: miniapp
-  title: 07 Pages Routing Subpackages
+  title: 页面路由与分包规则
   path: miniapp/rules/shared/07-pages-routing-subpackages.md
   owner_role: Miniapp owner
-  strength:
-    required_markers: 7
-    recommended_markers: 0
+  wording_stats:
+    normative_markers: 7
+    advisory_markers: 0
   routing:
   - miniapp/rules/codex/AGENTS.md
   - miniapp/rules/cursor/07-pages-subpackages.mdc
@@ -1373,12 +1410,12 @@ rules:
   - miniapp/rules/scripts/validate-rules-package.py
 - id: CR-MA-008
   stack: miniapp
-  title: 08 State Storage Cache
+  title: 状态、存储与缓存规则
   path: miniapp/rules/shared/08-state-storage-cache.md
   owner_role: Miniapp owner
-  strength:
-    required_markers: 13
-    recommended_markers: 0
+  wording_stats:
+    normative_markers: 13
+    advisory_markers: 0
   routing:
   - miniapp/rules/codex/AGENTS.md
   - miniapp/rules/cursor/08-state-storage.mdc
@@ -1388,12 +1425,12 @@ rules:
   - miniapp/rules/scripts/validate-rules-package.py
 - id: CR-MA-009
   stack: miniapp
-  title: 09 Privacy Permission
+  title: 隐私与权限规则
   path: miniapp/rules/shared/09-privacy-permission.md
   owner_role: Miniapp owner
-  strength:
-    required_markers: 9
-    recommended_markers: 0
+  wording_stats:
+    normative_markers: 9
+    advisory_markers: 0
   routing:
   - miniapp/rules/codex/AGENTS.md
   - miniapp/rules/cursor/00-project-overview.mdc
@@ -1411,12 +1448,12 @@ rules:
   - miniapp/rules/scripts/validate-rules-package.py
 - id: CR-MA-010
   stack: miniapp
-  title: 10 Performance Package Size
+  title: 性能与包体积规则
   path: miniapp/rules/shared/10-performance-package-size.md
   owner_role: Miniapp owner
-  strength:
-    required_markers: 21
-    recommended_markers: 1
+  wording_stats:
+    normative_markers: 21
+    advisory_markers: 1
   routing:
   - miniapp/rules/codex/AGENTS.md
   - miniapp/rules/cursor/00-project-overview.mdc
@@ -1432,12 +1469,12 @@ rules:
   - miniapp/rules/scripts/validate-rules-package.py
 - id: CR-MA-011
   stack: miniapp
-  title: 11 Platform Differences
+  title: 平台差异规则
   path: miniapp/rules/shared/11-platform-differences.md
   owner_role: Miniapp owner
-  strength:
-    required_markers: 16
-    recommended_markers: 0
+  wording_stats:
+    normative_markers: 16
+    advisory_markers: 0
   routing:
   - miniapp/rules/codex/AGENTS.md
   - miniapp/rules/cursor/00-project-overview.mdc
@@ -1450,30 +1487,32 @@ rules:
   - miniapp/rules/scripts/validate-rules-package.py
 - id: CR-MA-012
   stack: miniapp
-  title: 12 List Form Pagination
+  title: 列表、表单与分页规则
   path: miniapp/rules/shared/12-list-form-pagination.md
   owner_role: Miniapp owner
-  strength:
-    required_markers: 7
-    recommended_markers: 0
+  wording_stats:
+    normative_markers: 21
+    advisory_markers: 0
   routing:
   - miniapp/rules/codex/AGENTS.md
   - miniapp/rules/cursor/00-project-overview.mdc
   - miniapp/rules/cursor/02-vue3-uniapp.mdc
   - miniapp/rules/cursor/12-list-form-pagination.mdc
   eval_cases:
+  - M15
   - M18
   - M25
+  - M52
   verification:
   - miniapp/rules/scripts/validate-rules-package.py
 - id: CR-MA-013
   stack: miniapp
-  title: 13 Upload Download Media
+  title: 上传、下载与媒体规则
   path: miniapp/rules/shared/13-upload-download-media.md
   owner_role: Miniapp owner
-  strength:
-    required_markers: 8
-    recommended_markers: 0
+  wording_stats:
+    normative_markers: 8
+    advisory_markers: 0
   routing:
   - miniapp/rules/codex/AGENTS.md
   - miniapp/rules/cursor/13-upload-media.mdc
@@ -1483,12 +1522,12 @@ rules:
   - miniapp/rules/scripts/validate-rules-package.py
 - id: CR-MA-014
   stack: miniapp
-  title: 14 Payment Subscribe Share
+  title: 支付、订阅与分享规则
   path: miniapp/rules/shared/14-payment-subscribe-share.md
   owner_role: Miniapp owner
-  strength:
-    required_markers: 10
-    recommended_markers: 0
+  wording_stats:
+    normative_markers: 10
+    advisory_markers: 0
   routing:
   - miniapp/rules/codex/AGENTS.md
   - miniapp/rules/cursor/00-project-overview.mdc
@@ -1502,17 +1541,16 @@ rules:
   - M26
   - M27
   - M34
-  - M52
   verification:
   - miniapp/rules/scripts/validate-rules-package.py
 - id: CR-MA-015
   stack: miniapp
-  title: 15 Logging Observability
+  title: 日志与可观测规则
   path: miniapp/rules/shared/15-logging-observability.md
   owner_role: Miniapp owner
-  strength:
-    required_markers: 6
-    recommended_markers: 1
+  wording_stats:
+    normative_markers: 6
+    advisory_markers: 1
   routing:
   - miniapp/rules/codex/AGENTS.md
   - miniapp/rules/cursor/00-project-overview.mdc
@@ -1525,12 +1563,12 @@ rules:
   - miniapp/rules/scripts/validate-rules-package.py
 - id: CR-MA-016
   stack: miniapp
-  title: 16 Testing Quality Gates
+  title: 测试与质量门禁规则
   path: miniapp/rules/shared/16-testing-quality-gates.md
   owner_role: Miniapp owner
-  strength:
-    required_markers: 9
-    recommended_markers: 3
+  wording_stats:
+    normative_markers: 9
+    advisory_markers: 3
   routing:
   - miniapp/rules/codex/AGENTS.md
   - miniapp/rules/cursor/02-vue3-uniapp.mdc
@@ -1545,12 +1583,12 @@ rules:
   - miniapp/rules/scripts/validate-rules-package.py
 - id: CR-MA-017
   stack: miniapp
-  title: 17 AI Generation
+  title: AI 生成规则
   path: miniapp/rules/shared/17-ai-generation.md
   owner_role: Miniapp owner
-  strength:
-    required_markers: 13
-    recommended_markers: 0
+  wording_stats:
+    normative_markers: 13
+    advisory_markers: 0
   routing:
   - miniapp/rules/codex/AGENTS.md
   - miniapp/rules/cursor/00-project-overview.mdc
@@ -1561,12 +1599,12 @@ rules:
   - miniapp/rules/scripts/validate-rules-package.py
 - id: CR-MA-018
   stack: miniapp
-  title: 18 Business Module Extension
+  title: 业务模块扩展规则（小程序）
   path: miniapp/rules/shared/18-business-module-extension.md
   owner_role: Miniapp owner
-  strength:
-    required_markers: 8
-    recommended_markers: 0
+  wording_stats:
+    normative_markers: 8
+    advisory_markers: 0
   routing:
   - miniapp/rules/codex/AGENTS.md
   - miniapp/rules/cursor/00-project-overview.mdc
@@ -1577,12 +1615,12 @@ rules:
   - miniapp/rules/scripts/validate-rules-package.py
 - id: CR-MA-019
   stack: miniapp
-  title: 19 Release Ops
+  title: 发布与运维规则
   path: miniapp/rules/shared/19-release-ops.md
   owner_role: Miniapp owner
-  strength:
-    required_markers: 9
-    recommended_markers: 0
+  wording_stats:
+    normative_markers: 9
+    advisory_markers: 0
   routing:
   - miniapp/rules/codex/AGENTS.md
   - miniapp/rules/cursor/16-quality-gates.mdc
@@ -1594,12 +1632,12 @@ rules:
   - miniapp/rules/scripts/validate-rules-package.py
 - id: CR-MA-020
   stack: miniapp
-  title: 20 App Runtime
+  title: 应用运行时规则
   path: miniapp/rules/shared/20-app-runtime.md
   owner_role: Miniapp owner
-  strength:
-    required_markers: 14
-    recommended_markers: 0
+  wording_stats:
+    normative_markers: 14
+    advisory_markers: 0
   routing:
   - miniapp/rules/codex/06-app-runtime.md
   - miniapp/rules/codex/AGENTS.md
@@ -1613,12 +1651,12 @@ rules:
   - miniapp/rules/scripts/validate-rules-package.py
 - id: CR-MA-021
   stack: miniapp
-  title: 21 Network Security
+  title: 网络安全规则
   path: miniapp/rules/shared/21-network-security.md
   owner_role: Miniapp owner
-  strength:
-    required_markers: 12
-    recommended_markers: 0
+  wording_stats:
+    normative_markers: 12
+    advisory_markers: 0
   routing:
   - miniapp/rules/codex/07-network-security.md
   - miniapp/rules/codex/AGENTS.md
@@ -1634,29 +1672,31 @@ rules:
   - miniapp/rules/scripts/validate-rules-package.py
 - id: CR-MA-022
   stack: miniapp
-  title: 22 Error Recovery Offline
+  title: 错误恢复与离线规则
   path: miniapp/rules/shared/22-error-recovery-offline.md
   owner_role: Miniapp owner
-  strength:
-    required_markers: 10
-    recommended_markers: 1
+  wording_stats:
+    normative_markers: 17
+    advisory_markers: 1
   routing:
   - miniapp/rules/codex/08-error-recovery.md
   - miniapp/rules/codex/AGENTS.md
   - miniapp/rules/cursor/22-error-recovery.mdc
   eval_cases:
+  - M25
   - M35
   - M36
+  - M52
   verification:
   - miniapp/rules/scripts/validate-rules-package.py
 - id: CR-MA-023
   stack: miniapp
-  title: 23 Content Safety
+  title: 内容安全规则
   path: miniapp/rules/shared/23-content-safety.md
   owner_role: Miniapp owner
-  strength:
-    required_markers: 6
-    recommended_markers: 0
+  wording_stats:
+    normative_markers: 6
+    advisory_markers: 0
   routing:
   - miniapp/rules/codex/09-content-safety.md
   - miniapp/rules/codex/AGENTS.md
@@ -1668,12 +1708,12 @@ rules:
   - miniapp/rules/scripts/validate-rules-package.py
 - id: CR-MA-024
   stack: miniapp
-  title: 24 Design System Mobile
+  title: 移动端设计系统规则
   path: miniapp/rules/shared/24-design-system-mobile.md
   owner_role: Miniapp owner
-  strength:
-    required_markers: 6
-    recommended_markers: 2
+  wording_stats:
+    normative_markers: 6
+    advisory_markers: 2
   routing:
   - miniapp/rules/codex/AGENTS.md
   - miniapp/rules/cursor/02-vue3-uniapp.mdc
@@ -1686,12 +1726,12 @@ rules:
   - miniapp/rules/scripts/validate-rules-package.py
 - id: CR-MA-025
   stack: miniapp
-  title: 25 Dependency Supply Chain
+  title: 依赖与供应链规则
   path: miniapp/rules/shared/25-dependency-supply-chain.md
   owner_role: Miniapp owner
-  strength:
-    required_markers: 5
-    recommended_markers: 1
+  wording_stats:
+    normative_markers: 5
+    advisory_markers: 1
   routing:
   - miniapp/rules/codex/AGENTS.md
   - miniapp/rules/cursor/00-project-overview.mdc
@@ -1705,12 +1745,12 @@ rules:
   - miniapp/rules/scripts/validate-rules-package.py
 - id: CR-MA-026
   stack: miniapp
-  title: 26 Security Hardening Risk
+  title: 安全加固与风险规则
   path: miniapp/rules/shared/26-security-hardening-risk.md
   owner_role: Miniapp owner
-  strength:
-    required_markers: 20
-    recommended_markers: 0
+  wording_stats:
+    normative_markers: 20
+    advisory_markers: 0
   routing:
   - miniapp/rules/codex/AGENTS.md
   - miniapp/rules/cursor/00-project-overview.mdc

@@ -1,4 +1,4 @@
-# Dependency Governance
+# 依赖治理规则
 
 ## 引入与评审
 

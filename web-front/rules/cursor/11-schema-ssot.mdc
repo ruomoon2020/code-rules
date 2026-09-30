@@ -1,5 +1,5 @@
 ---
-description: API / 表单 / 表格字段须以 schema 为唯一来源
+description: API / 表单 / 表格字段须以 OpenAPI 权威契约为唯一来源
 globs:
   - "src/views/**/*.vue"
   - "src/api/**/*.ts"
@@ -8,12 +8,12 @@ globs:
 alwaysApply: false
 ---
 
-# Schema SSOT
+# OpenAPI 契约 SSOT
 
 写字段、表单、表格、API 前必读：**`rules/shared/12-schema-ssot.md`**。
 
 要点：
 
-- 先读 `contracts/schema.json` 与 `src/api/generated`
-- 禁止添加 schema 中不存在的字段
-- 禁止手改 generated；枚举须有 unknown fallback
+- 先读权威契约 `contracts/openapi.yaml`，再核对同步后的 `contracts/schema.json` 与 `src/api/generated`
+- 字段只来自 `contracts/openapi.yaml`；禁止通过手改生成物补字段
+- 禁止手改生成的 schema / client；枚举须有 unknown fallback

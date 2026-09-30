@@ -30,7 +30,7 @@ alwaysApply: true
 | 测试 / CI | `08-quality-testing.mdc` |
 | 生产发布 / 灰度 / 回滚 | `common-governance/docs/environment-promotion.md`、`common-governance/docs/release-evidence.md` |
 | 生产事故 / 复盘 | `common-governance/docs/incident-response.md`、`common-governance/docs/incident-postmortem-template.md` |
-| 列表 / schema / Base | `10` / `11` / `13`；路由权限见 `06` 相关规则 |
+| Base / schema / 列表 | `10-base-components.mdc` / `11-schema-ssot.mdc` / `13-list-pagination.mdc`；API 与路由权限见 `05-api-state-error.mdc` |
 
 ## 落地要求
 
@@ -38,7 +38,7 @@ alwaysApply: true
 
 ## 核心约束
 
-- `src/views/**` 使用 Base 组件与 schema / generated 类型
+- `src/views/**` 使用 Base 组件，以及 `contracts/openapi.yaml` 同步生成的类型；不得手改生成物
 - 禁止原生 Element Plus（`el-*` 与 denylist 内 `<El*>`）、禁止虚构字段与 Base API
 - 写 views 前读 `rules/shared/11-base-components-context.md`、`rules/shared/19-list-pagination.md`（列表页）
 - 写字段前读 `rules/shared/12-schema-ssot.md`

@@ -1,0 +1,31 @@
+# Owner review for the example contract's 1.0 -> 2.0 migration only.
+# Owner: @ruomoon2020. Owner approval must be recorded on the PR before merge.
+# These are not generally backward compatible: generated clients must migrate before server cutover.
+# Six newly exposed error codes affect four GET responses; the create request no longer accepts
+# Idempotency-Key or status. Remove this file when the 2.0 baseline is released.
+GET /api/v1/system/audit-logs added the new `ACCESS_DENIED` enum value to the `allOf[#/components/schemas/ApiResultBase]/errorCode/allOf[#/components/schemas/BusinessErrorCode]/` response property for the response status `200`
+GET /api/v1/system/audit-logs added the new `INVALID_SORT_FIELD` enum value to the `allOf[#/components/schemas/ApiResultBase]/errorCode/allOf[#/components/schemas/BusinessErrorCode]/` response property for the response status `200`
+GET /api/v1/system/audit-logs added the new `NOT_FOUND` enum value to the `allOf[#/components/schemas/ApiResultBase]/errorCode/allOf[#/components/schemas/BusinessErrorCode]/` response property for the response status `200`
+GET /api/v1/system/audit-logs added the new `RATE_LIMITED` enum value to the `allOf[#/components/schemas/ApiResultBase]/errorCode/allOf[#/components/schemas/BusinessErrorCode]/` response property for the response status `200`
+GET /api/v1/system/audit-logs added the new `UNAUTHENTICATED` enum value to the `allOf[#/components/schemas/ApiResultBase]/errorCode/allOf[#/components/schemas/BusinessErrorCode]/` response property for the response status `200`
+GET /api/v1/system/audit-logs added the new `VALIDATION_FAILED` enum value to the `allOf[#/components/schemas/ApiResultBase]/errorCode/allOf[#/components/schemas/BusinessErrorCode]/` response property for the response status `200`
+GET /api/v1/system/audit-logs/{id} added the new `ACCESS_DENIED` enum value to the `allOf[#/components/schemas/ApiResultBase]/errorCode/allOf[#/components/schemas/BusinessErrorCode]/` response property for the response status `200`
+GET /api/v1/system/audit-logs/{id} added the new `INVALID_SORT_FIELD` enum value to the `allOf[#/components/schemas/ApiResultBase]/errorCode/allOf[#/components/schemas/BusinessErrorCode]/` response property for the response status `200`
+GET /api/v1/system/audit-logs/{id} added the new `NOT_FOUND` enum value to the `allOf[#/components/schemas/ApiResultBase]/errorCode/allOf[#/components/schemas/BusinessErrorCode]/` response property for the response status `200`
+GET /api/v1/system/audit-logs/{id} added the new `RATE_LIMITED` enum value to the `allOf[#/components/schemas/ApiResultBase]/errorCode/allOf[#/components/schemas/BusinessErrorCode]/` response property for the response status `200`
+GET /api/v1/system/audit-logs/{id} added the new `UNAUTHENTICATED` enum value to the `allOf[#/components/schemas/ApiResultBase]/errorCode/allOf[#/components/schemas/BusinessErrorCode]/` response property for the response status `200`
+GET /api/v1/system/audit-logs/{id} added the new `VALIDATION_FAILED` enum value to the `allOf[#/components/schemas/ApiResultBase]/errorCode/allOf[#/components/schemas/BusinessErrorCode]/` response property for the response status `200`
+GET /api/v1/system/users added the new `ACCESS_DENIED` enum value to the `allOf[#/components/schemas/ApiResultBase]/errorCode/allOf[#/components/schemas/BusinessErrorCode]/` response property for the response status `200`
+GET /api/v1/system/users added the new `INVALID_SORT_FIELD` enum value to the `allOf[#/components/schemas/ApiResultBase]/errorCode/allOf[#/components/schemas/BusinessErrorCode]/` response property for the response status `200`
+GET /api/v1/system/users added the new `NOT_FOUND` enum value to the `allOf[#/components/schemas/ApiResultBase]/errorCode/allOf[#/components/schemas/BusinessErrorCode]/` response property for the response status `200`
+GET /api/v1/system/users added the new `RATE_LIMITED` enum value to the `allOf[#/components/schemas/ApiResultBase]/errorCode/allOf[#/components/schemas/BusinessErrorCode]/` response property for the response status `200`
+GET /api/v1/system/users added the new `UNAUTHENTICATED` enum value to the `allOf[#/components/schemas/ApiResultBase]/errorCode/allOf[#/components/schemas/BusinessErrorCode]/` response property for the response status `200`
+GET /api/v1/system/users added the new `VALIDATION_FAILED` enum value to the `allOf[#/components/schemas/ApiResultBase]/errorCode/allOf[#/components/schemas/BusinessErrorCode]/` response property for the response status `200`
+POST /api/v1/system/users deleted the `header` request parameter `idempotency-key`
+POST /api/v1/system/users removed the request property `status`
+GET /api/v1/system/users/{id} added the new `ACCESS_DENIED` enum value to the `allOf[#/components/schemas/ApiResultBase]/errorCode/allOf[#/components/schemas/BusinessErrorCode]/` response property for the response status `200`
+GET /api/v1/system/users/{id} added the new `INVALID_SORT_FIELD` enum value to the `allOf[#/components/schemas/ApiResultBase]/errorCode/allOf[#/components/schemas/BusinessErrorCode]/` response property for the response status `200`
+GET /api/v1/system/users/{id} added the new `NOT_FOUND` enum value to the `allOf[#/components/schemas/ApiResultBase]/errorCode/allOf[#/components/schemas/BusinessErrorCode]/` response property for the response status `200`
+GET /api/v1/system/users/{id} added the new `RATE_LIMITED` enum value to the `allOf[#/components/schemas/ApiResultBase]/errorCode/allOf[#/components/schemas/BusinessErrorCode]/` response property for the response status `200`
+GET /api/v1/system/users/{id} added the new `UNAUTHENTICATED` enum value to the `allOf[#/components/schemas/ApiResultBase]/errorCode/allOf[#/components/schemas/BusinessErrorCode]/` response property for the response status `200`
+GET /api/v1/system/users/{id} added the new `VALIDATION_FAILED` enum value to the `allOf[#/components/schemas/ApiResultBase]/errorCode/allOf[#/components/schemas/BusinessErrorCode]/` response property for the response status `200`

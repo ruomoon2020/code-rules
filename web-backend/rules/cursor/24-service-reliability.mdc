@@ -9,6 +9,6 @@ alwaysApply: false
 
 # 服务可靠性
 
-SLO、错误预算、熔断降级、RTO/RPO、告警与复盘。
+SLO、错误预算、端到端截止时间、舱壁与批量异步化、熔断降级、RTO/RPO、告警与复盘。
 
 全文：`rules/shared/32-service-reliability.md`

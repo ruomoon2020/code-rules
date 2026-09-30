@@ -1,4 +1,4 @@
-# 15 Logging Observability
+# 日志与可观测规则
 
 ## 结构化日志
 

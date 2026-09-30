@@ -1,4 +1,4 @@
-# 14 Payment Subscribe Share
+# 支付、订阅与分享规则
 
 ## 支付
 

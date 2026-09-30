@@ -8,6 +8,7 @@ public record UserDetailResponse(
         String status,
         String email,
         String phoneMasked,
-        Instant createdAt
+        Instant createdAt,
+        Integer version
 ) {
 }

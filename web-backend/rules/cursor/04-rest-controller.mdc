@@ -10,6 +10,7 @@ alwaysApply: false
 # Controller
 
 - 仅 DTO 入出；`@Valid`；禁止 Entity、禁止注入 Mapper。
-- OpenAPI 为先。
+- OpenAPI 为先；路径 ID 使用 `string`，避免前端 JavaScript 精度丢失。
+- 创建响应返回初始 `version`，更新响应返回递增后的 `version`。更新和删除请求必须携带客户端打开详情时保存的当前 `version`；服务端不得重新查询最新版本并覆盖该前置条件。
 
-全文：`rules/shared/04-rest-api-design.md`、`rules/shared/12-dto-mapping.md`
+全文：`rules/shared/04-rest-api-design.md`、`rules/shared/05-openapi-contract.md`、`rules/shared/12-dto-mapping.md`、`rules/shared/18-idempotency-concurrency.md`

@@ -9,7 +9,7 @@ alwaysApply: true
 - 业务扩展页面：`src/views/crm/**`、`src/views/order/**`（示例；请替换为真实业务域，非此路径默认不按成熟后台二开）
 - Base 组件：`src/components/base`
 - API generated：`src/api/generated`（禁止手改）
-- 契约：`contracts/schema.json` 或 `contracts/openapi.yaml`
+- 权威契约：`contracts/openapi.yaml`；生成 schema：`contracts/schema.json`（若项目使用，禁止手改）
 - 成熟后台二开：读 `shared/22` + `docs/business-feature-playbook-frontend.md`；Cursor 命中 `18-business-module-extension.mdc`
 - 仅改样式、修 bug、单字段展示或非业务域页面时，走普通 views 任务包，不强制业务扩展
 - 脚本：`pnpm lint`、`pnpm type-check`、`pnpm api:check`（以 `package.json` 为准）

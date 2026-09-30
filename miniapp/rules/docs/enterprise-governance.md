@@ -1,4 +1,4 @@
-# 企业级治理（业务仓落地）
+# 业务仓要接的治理文档
 
 > 本目录 `rules/` 侧重 **AI 编码规则**。组织级 DoD、豁免、Owner、供应链与数据分级由 `common-governance/` 独立分发；code-rules 根 `docs/` 是其维护 SSOT。
 

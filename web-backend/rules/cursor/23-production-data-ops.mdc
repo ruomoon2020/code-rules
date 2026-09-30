@@ -16,6 +16,8 @@ alwaysApply: false
 - 生产数据修复必须有工单、Owner、Reviewer、dry-run、影响行数、回滚或前滚方案。
 - 禁止无 WHERE 的生产 UPDATE / DELETE；大表 DDL 须评估锁表、复制延迟与分批策略。
 - 批量修复脚本须幂等，记录 traceId / jobId、影响行数和失败原因。
+- 有逻辑删除的表，日常修复只改未删除行。用户表样板的每条读写都带 `is_deleted = 0`。
+- 对包含 `version` 的表，手工更新和回滚均执行 `version = version + 1`，不得恢复旧版本。执行时写入 `updated_by`，回滚时恢复备份值。
 - AI 只能生成草案，必须提示人工审批，不能声称可直接生产执行。
 
 全文：`rules/shared/31-production-data-ops.md`

@@ -169,6 +169,187 @@ class CheckProjectAdoptionTests(unittest.TestCase):
 
         self.assertTrue(any("sample placeholders" in error for error in errors))
 
+    def test_backend_profiles_reject_cursor_codex_and_openapi_drift(self):
+        import tempfile
+
+        spec = importlib.util.spec_from_file_location("adoption_backend_profiles", CHECK_SCRIPT)
+        mod = importlib.util.module_from_spec(spec)
+        assert spec.loader is not None
+        spec.loader.exec_module(mod)
+
+        with tempfile.TemporaryDirectory() as tmp:
+            repo = Path(tmp)
+            local = repo / ".cursor" / "rules" / "99-project-local.mdc"
+            local.parent.mkdir(parents=True)
+            local.write_text(
+                "- 架构档：CRUD_LITE\n- 对象命名：ENTITY_REQUEST_RESPONSE\n- API 风格：GET_POST_COMPAT\n"
+                "- 租户模型：SHARED_COLUMN\n- 全局表 / 租户豁免表：NONE\n- 数据所有权清单：crm -> crm_*\n",
+                encoding="utf-8",
+            )
+            (repo / "AGENTS.md").write_text(
+                "- 架构档：CLASSIC_LAYERED\n- 对象命名：ENTITY_REQUEST_RESPONSE\n- API 风格：GET_POST_COMPAT\n"
+                "- 租户模型：SHARED_COLUMN\n- 全局表 / 租户豁免表：NONE\n- 数据所有权清单：crm -> crm_*\n",
+                encoding="utf-8",
+            )
+            contract = repo / "contracts" / "openapi.yaml"
+            contract.parent.mkdir()
+            contract.write_text("openapi: 3.0.3\nx-api-style: RESOURCE_REST\ninfo: {title: test, version: 1}\npaths: {}\n", encoding="utf-8")
+            errors: list[str] = []
+            mod.check_backend_project_profiles(repo, errors, required=True)
+
+        self.assertTrue(any("project decision drift for 架构档" in error for error in errors))
+        self.assertTrue(any("OpenAPI x-api-style drift" in error for error in errors))
+
+    def test_backend_profiles_default_api_tenancy_and_ownership_when_omitted(self):
+        import tempfile
+
+        spec = importlib.util.spec_from_file_location("adoption_backend_tenancy", CHECK_SCRIPT)
+        mod = importlib.util.module_from_spec(spec)
+        assert spec.loader is not None
+        spec.loader.exec_module(mod)
+
+        with tempfile.TemporaryDirectory() as tmp:
+            repo = Path(tmp)
+            local = repo / ".cursor" / "rules" / "99-project-local.mdc"
+            local.parent.mkdir(parents=True)
+            decisions = "# ordinary single-module CRUD\n"
+            local.write_text(decisions, encoding="utf-8")
+            (repo / "AGENTS.md").write_text(decisions, encoding="utf-8")
+            contract = repo / "contracts" / "openapi.yaml"
+            contract.parent.mkdir()
+            contract.write_text(
+                "openapi: 3.0.3\n"
+                "info: {title: test, version: 1}\npaths: {}\n",
+                encoding="utf-8",
+            )
+            errors: list[str] = []
+            mod.check_backend_project_profiles(repo, errors, required=True)
+
+        self.assertEqual([], errors)
+
+    def test_backend_profiles_reject_implicit_single_tenant_with_tenant_migration(self):
+        import tempfile
+
+        spec = importlib.util.spec_from_file_location("adoption_tenant_signal", CHECK_SCRIPT)
+        mod = importlib.util.module_from_spec(spec)
+        assert spec.loader is not None
+        spec.loader.exec_module(mod)
+        with tempfile.TemporaryDirectory() as tmp:
+            repo = Path(tmp)
+            local = repo / ".cursor" / "rules" / "99-project-local.mdc"
+            local.parent.mkdir(parents=True)
+            local.write_text("# local\n", encoding="utf-8")
+            (repo / "AGENTS.md").write_text("# agent\n", encoding="utf-8")
+            contract = repo / "contracts" / "openapi.yaml"
+            contract.parent.mkdir()
+            contract.write_text("openapi: 3.0.3\npaths: {}\n", encoding="utf-8")
+            migration = repo / "src" / "main" / "resources" / "db" / "migration" / "V1__user.sql"
+            migration.parent.mkdir(parents=True)
+            migration.write_text("CREATE TABLE sys_user (tenant_id VARCHAR(64));\n", encoding="utf-8")
+            errors: list[str] = []
+            mod.check_backend_project_profiles(repo, errors, required=True)
+        self.assertTrue(any("tenant implementation signals conflict" in error for error in errors))
+
+    def test_backend_profiles_validate_declared_contract_path(self):
+        import tempfile
+
+        spec = importlib.util.spec_from_file_location("adoption_custom_contract", CHECK_SCRIPT)
+        mod = importlib.util.module_from_spec(spec)
+        assert spec.loader is not None
+        spec.loader.exec_module(mod)
+        with tempfile.TemporaryDirectory() as tmp:
+            repo = Path(tmp)
+            local = repo / ".cursor" / "rules" / "99-project-local.mdc"
+            local.parent.mkdir(parents=True)
+            local.write_text("- API 风格：GET_POST_COMPAT\n- OpenAPI SSOT：api/spec.yaml\n", encoding="utf-8")
+            (repo / "AGENTS.md").write_text(
+                "- API 风格：GET_POST_COMPAT\n- OpenAPI SSOT：api/spec.yaml\n", encoding="utf-8"
+            )
+            contract = repo / "api" / "spec.yaml"
+            contract.parent.mkdir()
+            contract.write_text("openapi: 3.0.3\nx-api-style: RESOURCE_REST\npaths: {}\n", encoding="utf-8")
+            errors: list[str] = []
+            mod.check_backend_project_profiles(repo, errors, required=True)
+        self.assertTrue(any("OpenAPI x-api-style drift" in error for error in errors))
+
+    def test_backend_profiles_reject_missing_declared_contract_even_with_default(self):
+        import tempfile
+
+        spec = importlib.util.spec_from_file_location("adoption_missing_contract", CHECK_SCRIPT)
+        mod = importlib.util.module_from_spec(spec)
+        assert spec.loader is not None
+        spec.loader.exec_module(mod)
+        with tempfile.TemporaryDirectory() as tmp:
+            repo = Path(tmp)
+            local = repo / ".cursor" / "rules" / "99-project-local.mdc"
+            local.parent.mkdir(parents=True)
+            local.write_text("- OpenAPI SSOT：api/missing.yaml\n", encoding="utf-8")
+            (repo / "AGENTS.md").write_text("- OpenAPI SSOT：api/missing.yaml\n", encoding="utf-8")
+            contract = repo / "contracts" / "openapi.yaml"
+            contract.parent.mkdir()
+            contract.write_text("openapi: 3.0.3\npaths: {}\n", encoding="utf-8")
+            errors: list[str] = []
+            mod.check_backend_project_profiles(repo, errors, required=True)
+        self.assertTrue(any("declared OpenAPI contract not found" in error for error in errors))
+
+    def test_backend_profiles_require_global_table_decision_for_multi_tenant_project(self):
+        import tempfile
+
+        spec = importlib.util.spec_from_file_location("adoption_backend_tenancy", CHECK_SCRIPT)
+        mod = importlib.util.module_from_spec(spec)
+        assert spec.loader is not None
+        spec.loader.exec_module(mod)
+
+        with tempfile.TemporaryDirectory() as tmp:
+            repo = Path(tmp)
+            local = repo / ".cursor" / "rules" / "99-project-local.mdc"
+            local.parent.mkdir(parents=True)
+            decisions = "- 租户模型：SHARED_COLUMN\n"
+            local.write_text(decisions, encoding="utf-8")
+            (repo / "AGENTS.md").write_text(decisions, encoding="utf-8")
+            contract = repo / "contracts" / "openapi.yaml"
+            contract.parent.mkdir()
+            contract.write_text(
+                "openapi: 3.0.3\ninfo: {title: test, version: 1}\npaths: {}\n",
+                encoding="utf-8",
+            )
+            errors: list[str] = []
+            mod.check_backend_project_profiles(repo, errors, required=True)
+
+        self.assertTrue(any("全局表 / 租户豁免表" in error for error in errors))
+
+    def test_backend_profiles_accept_explicit_non_default_decisions(self):
+        import tempfile
+
+        spec = importlib.util.spec_from_file_location("adoption_backend_defaults", CHECK_SCRIPT)
+        mod = importlib.util.module_from_spec(spec)
+        assert spec.loader is not None
+        spec.loader.exec_module(mod)
+
+        with tempfile.TemporaryDirectory() as tmp:
+            repo = Path(tmp)
+            local = repo / ".cursor" / "rules" / "99-project-local.mdc"
+            local.parent.mkdir(parents=True)
+            required = (
+                "- API 风格：GET_POST_COMPAT\n"
+                "- 租户模型：SHARED_COLUMN\n"
+                "- 全局表 / 租户豁免表：NONE\n"
+                "- 数据所有权清单：crm -> crm_*\n"
+            )
+            local.write_text(required, encoding="utf-8")
+            (repo / "AGENTS.md").write_text(required, encoding="utf-8")
+            contract = repo / "contracts" / "openapi.yaml"
+            contract.parent.mkdir()
+            contract.write_text(
+                "openapi: 3.0.3\nx-api-style: GET_POST_COMPAT\n"
+                "info: {title: test, version: 1}\npaths: {}\n",
+                encoding="utf-8",
+            )
+            errors: list[str] = []
+            mod.check_backend_project_profiles(repo, errors, required=True)
+
+        self.assertEqual([], errors)
+
     def test_level_two_automatically_requires_governance_package(self):
         repo = ROOT / "examples" / "adoption-fixture" / "frontend"
         result = subprocess.run(
@@ -396,7 +577,7 @@ class CheckProjectAdoptionTests(unittest.TestCase):
         )
         self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
 
-    def test_frontend_contract_accepts_json_schema(self):
+    def test_frontend_contract_rejects_generated_json_schema_as_ssot(self):
         import tempfile
 
         spec = importlib.util.spec_from_file_location("adoption_contract", CHECK_SCRIPT)
@@ -411,7 +592,7 @@ class CheckProjectAdoptionTests(unittest.TestCase):
             errors: list[str] = []
             mod.check_contracts(repo, errors, required=True, flexible=True)
 
-        self.assertEqual(errors, [])
+        self.assertTrue(any("MISSING contract SSOT" in error for error in errors))
 
     def test_frontend_contract_accepts_declared_https_ssot(self):
         import tempfile
@@ -600,6 +781,35 @@ class CheckProjectAdoptionTests(unittest.TestCase):
             cwd=ROOT,
         )
         self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+
+    def test_common_governance_validator_rejects_adr_template_contract_drift(self):
+        import tempfile
+
+        spec = importlib.util.spec_from_file_location(
+            "common_governance_validator_adr", COMMON_GOVERNANCE_VALIDATOR
+        )
+        mod = importlib.util.module_from_spec(spec)
+        assert spec.loader is not None
+        spec.loader.exec_module(mod)
+
+        with tempfile.TemporaryDirectory() as tmp:
+            package = Path(tmp) / "common-governance"
+            shutil.copytree(ROOT / "common-governance", package)
+            template = package / "examples" / "adr-template.md"
+            template.write_text(
+                template.read_text(encoding="utf-8")
+                .replace("- Status: proposed", "- Status: Proposed")
+                .replace("### Option B", "### Alternative"),
+                encoding="utf-8",
+            )
+            mod.ROOT = package
+            output = io.StringIO()
+            with redirect_stdout(output), redirect_stderr(output):
+                result = mod.main()
+
+        self.assertEqual(result, 1)
+        self.assertIn("ADR template minimum contract missing", output.getvalue())
+        self.assertIn("lowercase governed enum", output.getvalue())
 
     def test_distributed_validator_rejects_checksum_drift(self):
         import tempfile
@@ -942,6 +1152,45 @@ class CheckProjectAdoptionTests(unittest.TestCase):
         self.assertTrue(any("missing local link" in error for error in errors))
         self.assertTrue(any("invalid YAML" in error for error in errors))
 
+    def test_repository_hygiene_validator_rejects_ambiguous_root_contract_ssot(self):
+        import tempfile
+
+        spec = importlib.util.spec_from_file_location("repository_ssot", REPOSITORY_VALIDATOR)
+        mod = importlib.util.module_from_spec(spec)
+        assert spec.loader is not None
+        spec.loader.exec_module(mod)
+
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            (root / "README.md").write_text("OpenAPI / schema 作为 SSOT\n", encoding="utf-8")
+            errors = mod.check_root_openapi_ssot(root)
+
+        self.assertTrue(any("peer OpenAPI SSOT" in error for error in errors))
+
+    def test_repository_hygiene_validator_rejects_stale_contract_gate_wording(self):
+        import tempfile
+
+        spec = importlib.util.spec_from_file_location("repository_contract_gate", REPOSITORY_VALIDATOR)
+        mod = importlib.util.module_from_spec(spec)
+        assert spec.loader is not None
+        spec.loader.exec_module(mod)
+
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            branch = root / "docs/branch-protection.md"
+            template = root / ".github/pull_request_template.md"
+            readme = root / "README.md"
+            branch.parent.mkdir(parents=True)
+            template.parent.mkdir(parents=True)
+            branch.write_text("契约门禁：OpenAPI diff / Spectral\n", encoding="utf-8")
+            template.write_text("OpenAPI diff / Spectral\n", encoding="utf-8")
+            readme.write_text("接入 OpenAPI diff\n", encoding="utf-8")
+            errors = mod.check_root_contract_gate_wording(root)
+
+        self.assertTrue(any("contract gate wording missing" in error for error in errors))
+        self.assertTrue(any("generic OpenAPI diff / Spectral" in error for error in errors))
+        self.assertTrue(any(error.startswith("README.md:") for error in errors))
+
     def test_repository_hygiene_validator_requires_aligned_four_part_versions(self):
         import tempfile
 
@@ -965,6 +1214,69 @@ class CheckProjectAdoptionTests(unittest.TestCase):
 
         self.assertTrue(any("invalid four-part release version" in error for error in errors))
         self.assertTrue(any("release versions are not aligned" in error for error in errors))
+
+    def test_repository_hygiene_validator_enforces_chinese_unnumbered_shared_titles(self):
+        import tempfile
+
+        spec = importlib.util.spec_from_file_location("repository_titles", REPOSITORY_VALIDATOR)
+        mod = importlib.util.module_from_spec(spec)
+        assert spec.loader is not None
+        spec.loader.exec_module(mod)
+
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            shared = root / "web-backend" / "rules" / "shared"
+            shared.mkdir(parents=True)
+            (shared / "00-must-follow.md").write_text("# Must Follow Rules\n", encoding="utf-8")
+            (shared / "01-project-structure.md").write_text("# 01 项目结构规则\n", encoding="utf-8")
+            (shared / "02-naming.md").write_text("# 命名规则（Java）\n", encoding="utf-8")
+
+            errors = mod.check_shared_rule_titles(root)
+
+        self.assertEqual(len(errors), 2)
+        self.assertTrue(any("Chinese display title" in error for error in errors))
+        self.assertTrue(any("must not repeat" in error for error in errors))
+
+    def test_repository_hygiene_validator_rejects_bare_or_missing_checklist_rule_refs(self):
+        import tempfile
+
+        spec = importlib.util.spec_from_file_location("repository_refs", REPOSITORY_VALIDATOR)
+        mod = importlib.util.module_from_spec(spec)
+        assert spec.loader is not None
+        spec.loader.exec_module(mod)
+
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            checklist = root / "docs" / "architect-engineering-checklist.md"
+            checklist.parent.mkdir(parents=True)
+            checklist.write_text(
+                "`07`\n`web-front/rules/shared/07-security-performance.md`\n",
+                encoding="utf-8",
+            )
+            errors = mod.check_architecture_checklist_rule_references(root)
+
+        self.assertTrue(any("bare rule reference" in error for error in errors))
+        self.assertTrue(any("missing rule reference" in error for error in errors))
+
+    def test_repository_hygiene_validator_enforces_chinese_agent_document_titles(self):
+        import tempfile
+
+        spec = importlib.util.spec_from_file_location("repository_agent_titles", REPOSITORY_VALIDATOR)
+        mod = importlib.util.module_from_spec(spec)
+        assert spec.loader is not None
+        spec.loader.exec_module(mod)
+
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            codex = root / "web-backend" / "rules" / "codex"
+            codex.mkdir(parents=True)
+            (root / "AGENTS.md").write_text("# Repository Instructions\n", encoding="utf-8")
+            (codex / "01-before-editing.md").write_text("# 01 Before Editing\n", encoding="utf-8")
+            errors = mod.check_agent_document_titles(root)
+
+        self.assertEqual(len(errors), 3)
+        self.assertTrue(any("Chinese explanatory title" in error for error in errors))
+        self.assertTrue(any("must not repeat" in error for error in errors))
 
 
 class ReleaseEvidenceTests(unittest.TestCase):

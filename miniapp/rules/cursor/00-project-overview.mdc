@@ -5,7 +5,7 @@ alwaysApply: true
 
 # 项目概览
 
-企业级 Vue 3 + TypeScript + uni-app + Vite 小程序规则包。Level 0 不变量 15 条（`shared/00-must-follow.md`）；支付、分包、UGC 等细则按场景触发。
+企业级 Vue 3 + TypeScript + uni-app + Vite 小程序规则包。所有项目都要遵守 `shared/00-must-follow.md` 的 15 条基础条款；支付、分包、UGC 等细则按场景触发。
 
 ## 冲突优先级
 
@@ -21,7 +21,7 @@ alwaysApply: true
 
 - 页面禁止直接 `uni.request`、`uni.login`、支付、订阅消息、手机号授权。
 - 新业务页默认进分包；主包只放启动、登录、tabBar、基础能力。
-- API 字段来自 OpenAPI / schema / generated 类型。
+- API 字段来自 `contracts/openapi.yaml` 和由其生成的类型，禁止手改生成物。
 - 敏感能力必须有隐私用途、用户触发、拒绝态。
 - 使用支付时，最终状态以后端订单查询为准，并加载 `14-payment-subscribe-share.mdc`。
 - 平台差异进入 `src/platform/`，不要散落在页面。

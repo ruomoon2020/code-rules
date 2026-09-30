@@ -8,7 +8,10 @@ alwaysApply: false
 
 # 架构
 
-- Controller → Service → Mapper；禁止 Controller → Mapper。
+- 没写明时用轻量分层：Controller → 应用服务 → Mapper 或 Repository（`CRUD_LITE`、`ENTITY_REQUEST_RESPONSE`）。禁止 Controller 直接调用 Mapper。
+- 经典分层（`CLASSIC_LAYERED`）只留给已经使用 Web / Service / Manager / DAO 的旧项目。六边形（`DOMAIN_HEXAGONAL`）只在业务复杂且有 ADR 时使用。
 - 业务按 `modules/{domain}` 划分。
+- Mapper / XML 只访问本模块拥有的表；跨模块保存公开 ID，经公开接口或事件协作。
+- 一个聚合只有一个写入模块；禁止一个本地事务同时写两个业务模块的表。
 
 全文：`rules/shared/01-project-structure.md`

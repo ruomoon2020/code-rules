@@ -12,7 +12,6 @@ public final class ErrorCodes {
     public static final String USERNAME_DUPLICATE = "USERNAME_DUPLICATE";
     public static final String CONCURRENT_MODIFICATION = "CONCURRENT_MODIFICATION";
     public static final String INVALID_SORT_FIELD = "INVALID_SORT_FIELD";
-    public static final String TENANT_CONTEXT_MISSING = "TENANT_CONTEXT_MISSING";
     public static final String VALIDATION_FAILED = "VALIDATION_FAILED";
     public static final String UNAUTHENTICATED = "UNAUTHENTICATED";
     public static final String ACCESS_DENIED = "ACCESS_DENIED";

@@ -27,6 +27,7 @@
 |---|---|---|
 | 金额 | 整数分 / 字符串 decimal（与后端一致） | `Intl.NumberFormat` 或项目 `formatMoney` |
 | 日期时间 | ISO-8601 + 明确时区或 UTC | `Intl.DateTimeFormat`；带时区缩写或说明 |
+| 自然日 | `YYYY-MM-DD`，不带偏移 | 按业务时区展示日期，不用本地时区换日 |
 | 数量 | number | 千分位 formatter |
 | 百分比 | 0–1 或 0–100（OpenAPI 注明） | 统一 formatter，禁止手写 `%` |
 
@@ -35,8 +36,9 @@
 ## 4. errorCode 与 fallback
 
 1. 未知 `errorCode`：展示通用错误文案 + `traceId`（可折叠），禁止裸抛后端 message。
-2. 未知 locale：回退默认语言（如 `zh-CN`），记录监控事件。
-3. 缺翻译 key：开发环境 warn；生产 fallback 到 key 末段或默认文案，**禁止白屏**。
+2. `message` 只作项目明确允许的 fallback / 诊断文案；禁止按 message 分支、把中文 message 当稳定契约或在客户端拼接业务句。
+3. 未知 locale：回退默认语言（如 `zh-CN`），记录监控事件。
+4. 缺翻译 key：开发环境 warn；生产 fallback 到 key 末段或默认文案，**禁止白屏**。
 
 ## 5. 语言切换
 

@@ -8,9 +8,9 @@ rules:
   title: 必须遵守的规则
   path: shared/00-must-follow.md
   owner_role: Frontend owner
-  strength:
-    required_markers: 41
-    recommended_markers: 0
+  wording_stats:
+    normative_markers: 42
+    advisory_markers: 0
   routing:
   - codex/01-before-editing.md
   - codex/02-page-generation.md
@@ -26,9 +26,9 @@ rules:
   title: 项目结构规则
   path: shared/01-project-structure.md
   owner_role: Frontend owner
-  strength:
-    required_markers: 1
-    recommended_markers: 1
+  wording_stats:
+    normative_markers: 7
+    advisory_markers: 1
   routing:
   - codex/AGENTS.md
   - cursor/01-architecture.mdc
@@ -41,9 +41,9 @@ rules:
   title: 命名规则
   path: shared/02-naming.md
   owner_role: Frontend owner
-  strength:
-    required_markers: 12
-    recommended_markers: 2
+  wording_stats:
+    normative_markers: 12
+    advisory_markers: 2
   routing:
   - codex/AGENTS.md
   - cursor/02-vue3-typescript.mdc
@@ -59,9 +59,9 @@ rules:
   title: 代码风格规则
   path: shared/03-code-style.md
   owner_role: Frontend owner
-  strength:
-    required_markers: 17
-    recommended_markers: 1
+  wording_stats:
+    normative_markers: 17
+    advisory_markers: 1
   routing:
   - codex/AGENTS.md
   - cursor/02-vue3-typescript.mdc
@@ -74,9 +74,9 @@ rules:
   title: UI 模式规则
   path: shared/04-ui-patterns.md
   owner_role: Frontend owner
-  strength:
-    required_markers: 8
-    recommended_markers: 0
+  wording_stats:
+    normative_markers: 8
+    advisory_markers: 0
   routing:
   - codex/02-page-generation.md
   - codex/AGENTS.md
@@ -84,6 +84,7 @@ rules:
   - cursor/04-component-usage.mdc
   eval_cases:
   - E01
+  - E08
   verification:
   - scripts/validate-rules-package.py
 - id: CR-FE-005
@@ -91,9 +92,9 @@ rules:
   title: API 契约规则
   path: shared/05-api-contract.md
   owner_role: Frontend owner
-  strength:
-    required_markers: 11
-    recommended_markers: 0
+  wording_stats:
+    normative_markers: 10
+    advisory_markers: 0
   routing:
   - codex/02-page-generation.md
   - codex/AGENTS.md
@@ -108,9 +109,9 @@ rules:
   title: 状态、路由与权限规则
   path: shared/06-state-route-permission.md
   owner_role: Frontend owner
-  strength:
-    required_markers: 7
-    recommended_markers: 0
+  wording_stats:
+    normative_markers: 7
+    advisory_markers: 0
   routing:
   - codex/02-page-generation.md
   - codex/AGENTS.md
@@ -128,9 +129,9 @@ rules:
   title: 安全、无障碍与性能规则
   path: shared/07-security-performance.md
   owner_role: Frontend owner
-  strength:
-    required_markers: 29
-    recommended_markers: 2
+  wording_stats:
+    normative_markers: 29
+    advisory_markers: 2
   routing:
   - codex/AGENTS.md
   - cursor/03-ui-design-system.mdc
@@ -149,9 +150,9 @@ rules:
   title: 质量门禁规则
   path: shared/08-quality-gates.md
   owner_role: Frontend owner
-  strength:
-    required_markers: 16
-    recommended_markers: 6
+  wording_stats:
+    normative_markers: 17
+    advisory_markers: 6
   routing:
   - codex/AGENTS.md
   - cursor/07-review-checklist.mdc
@@ -165,9 +166,9 @@ rules:
   title: AI 生成规则
   path: shared/09-ai-generation.md
   owner_role: Frontend owner
-  strength:
-    required_markers: 18
-    recommended_markers: 0
+  wording_stats:
+    normative_markers: 19
+    advisory_markers: 0
   routing:
   - codex/AGENTS.md
   - cursor/21-ai-generation.mdc
@@ -180,9 +181,9 @@ rules:
   title: 验证清单
   path: shared/10-verification-checklist.md
   owner_role: Frontend owner
-  strength:
-    required_markers: 3
-    recommended_markers: 0
+  wording_stats:
+    normative_markers: 4
+    advisory_markers: 0
   routing:
   - codex/02-page-generation.md
   - codex/05-verification.md
@@ -198,9 +199,9 @@ rules:
   title: 基础组件上下文（Context Pinning）
   path: shared/11-base-components-context.md
   owner_role: Frontend owner
-  strength:
-    required_markers: 6
-    recommended_markers: 0
+  wording_stats:
+    normative_markers: 6
+    advisory_markers: 0
   routing:
   - codex/01-before-editing.md
   - codex/02-page-generation.md
@@ -215,12 +216,12 @@ rules:
   - scripts/validate-rules-package.py
 - id: CR-FE-012
   stack: frontend
-  title: Schema 单一事实来源
+  title: OpenAPI 契约单一事实来源
   path: shared/12-schema-ssot.md
   owner_role: Frontend owner
-  strength:
-    required_markers: 3
-    recommended_markers: 0
+  wording_stats:
+    normative_markers: 5
+    advisory_markers: 0
   routing:
   - codex/01-before-editing.md
   - codex/02-page-generation.md
@@ -241,15 +242,17 @@ rules:
   title: 表单与详情页规则
   path: shared/13-form-and-detail.md
   owner_role: Frontend owner
-  strength:
-    required_markers: 0
-    recommended_markers: 1
+  wording_stats:
+    normative_markers: 15
+    advisory_markers: 1
   routing:
   - codex/02-page-generation.md
   - codex/AGENTS.md
+  - cursor/05-api-state-error.mdc
   - cursor/20-form-detail.mdc
   eval_cases:
   - E41
+  - E50
   verification:
   - scripts/validate-rules-package.py
 - id: CR-FE-014
@@ -257,9 +260,9 @@ rules:
   title: 上传、导入与导出规则
   path: shared/14-upload-import-export.md
   owner_role: Frontend owner
-  strength:
-    required_markers: 33
-    recommended_markers: 0
+  wording_stats:
+    normative_markers: 34
+    advisory_markers: 0
   routing:
   - codex/AGENTS.md
   - cursor/14-upload-import-export.mdc
@@ -277,9 +280,9 @@ rules:
   title: 测试规则
   path: shared/15-testing.md
   owner_role: Frontend owner
-  strength:
-    required_markers: 6
-    recommended_markers: 1
+  wording_stats:
+    normative_markers: 8
+    advisory_markers: 1
   routing:
   - codex/AGENTS.md
   - cursor/08-quality-testing.mdc
@@ -293,9 +296,9 @@ rules:
   title: 设计 Token 规则
   path: shared/16-design-tokens.md
   owner_role: Frontend owner
-  strength:
-    required_markers: 4
-    recommended_markers: 0
+  wording_stats:
+    normative_markers: 4
+    advisory_markers: 0
   routing:
   - codex/AGENTS.md
   - cursor/03-ui-design-system.mdc
@@ -308,15 +311,17 @@ rules:
   title: 壳层与导航规则
   path: shared/17-shell-navigation.md
   owner_role: Frontend owner
-  strength:
-    required_markers: 1
-    recommended_markers: 0
+  wording_stats:
+    normative_markers: 7
+    advisory_markers: 0
   routing:
   - codex/AGENTS.md
   - cursor/09-shell-navigation.mdc
   - cursor/19-platform-boundary.mdc
   eval_cases:
+  - E08
   - E32
+  - E45
   verification:
   - scripts/validate-rules-package.py
 - id: CR-FE-018
@@ -324,9 +329,9 @@ rules:
   title: 日志与可观测规则
   path: shared/18-logging-observability.md
   owner_role: Frontend owner
-  strength:
-    required_markers: 7
-    recommended_markers: 9
+  wording_stats:
+    normative_markers: 7
+    advisory_markers: 9
   routing:
   - codex/AGENTS.md
   - cursor/06-security-performance.mdc
@@ -340,9 +345,9 @@ rules:
   title: 列表分页与表格状态规则
   path: shared/19-list-pagination.md
   owner_role: Frontend owner
-  strength:
-    required_markers: 9
-    recommended_markers: 1
+  wording_stats:
+    normative_markers: 13
+    advisory_markers: 1
   routing:
   - codex/02-page-generation.md
   - codex/AGENTS.md
@@ -361,9 +366,9 @@ rules:
   title: 依赖治理规则
   path: shared/20-dependency-governance.md
   owner_role: Frontend owner
-  strength:
-    required_markers: 12
-    recommended_markers: 1
+  wording_stats:
+    normative_markers: 12
+    advisory_markers: 1
   routing:
   - codex/AGENTS.md
   - cursor/16-dependency-governance.mdc
@@ -376,11 +381,12 @@ rules:
   title: 错误恢复与白屏治理规则
   path: shared/21-error-recovery.md
   owner_role: Frontend owner
-  strength:
-    required_markers: 7
-    recommended_markers: 1
+  wording_stats:
+    normative_markers: 10
+    advisory_markers: 1
   routing:
   - codex/AGENTS.md
+  - cursor/05-api-state-error.mdc
   - cursor/17-error-recovery.mdc
   eval_cases:
   - E30
@@ -391,9 +397,9 @@ rules:
   title: 业务模块扩展（前端）
   path: shared/22-business-module-extension.md
   owner_role: Frontend owner
-  strength:
-    required_markers: 17
-    recommended_markers: 0
+  wording_stats:
+    normative_markers: 19
+    advisory_markers: 0
   routing:
   - codex/AGENTS.md
   - cursor/18-business-module-extension.mdc
@@ -415,9 +421,9 @@ rules:
   title: 国际化与区域格式规则
   path: shared/23-i18n-locale.md
   owner_role: Frontend owner
-  strength:
-    required_markers: 10
-    recommended_markers: 1
+  wording_stats:
+    normative_markers: 11
+    advisory_markers: 1
   routing:
   - codex/AGENTS.md
   - cursor/22-i18n-locale.mdc
@@ -430,9 +436,9 @@ rules:
   title: 实时通信与富文本规则
   path: shared/24-realtime-rich-content.md
   owner_role: Frontend owner
-  strength:
-    required_markers: 7
-    recommended_markers: 0
+  wording_stats:
+    normative_markers: 7
+    advisory_markers: 0
   routing:
   - codex/AGENTS.md
   - cursor/23-realtime-rich-content.mdc
@@ -446,9 +452,9 @@ rules:
   title: 受监管 Web 前端加固
   path: shared/25-regulated-web-hardening.md
   owner_role: Frontend owner
-  strength:
-    required_markers: 8
-    recommended_markers: 0
+  wording_stats:
+    normative_markers: 9
+    advisory_markers: 0
   routing:
   - codex/AGENTS.md
   - cursor/24-regulated-web-hardening.mdc

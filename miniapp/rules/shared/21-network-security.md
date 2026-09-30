@@ -1,4 +1,4 @@
-# 21 Network Security
+# 网络安全规则
 
 网络出站与 `web-view` 安全边界。request 契约与封装见 `05-api-contract-request.md`。
 

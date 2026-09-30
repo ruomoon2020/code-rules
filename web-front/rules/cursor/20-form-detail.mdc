@@ -13,8 +13,9 @@ alwaysApply: false
 
 # 表单与详情
 
-- 字段、必填、枚举和错误码以 schema / generated 类型为准；提交防重复，失败保留用户输入并展示可行动错误。
+- 字段、必填、枚举和错误码以 `contracts/openapi.yaml` 为准，代码使用其同步生成类型；提交防重复，失败保留用户输入并展示可行动错误。
 - 删除、权限变更、批量更新等破坏性操作必须确认；详情须处理无权限、已删除和并发更新状态。
+- 更新和删除请求必须携带页面当前持有的 `version`，提交前不得重新查询详情并替换该值。更新成功后保存响应中的新 `version`。收到 `CONCURRENT_MODIFICATION` 后保留输入；用户确认前不得覆盖提交。
 - 金额、时间、状态码使用项目统一 formatter / 字典，禁止页面硬编码协议语义。
 
 全文：`rules/shared/13-form-and-detail.md`、`rules/shared/12-schema-ssot.md`、`rules/shared/06-state-route-permission.md`

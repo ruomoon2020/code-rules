@@ -29,7 +29,7 @@ pnpm api:check
 6. 破坏性操作有确认。
 7. `keepAlive` 页面 `defineOptions({ name })` 与路由 `name` 一致。
 8. 新增目录、文件、变量、enum、样式类、环境变量符合 `02-naming.md`。
-9. 表单 / 表格字段与 schema、generated 类型一致。
+9. 表单 / 表格字段先以 `contracts/openapi.yaml` 为准，再核对由它同步生成的 schema、generated 类型；禁止把生成物当作字段定义入口。
 10. 日志无敏感信息；错误日志含 `event` 与 traceId / requestId / route / release（见 `18-logging-observability.md`）。
 11. 列表页：筛选或 pageSize 变化回第一页、删当前页最后一条回退、批量操作后清空 selection 并修正页码、批量部分失败有明确反馈、请求竞态已处理（见 `19-list-pagination.md`）。
 12. 大依赖懒加载、搜索 debounce、大表格分页或虚拟滚动（见 `07-security-performance.md`）。

@@ -109,9 +109,9 @@ def build_catalog(root: Path = ROOT) -> dict[str, object]:
                     "title": heading.group(1).strip() if heading else path.stem,
                     "path": _relative(path),
                     "owner_role": config["owner_role"],
-                    "strength": {
-                        "required_markers": len(REQUIRED.findall(text)),
-                        "recommended_markers": len(RECOMMENDED.findall(text)),
+                    "wording_stats": {
+                        "normative_markers": len(REQUIRED.findall(text)),
+                        "advisory_markers": len(RECOMMENDED.findall(text)),
                     },
                     "routing": route_refs,
                     "eval_cases": eval_refs,

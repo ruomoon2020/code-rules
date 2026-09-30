@@ -2,7 +2,7 @@
 
 | 编号 | 文件 | 一句话 |
 |---|---|---|
-| 00 | `00-must-follow.md` | Level 0 通用不变量（15 条）与场景路由 |
+| 00 | `00-must-follow.md` | 所有项目都要遵守的基础条款（15 条）与场景路由 |
 | 01 | `01-project-structure.md` | 目录与分层 |
 | 02 | `02-naming.md` | 命名 |
 | 03 | `03-vue3-typescript-uniapp.md` | Vue3 / TS 风格 |

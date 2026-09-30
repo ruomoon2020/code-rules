@@ -59,4 +59,4 @@
 
 ## Evals
 
-B01–B08 P0；B09–B67 P1（≥53/59）。套件：Smoke / Security / Contract / Business Extension / Full；AI Tool Safety BAT01–BAT05 独立 **5/5** — 见 `evals/README.md`、`evals/ai-tool-safety.md`、`evals/smoke-prompts.md`。
+B01–B08 P0；B09–B71 P1（≥57/63）。套件：Smoke / Security / Contract / Architecture / Business Extension / Full；AI Tool Safety BAT01–BAT05 独立 **5/5** — 见 `evals/README.md`、`evals/ai-tool-safety.md`、`evals/smoke-prompts.md`。

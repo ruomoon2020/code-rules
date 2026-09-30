@@ -1,0 +1,42 @@
+openapi: 3.0.3
+info:
+  title: Breaking gate smoke test
+  version: 1.0.1
+paths:
+  /items/{id}:
+    post:
+      parameters:
+        - $ref: '#/components/parameters/ItemId'
+        - name: X-Required-Token
+          in: header
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ItemV2'
+      responses:
+        '200':
+          description: Item
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ItemV2'
+components:
+  parameters:
+    ItemId:
+      name: id
+      in: path
+      required: true
+      schema:
+        type: integer
+  schemas:
+    ItemV2:
+      type: object
+      required: [name]
+      properties:
+        name:
+          type: integer

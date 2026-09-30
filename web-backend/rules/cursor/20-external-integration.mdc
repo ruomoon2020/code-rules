@@ -11,6 +11,6 @@ alwaysApply: false
 
 # 外部集成
 
-超时、分层、禁止事务内同步远程调用。
+外部超时、端到端截止时间、舱壁、分层，禁止事务内同步远程调用；批量扇出转异步任务。
 
 全文：`rules/shared/28-external-integration.md`

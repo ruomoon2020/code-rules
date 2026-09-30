@@ -1,6 +1,6 @@
 # 全栈 Definition of Done（DoD）
 
-> 业务 PR **合并**与**发布**的统一完成标准。各端细则见对应 `shared/10` / `16` / `23`；本文是跨端 SSOT。
+> 业务 PR **合并**与**发布**的统一完成标准。各端细则见 `web-backend/rules/shared/10-verification-checklist.md`、`web-backend/rules/shared/23-quality-gates.md`、`web-front/rules/shared/08-quality-gates.md`、`web-front/rules/shared/10-verification-checklist.md` 与 `miniapp/rules/shared/16-testing-quality-gates.md`；本文是跨端 SSOT。
 
 ## 适用
 
@@ -39,7 +39,7 @@
 | 检查项 | 说明 |
 |---|---|
 | OpenAPI SSOT | 字段 / 错误码 / 分页先于实现 |
-| OpenAPI diff | 相对 `openapi.baseline.yaml` 无未说明 breaking |
+| 固定版本 `oasdiff breaking --fail-on WARN` | 相对目标分支已接受的 baseline，无未批准的 error / warning；首次 baseline 须 Owner 显式批准，临时例外须注明版本与到期条件 |
 | 前端 / 小程序生成 | `api:gen` + `api:check`；禁止手改 `generated/**` |
 | 联调字段 | `traceId`、`errorCode`、权限码、分页与 `fullstack-contract` 一致 |
 

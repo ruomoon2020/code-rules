@@ -1,28 +1,75 @@
-# Code Rules（全栈 AI 规则）
+# Code Rules：全栈研发规则与治理基线
 
-本仓库包含 Web 前端、后端与小程序 AI 编码规则包，以及技术栈无关的 common governance 发布包，可独立或组合落地到业务项目。当前首个正式基线为 **1.0.0.0**，仓库根 `VERSION` 与四个可分发包的 `VERSION` 保持一致。
+本仓库是一套可分发、可路由、可校验的研发规则源库，覆盖 Web 前端、Spring Boot 后端、uni-app 小程序和跨技术栈工程治理。它解决三个问题：让开发者知道业务应该怎样开展，让 AI 只读取当前任务需要的规则，让 CI 能验证规则是否真正落地。
+
+当前版本为 **2.0.0.0**。仓库根 `VERSION` 与四个可分发包的 `VERSION` 保持一致。
 
 | 目录 | 技术栈 | 说明 |
 |---|---|---|
 | [web-front/rules/](web-front/rules/README.md) | Vue 3 + TypeScript + Element Plus | 前端规则包 |
 | [web-backend/rules/](web-backend/rules/README.md) | Spring Boot 3 + MyBatis-Plus + 多数据库 | 后端规则包 |
 | [miniapp/rules/](miniapp/rules/README.md) | Vue 3 + TypeScript + uni-app + Vite | 小程序规则包 |
-| [common-governance/](common-governance/README.md) | 技术栈无关 | DoD、需求追踪、业务评审、AI 工具安全、环境晋级、事故响应、发布证据与组织治理发布包 |
+| [common-governance/](common-governance/README.md) | 技术栈无关 | DoD、需求追踪、业务评审、AI 工具安全、环境晋级、事故响应、发布证据与组织治理 |
 
-## 这些 README 怎么看
+## 适用对象与使用结果
+
+| 角色 | 从这里获得什么 |
+|---|---|
+| 项目负责人 / 架构师 | 选择规则包和采纳 Level，明确契约、Owner、门禁与例外机制 |
+| 业务开发者 | 按需求、契约、实现、验证和发布的顺序开展业务，不靠记忆拼规则 |
+| Codex / Cursor 使用者 | 用根 `AGENTS.md` 和 `.cursor/rules/` 自动路由到必要规则，减少长提示词 |
+| 规则维护者 | 维护 SSOT、路由、评测、版本和发布包，并用脚本阻止漂移 |
+
+本仓库不提供具体业务系统，也不能仅靠校验器证明业务正确。真实项目仍需结合需求、领域规则、权限模型、数据口径和测试证据完成验收。
+
+## 先从哪个入口开始
 
 | README | 作用 | 读者 |
 |---|---|---|
-| 本文件 | 全栈规则包总览、组合部署、前后端协作方式 | 架构 / 项目负责人 / 规则维护者 |
+| 本文件 | 规则包总览、组合部署、业务研发主流程 | 架构 / 项目负责人 / 规则维护者 |
 | `web-front/rules/README.md` | 前端规则怎么部署、Codex/Cursor 怎么用、怎么写页面 | 前端团队 / AI |
 | `web-backend/rules/README.md` | 后端规则怎么部署、Codex/Cursor 怎么用、怎么写业务接口 | 后端团队 / AI |
 | `miniapp/rules/README.md` | 小程序规则怎么部署、登录授权/分包/支付分享怎么约束 | 小程序团队 / AI |
 
-原则：**外层 README 不替代各规则包 README**。真正写代码时，AI 先读对应业务仓的 `AGENTS.md`，再按任务读少量规则。
+外层 README 负责导航，不替代各规则包 README。真正写代码时，开发者先确认业务要求和契约，AI 从业务仓最近的 `AGENTS.md` 进入，再按任务读取少量规则。
 
 **新业务接入**：全栈 monorepo / 前后端分仓 / 单端三种形态的完整步骤见 **[`docs/project-adoption-guide.md`](docs/project-adoption-guide.md)**。
 
-已有项目采用更高目标规则时，按 [`docs/migration-baseline.md`](docs/migration-baseline.md) 分离目标规范与当前基线；不要因为存量不合规而降低通用规则。
+已有项目采用更高目标规则时，按 [`docs/migration-baseline.md`](docs/migration-baseline.md) 分离目标规范与当前基线；不得因为存量不合规而降低共享规则。
+
+## 五分钟接入路径
+
+1. 判断项目形态：全栈 monorepo、前后端分仓、单端项目或小程序。
+2. 整包引入对应技术栈的 `rules/`；企业项目同时引入 `common-governance/`。
+3. 将包内 `codex/AGENTS.md` 作为业务仓根入口，将 `cursor/*.mdc` 放入 `.cursor/rules/`。
+4. 用 `99-project-local.mdc` 和根 `AGENTS.md` 记录真实目录、技术选择、命令、契约路径和采纳 Level。
+5. 接入最近的规则包校验、项目编译测试和 `check-project-adoption.py`。
+6. 故意制造一次违规，确认 PR 门禁能够失败；恢复后再把检查设为 Required。
+
+完整命令、目录布局和存量迁移方式见 [`docs/project-adoption-guide.md`](docs/project-adoption-guide.md)。
+
+## 业务研发主流程
+
+```text
+需求与验收条件
+  → 影响分析（流程 / 数据 / 权限 / 契约 / 兼容）
+  → 契约和设计先行
+  → 各端实现
+  → 确定性检查与场景测试
+  → 人工业务正确性评审
+  → 发布证据、灰度与回滚
+```
+
+每个业务需求至少回答以下问题：
+
+- 业务状态如何变化，取消、重试、重复提交和回滚如何处理？
+- 哪些角色、租户或数据 Owner 可以查看和操作？
+- API、字段、分页、错误码、时间和金额口径由谁定义？
+- 前端、后端和小程序如何对齐同一契约？
+- 正常、失败、边界和兼容路径分别由什么证据证明？
+- 上线后如何观测，出现问题如何回滚？
+
+立项和方案阶段使用 [`docs/architect-engineering-checklist.md`](docs/architect-engineering-checklist.md)；开发与合并阶段以 [`docs/definition-of-done.md`](docs/definition-of-done.md) 为准。
 
 ## 推荐目录结构
 
@@ -80,10 +127,10 @@ backend-repo/
 
 要求：
 
-1. OpenAPI / schema 有一个明确 SSOT。
+1. 权威契约是 `contracts/openapi.yaml`（或项目明确声明的等价 OpenAPI 路径）；schema / client 仅为生成结果。
 2. 前端 `api:gen` 来源与后端契约一致。
 3. 本源仓发布时各规则包版本保持一致；业务仓可按需采用单个包，但须记录实际采用版本，并由同一 Owner 维护 fullstack contract。
-4. 发版前至少跑后端 Contract / Business Extension 与前端 schema / build 检查。
+4. 发版前至少跑后端 Contract / Business Extension 与前端 schema / build 检查。OpenAPI 必须声明 `x-api-style`（`RESOURCE_REST` 或 `GET_POST_COMPAT`），覆盖 HTTP method/status、security、主要错误响应，并与 Controller / DTO 机器对齐。
 
 ## 部署步骤
 
@@ -103,7 +150,7 @@ backend-repo/
 1. 将 `web-backend/rules/` 整包复制或作为 submodule 放入后端仓 `rules/`。
 2. 复制 `web-backend/rules/codex/AGENTS.md` 到后端仓根 `AGENTS.md`。
 3. 复制 `web-backend/rules/cursor/*.mdc` 到后端仓 `.cursor/rules/`。
-4. 按需接入 `examples/` 中的 ArchUnit、Checkstyle、OpenAPI diff、CI 样板。
+4. 按需接入 `examples/` 中的 ArchUnit、Checkstyle、固定版本 `oasdiff breaking --fail-on WARN`、CI 样板。
 5. 运行 `python rules/scripts/validate-rules-package.py`。
 
 详细说明见 `web-backend/rules/README.md`。
@@ -138,7 +185,7 @@ Codex 只看业务仓根 `AGENTS.md`。不要让它一次读全部 `shared/`。
 
 ```text
 后端：新增客户模块 API，按 OpenAPI + 04/05/08 + playbook。
-前端：新增客户列表页，按 schema SSOT + 列表/表单规则。
+前端：新增客户列表页，先读 `contracts/openapi.yaml`，再核对同步生成的 schema / API 类型，并按列表/表单规则实现。
 全栈：先改 OpenAPI，再后端实现，再前端 api:gen + 联调（对齐 errorCode / traceId / 分页）。
 成熟后台二开：复用平台菜单权限字典，按业务扩展规则 + playbook；平台差异写 99-project-local。
 公共层变更：按 Owner / ADR 与平台边界规则。
@@ -178,7 +225,7 @@ Cursor 靠 `.cursor/rules/*.mdc` 的 `alwaysApply` 和 `globs` 触发。
 
 本地覆盖层只写项目路径、技术栈、脚本名，不要复制大段 shared 规则。
 
-## 怎么写真实业务
+## 业务场景落地示例
 
 ### 成熟后台新增 CRUD
 
@@ -206,9 +253,9 @@ Cursor 靠 `.cursor/rules/*.mdc` 的 `alwaysApply` 和 `globs` 触发。
 4. 前端列表四态、删除末条回退页码、错误恢复完整。
 5. 后端跑 `mvn verify` / `./gradlew check`，前端跑 `pnpm lint` / `type-check` / `build`。
 
-## 企业级治理（大厂执行闭环）
+## 跨端治理文档
 
-规则内容之外，本 monorepo 提供**强制落地**配套文档与脚本：
+规则正文之外，仓库还提供这些配套文档和脚本：
 
 | 文档 / 脚本 | 用途 |
 |---|---|
@@ -237,7 +284,7 @@ Cursor 靠 `.cursor/rules/*.mdc` 的 `alwaysApply` 和 `globs` 触发。
 | [`scripts/validate-pr-governance.py`](scripts/validate-pr-governance.py) | 校验实际 PR 描述中的需求追踪、风险等级和占位符 |
 | [`scripts/generate-eval-topic-manifest.py`](scripts/generate-eval-topic-manifest.py) | Eval 全量 topic manifest（防 prompts/rubric drift） |
 
-业务仓落地后建议：
+接到业务仓库后可以运行：
 
 ```bash
 python scripts/check-project-adoption.py --repo /path/to/your-app --stack frontend --strict
@@ -266,13 +313,13 @@ python scripts/check-project-adoption.py --repo /path/to/your-app --stack fronte
 | 小程序 UGC / 富文本 / 恢复 | Resilience Extension M35–M38（建议 4/4） |
 | 小程序安全加固 / 无障碍 / 多平台 / 实验 | Enterprise Hardening Extension M39–M44（建议 6/6） |
 | 前端发版 / 大改规则 | Smoke / Full evals（E01–E50，P1 ≥39/42） |
-| 全栈契约 | OpenAPI diff + 前端 api:gen / api:check |
+| 全栈契约 | 固定版本 `oasdiff breaking --fail-on WARN` + 前端 api:gen / api:check |
 
 本仓库 CI：PR 改任一端 `rules/**` 时运行对应 `validate-rules-package.py`（含 miniapp），见 `.github/workflows/validate-rules-packages.yml`。
 
-## 业务仓落地 Checklist
+## 接到业务仓库后检查
 
-把规则包复制到真实项目后，按下面顺序检查。建议由项目 Owner 在首个 PR 中一次性完成。
+把规则包复制到真实项目后，按下面顺序检查。建议由项目负责人在第一个 PR 里做完。
 
 ### 必做
 
@@ -281,9 +328,9 @@ python scripts/check-project-adoption.py --repo /path/to/your-app --stack fronte
 - [ ] 小程序仓存在 `rules/`、根 `AGENTS.md`、`.cursor/rules/*.mdc`。
 - [ ] 根 `AGENTS.md` 中的路径能解析到 `rules/shared/...`、`rules/codex/...`。
 - [ ] Cursor 只保留概览类规则 `alwaysApply: true`；不要把所有 `.mdc` 都设为 alwaysApply。
-- [ ] 已补业务仓本地覆盖层：真实包名、业务模块路径、Base 组件路径、OpenAPI / schema 路径、采纳 Level。
+- [ ] 已补业务仓本地覆盖层：真实包名、业务模块路径、Base 组件路径、权威 OpenAPI 路径及生成物目录、采纳 Level。
 - [ ] 企业项目已引入 `common-governance/` 并通过 `--level 2`（或显式 `--require-governance`）验收。
-- [ ] OpenAPI / schema 的 SSOT 已写清楚，前后端不各维护一份字段定义。
+- [ ] `contracts/openapi.yaml`（或项目明确声明的等价 OpenAPI 路径）已写为契约 SSOT，schema / client 只由它生成，前后端不各维护字段定义。
 - [ ] 后端接入 `mvn verify` / `./gradlew check`，前端接入 `pnpm lint`、`type-check`、`build`。
 - [ ] 小程序接入 `pnpm lint`、`type-check`、`build:mp-weixin`、api check 和包体积检查。
 - [ ] 业务 PR 模板已复制或等价接入，能覆盖契约、权限、数据权限、审计、导入导出和回滚。
@@ -295,7 +342,7 @@ python scripts/check-project-adoption.py --repo /path/to/your-app --stack fronte
 
 ### 推荐
 
-- [ ] 后端接入 ArchUnit、Checkstyle、OpenAPI diff、Flyway validate。
+- [ ] 后端接入 ArchUnit、Checkstyle、固定版本 `oasdiff breaking --fail-on WARN`、Flyway validate。
 - [ ] 前端接入 schema / api check、views 禁 Element Plus 扫描。
 - [ ] CODEOWNERS 覆盖契约、DB migration、安全、CI、规则包。
 - [ ] 新项目声明采纳 Level：前端 / 后端至少 Level 0，成熟后台二开建议 Level 1。
@@ -307,9 +354,9 @@ python scripts/check-project-adoption.py --repo /path/to/your-app --stack fronte
 |---|---|---|
 | 只复制 `AGENTS.md`，不复制 `rules/` | AI 读不到 shared 全文，容易幻觉补规则 | 整包复制 `rules/`，或保证路径可解析 |
 | 所有 `.mdc` 都 `alwaysApply: true` | 上下文膨胀，规则互相干扰 | 只让概览 alwaysApply，其余靠 globs |
-| 让 AI 一次读完全部 shared | 慢、贵、容易丢重点 | 按任务包 / 路径触发读取 |
+| 让 AI 一次读完全部 shared | 慢、贵、容易丢重点 | 按这次改动和文件路径读取 |
 | 业务仓不写本地路径 | Cursor / Codex 只能猜包名和目录 | 加 `99-project-local.mdc` 与本项目约定 |
-| 前后端各写字段 | 字段、权限码、分页、错误码漂移 | OpenAPI / schema 作为 SSOT |
+| 前后端各写字段 | 字段、权限码、分页、错误码漂移 | 以 OpenAPI 为契约 SSOT，schema / client 只作生成物 |
 | CodeGen 后直接上线 | 漏权限、审计、数据权限、测试 | 按前后端 playbook 补齐 |
 | 改 common / system 做单业务 | 平台层污染，后续升级困难 | 业务进业务模块；平台变更走 ADR |
 

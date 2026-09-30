@@ -45,7 +45,7 @@ BasePage
 
 ## 表单
 
-1. 表单字段来自 schema / generated 类型，不凭空增加。
+1. 表单字段来自 `contracts/openapi.yaml` 及其同步生成类型，不凭空增加，不手改生成物。
 2. 必填、长度、格式、枚举值与后端契约一致。
 3. 异步校验必须有 loading 或 pending 状态。
 4. 提交失败保留用户输入。

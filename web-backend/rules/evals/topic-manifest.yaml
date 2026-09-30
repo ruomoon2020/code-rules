@@ -35,7 +35,8 @@ entries:
     rubric_pass: 拒绝或拆分超大类
   B11:
     prompt_topic: 先改 OpenAPI
-    rubric_pass: 要求 OpenAPI 先改
+    rubric_pass: 要求 OpenAPI 先改；未声明时默认 GET_POST_COMPAT，公网 API 才显式改 RESOURCE_REST；契约门禁阻断
+      method/path/status/security/error/DTO 漂移
   B12:
     prompt_topic: 异常不可观测与校验误报 500
     rubric_pass: 失败请求须有 traceId 可检索的诊断主事件；业务/5xx 保留堆栈与 cause；Bind、方法级校验等参数异常单独返回 400
@@ -66,7 +67,7 @@ entries:
     rubric_pass: 命名违规要拒绝
   B21:
     prompt_topic: 多租户查询漏 tenant 条件
-    rubric_pass: 多租户 / 数据权限查询不得漏 tenant / 权限条件
+    rubric_pass: 多租户查询不得漏 tenant 条件；NONE 不追加租户条件
   B22:
     prompt_topic: 缓存无失效策略
     rubric_pass: 缓存须有 key、TTL、权限维度与失效策略
@@ -78,7 +79,8 @@ entries:
     rubric_pass: DB 迁移须跑目标库 validate / Testcontainers
   B25:
     prompt_topic: API breaking change 不做版本与 diff
-    rubric_pass: API breaking change 须 OpenAPI diff、版本与兼容策略
+    rubric_pass: 对目标分支契约运行固定版本 oasdiff；error/warning 默认阻断，禁止覆盖 baseline 绕过；首次 baseline
+      和逐项例外须 Owner 批准并限版本，breaking 仍须兼容迁移
   B26:
     prompt_topic: 限流防刷缺失
     rubric_pass: 高风险接口须限流、防刷、审计或告警
@@ -111,10 +113,10 @@ entries:
     rubric_pass: 拒绝批处理 / 导出一次性加载百万数据到内存
   B36:
     prompt_topic: 第三方调用无超时
-    rubric_pass: 外部 HTTP / SDK 调用必须有超时、错误映射与重试边界
+    rubric_pass: 核心请求须有端到端截止时间与舱壁；内部调用继承剩余预算，高扇出转异步；外部调用须有超时、错误映射与重试边界
   B37:
     prompt_topic: 配置写死在 Java 常量
-    rubric_pass: 拒绝环境参数、限额、第三方地址硬编码在 Java 常量
+    rubric_pass: 拒绝环境参数硬编码；开关须覆盖稳定 key、Owner、原因、默认值、安全失败值、环境、启停条件、指标、回滚、到期和清理，读取失败使用安全失败值
   B38:
     prompt_topic: 分布式锁释放不校验 owner
     rubric_pass: 分布式锁释放须校验 owner token 并原子释放
@@ -138,16 +140,16 @@ entries:
     rubric_pass: 拒绝弱密码哈希和硬编码 JWT secret
   B45:
     prompt_topic: 内部接口只信内网 IP
-    rubric_pass: 拒绝内部接口只信内网 IP，须机器身份认证
+    rubric_pass: 拒绝内部接口只信内网 IP，须证明调用方身份
   B46:
     prompt_topic: 生产镜像 latest/root/无资源限制
     rubric_pass: 拒绝生产镜像 latest/root/无资源限制
   B47:
-    prompt_topic: MQ 事件无 schema 和版本
-    rubric_pass: MQ / 事件须有 schema、version、兼容、死信与重放
+    prompt_topic: MQ 事件无契约和租户上下文
+    rubric_pass: MQ / 事件须有契约并传递操作者与追踪上下文；非 NONE 时传递租户；消费端不得用无数据范围的系统身份扩大写入权
   B48:
     prompt_topic: 金额用 double，时间用服务器本地时区
-    rubric_pass: 金额禁 double/float，时间须明确时区与边界
+    rubric_pass: 金额禁 double/float；时刻带时区或明确 UTC，自然日用日期类型，禁止用本地时区猜业务日
   B49:
     prompt_topic: 状态任意 setStatus
     rubric_pass: 状态流转须合法迁移、权限、审计和并发控制
@@ -159,7 +161,7 @@ entries:
     rubric_pass: 可重试写操作须 OpenAPI 声明 Idempotency-Key 或业务幂等键并服务端去重
   B52:
     prompt_topic: GET 他人资源 ID 无对象级校验
-    rubric_pass: 按资源 ID 访问须对象级归属校验（BOLA/IDOR），禁止仅已登录
+    rubric_pass: 按资源 ID 访问须核对记录是否属于当前用户和数据范围；非 NONE 才校验租户，禁止仅已登录
   B53:
     prompt_topic: 用户填 URL 服务端去拉
     rubric_pass: 禁止无校验根据用户 URL 出站（SSRF），Webhook 须白名单与禁内网
@@ -174,7 +176,8 @@ entries:
     rubric_pass: 成熟后台须复用平台用户、角色、菜单、权限、字典能力，禁止重复实现
   B57:
     prompt_topic: 代码生成 CRUD 直接上线
-    rubric_pass: CodeGen 只是起点，必须补权限、审计、数据权限、索引、错误码与测试
+    rubric_pass: CodeGen 只是起点，须补适用门禁；无租户痕迹时为 NONE，不把缺租户列当全局表，树表不强制跨租户；已有租户插件或 tenant_id
+      时立即继承 SHARED_COLUMN，不等决策写完；状态机只用于显式状态流转
   B58:
     prompt_topic: 列表有租户但详情导出批量漏数据权限
     rubric_pass: list/detail/export/delete/batch/job 均须一致校验租户、数据权限和对象级归属
@@ -183,7 +186,7 @@ entries:
     rubric_pass: 导入导出须复用平台文件 / OSS、下载鉴权、任务状态与审计
   B60:
     prompt_topic: 业务任务手写线程绕过调度平台
-    rubric_pass: 批处理 / 定时任务须复用平台调度，具备防重、幂等、任务日志和告警
+    rubric_pass: 任务须复用平台调度并传递操作者与追踪；非 NONE 时传递租户；禁止用无数据范围的系统身份扩大写入权。长流程定义步骤、每步幂等、终态、补偿与人工接管
   B61:
     prompt_topic: 树表跨租户挂父节点
     rubric_pass: 树表须校验父节点租户 / 数据权限、循环父子与层级；禁止跨租户挂父节点
@@ -204,7 +207,21 @@ entries:
     rubric_pass: 大表归档无幂等与在线行为说明；须幂等、防重并明确在线 API 行为，禁止无审批大批量 DELETE
   B67:
     prompt_topic: Controller 拼聚合不变量
-    rubric_pass: Controller 拼聚合不变量；聚合不变量在领域/Service，拒绝 Entity 作 API body
+    rubric_pass: Controller 拼聚合不变量或业务规则必须拒绝；默认 CRUD_LITE 在 Application Service 编排，只有显式
+      Hexagonal 才把不变量放进领域对象；拒绝 Entity 作 API body 和无白名单赋值；集合/批量/嵌套输入须有大小或深度上限
+  B68:
+    prompt_topic: 普通 CRUD 被迫选档并生成多套接缝
+    rubric_pass: 没写明且看不出租户时用轻量分层、Request/Response、查询 GET 写入 POST、单租户，并且只写本模块的表（CRUD_LITE、ENTITY_REQUEST_RESPONSE、GET_POST_COMPAT、NONE）；已有租户列或插件时沿用共享表加租户列（SHARED_COLUMN）；普通增删改查不停下填表，不预先做多套数据访问或新
+      IService，不补服务账号、任务防重或 tenant_id；错误码用领域_原因（DOMAIN_REASON）
+  B69:
+    prompt_topic: 共享库绕过模块边界与双写
+    rubric_pass: 业务 SQL 只访问本模块表；聚合 / 事实唯一写入方；禁止跨模块本地事务和借只读报表通道回写
+  B70:
+    prompt_topic: 逻辑删除直接 deleteById
+    rubric_pass: 拒绝只调用 deleteById；逻辑删除须条件更新未删除行并写删除唯一标记、删除时间和操作者
+  B71:
+    prompt_topic: 更新前重查最新 version
+    rubric_pass: 更新/删除必须使用客户端持有的 version 作为前置条件；禁止先重查最新版本再覆盖，冲突返回稳定错误码
 suites:
   Security:
   - B06

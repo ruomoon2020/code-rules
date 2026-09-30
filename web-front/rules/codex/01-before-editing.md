@@ -12,7 +12,7 @@
 
 - 目标模块现有目录与文件
 - Base 组件真实 API（`shared/11-base-components-context.md` 或源码）
-- schema / generated 类型（`shared/12-schema-ssot.md`）
+- `contracts/openapi.yaml` 及其同步生成类型（`shared/12-schema-ssot.md`）
 - 已有 composable：`useTable`、`useDialog`、`useRequest` 等
 - 路由 `name`、权限码、字典来源
 - `package.json` 中实际 scripts 名称
@@ -20,6 +20,6 @@
 ## 开始前须明确
 
 - 改动所属分层（views / components / api / store）
-- 字段是否来自 schema / generated
+- 字段是否来自 `contracts/openapi.yaml` 及其同步生成类型
 - 是否 keep-alive 及路由 `name`
 - 项目验证命令名称

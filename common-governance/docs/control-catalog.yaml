@@ -35,7 +35,7 @@ controls:
     rules: [docs/business-correctness-review.md, docs/data-classification-matrix.md]
     verification_kind: presence
     verification: [scripts/check-project-adoption.py]
-    evidence: [authorization tests, tenant isolation tests, MFA configuration]
+    evidence: [authorization tests, "tenant isolation tests when tenancy mode is not NONE", MFA configuration]
   - id: CR-GOV-002
     title: Time-boxed governance exceptions and risk acceptance
     level: 1

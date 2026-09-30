@@ -7,17 +7,17 @@
 1. `rules/codex/01-before-editing.md`
 2. `rules/shared/00-must-follow.md`
 
-## 实现前命中声明
+## 改代码前先说明
 
 改代码前，先用 3-8 行说明本轮规则路由；纯问答、只审查不修改时可不声明。
 
-- **任务包**：命中下表哪一行。
+- **这次改动**：对应下表哪一行。
 - **将读取**：本轮实际会读的 `rules/` 文件路径。
 - **不读取及原因**：例如“非成熟后台二开 / 无导入导出 / 仅改样式”。
 
 未声明即开始写代码，视为未遵守本文件。
 
-## 按任务包追加阅读
+## 按改动类型追加阅读
 
 先判断属于下表哪一行，只读该行和被点名的细则；不要一次加载全部 `shared/`。
 
@@ -41,7 +41,7 @@
 | i18n / 金额 / 日期 / 时区展示 | `rules/shared/23-i18n-locale.md`、`rules/shared/13-form-and-detail.md` |
 | WebSocket / SSE / 富文本 / 编辑器 | `rules/shared/24-realtime-rich-content.md`、`rules/shared/07-security-performance.md` |
 | 金融 / 政务 / 高敏数据 / 第三方脚本 / 嵌入页面 / 跨窗口通信 | `rules/shared/25-regulated-web-hardening.md`、`rules/shared/07-security-performance.md` |
-| 架构 / 新模块 | `rules/shared/01-project-structure.md` |
+| 架构 / 新模块 / 跨业务域引用 | `rules/shared/01-project-structure.md`、`rules/shared/22-business-module-extension.md` |
 | 收尾 / Review | `rules/shared/10-verification-checklist.md`、`rules/codex/05-verification.md` |
 
 ## 业务扩展触发词
@@ -51,7 +51,7 @@
 ## 路径触发
 
 - 编辑 `src/views/**`、`src/router/**`（业务域）→ 追加 `22` + playbook（成熟后台场景）。
-- 编辑 `contracts/schema.json`、`src/api/generated/**` → 追加 `12-schema-ssot.md` + `05-api-contract.md`。
+- 编辑 `contracts/openapi.yaml`、同步生成的 `contracts/schema.json` 或 `src/api/generated/**` → 追加 `12-schema-ssot.md` + `05-api-contract.md`。
 - 编辑 `src/components/base/**` → 追加 `11-base-components-context.md`。
 - 编辑 `src/layouts/**`、全局壳层 → 追加 `17-shell-navigation.md`。
 - 编辑 `src/**/*i18n*`、locale、formatter → 追加 `23-i18n-locale.md`。
@@ -66,7 +66,7 @@ Codex 优先读 `rules/shared/*.md` 与 `rules/codex/*.md`。
 ## 硬规则
 
 - 未阅读目标仓库 Base 组件源码或 `rules/shared/11-base-components-context.md` 前，不得编写或重构 `src/views/**`。
-- 未阅读 `contracts/schema.json`（或 generated 类型）前，不得新增表单字段、表格列或 DTO。
+- 未阅读 `contracts/openapi.yaml` 与同步后的 generated 类型前，不得新增表单字段、表格列或 DTO。
 - `src/views/**` 禁止使用原生 Element Plus（`el-*`、denylist 内 PascalCase 如 `<ElButton>`，以及 `element-plus` / `element-plus/*` import）。
 - 禁止虚构 Base 组件 props / events / slots、schema 字段、权限码、路由名。
 - 禁止在 Vue 组件内直接 `axios` / `fetch`。
@@ -76,16 +76,17 @@ Codex 优先读 `rules/shared/*.md` 与 `rules/codex/*.md`。
 - 禁止把 mock、密钥、调试日志、不安全 `v-html` 带入生产代码。
 - 涉及文件导入导出时，禁止 schema 外字段、未授权字段或未脱敏敏感字段，并按任务路由读取 `rules/shared/14-upload-import-export.md`。
 - 不得在单文件模板内堆叠 API、权限、表格、表单、弹窗全部逻辑；行数阈值按项目和 `rules/shared/03-code-style.md` 执行。
+- 无论采用业务域优先还是横向目录，禁止跨业务域导入对方 store、页面私有组件、页面 composable 或手写请求封装；跨域只使用 Base、OpenAPI 同步生成的 API 类型与壳层公开接口。
 
 ## Schema 固定指令
 
 生成或修改 `views/` 下业务页面前：
 
 ```text
-1. 读取 contracts/schema.json（或执行 pnpm schema:sync 后的最新文件）。
+1. 读取权威契约 contracts/openapi.yaml；再执行 pnpm schema:sync 并读取最新 generated 类型。
 2. 定位当前模块对应 service 的 request/response。
 3. 据此生成类型、api 调用、表单字段、表格列。
-4. 禁止添加 schema 中不存在的字段；禁止手写与 generated 重复的 interface。
+4. 字段以 `contracts/openapi.yaml` 为准，并使用其同步生成类型；生成 schema / client 不得手改，也不得手写与 generated 重复的 interface。
 5. UI 仅使用项目 Base 组件；views 禁 el-*、禁 EP PascalCase（见 `00-must-follow` §7）。
 ```
 

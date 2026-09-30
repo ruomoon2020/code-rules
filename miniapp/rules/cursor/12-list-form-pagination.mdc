@@ -11,6 +11,7 @@ globs:
 Read `rules/shared/12-list-form-pagination.md`、`rules/shared/04-page-ui-lifecycle.md`。
 
 - 列表须含加载、空、错误、正常、分页到底、下拉刷新。
-- 分页字段与 OpenAPI 一致；筛选变化回第一页；删末条回退页码。
-- 写操作防重复提交；弱网/超时有边界。
+- 分页字段为 `page`、`pageSize`，`page` 从 1 开始；筛选变化回第一页；删末条回退页码。禁止 `pageNo` / `pageNum`。排序使用 `sortField`、`sortOrder=asc|desc`。
+- 写操作必须防止重复提交，并明确弱网和超时处理边界。更新和删除请求携带页面当前持有的 `version`，提交前不得重新查询并替换该值；更新成功后保存响应中的新 `version`。
+- 收到 `CONCURRENT_MODIFICATION` 后保留输入。用户确认前不得覆盖提交，也不得按网络失败自动重试。
 - 高频输入须防抖/节流。

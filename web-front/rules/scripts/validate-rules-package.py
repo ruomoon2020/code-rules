@@ -204,6 +204,47 @@ def check_readme_shared_inventory(root: Path, errors: list[str]) -> None:
             errors.append(f"README.md file inventory missing {rel}")
 
 
+def check_shared_titles(root: Path, errors: list[str]) -> None:
+    for path in sorted((root / "shared").glob("*.md")):
+        lines = read(path).splitlines()
+        title = lines[0].strip() if lines else ""
+        if not title.startswith("# "):
+            errors.append(f"{path.name}: must start with an H1 title")
+            continue
+        if re.match(r"^#\s+\d{2}(?:\s|$)", title):
+            errors.append(f"{path.name}: H1 must not repeat the filename number")
+        if not re.search(r"[\u4e00-\u9fff]", title):
+            errors.append(f"{path.name}: H1 must use a Chinese display title")
+
+
+def check_openapi_ssot_wording(root: Path, errors: list[str]) -> None:
+    """Prevent entry and routing docs from presenting generated schema as a peer source."""
+    routed_files = (
+        "README.md",
+        "codex/AGENTS.md",
+        "codex/01-before-editing.md",
+        "codex/04-api-and-schema.md",
+        "shared/12-schema-ssot.md",
+        "shared/13-form-and-detail.md",
+        "shared/14-upload-import-export.md",
+        "docs/onboarding-new-project.md",
+        "examples/.github/pull_request_template.md",
+    )
+    ambiguous_phrases = (
+        "OpenAPI / schema",
+        "schema / generated",
+        "generated API/schema",
+        "generated API / schema",
+    )
+    for rel in routed_files:
+        path = root / rel
+        if not path.is_file():
+            continue
+        found = [phrase for phrase in ambiguous_phrases if phrase in read(path)]
+        if found:
+            errors.append(f"{rel}: ambiguous OpenAPI SSOT wording: {', '.join(found)}")
+
+
 def check_scaffold_assets(root: Path, errors: list[str]) -> None:
     scaffold = root / "examples" / "scaffold"
     for rel in SCAFFOLD_REQUIRED:
@@ -488,6 +529,23 @@ def check_cross_package_backend_refs(rules_root: Path, errors: list[str]) -> Non
                 )
 
 
+def check_v2_regression_coverage(root: Path, errors: list[str]) -> None:
+    required = {
+        "evals/prompts.md": ("pageNo=0", "iframe 地址", "不检查未保存状态"),
+        "shared/15-testing.md": ("当前 `version`", "禁止在提交前重查详情"),
+        "shared/21-error-recovery.md": ("当前持有的 `version`", "稳定 `errorCode`"),
+        "cursor/09-shell-navigation.mdc": ("未保存状态", "iframe 只加载项目登记的 HTTPS 来源"),
+        "cursor/05-api-state-error.mdc": ("稳定 `errorCode`", "禁止提交前重查最新版本"),
+        "shared/09-ai-generation.md": ("权威契约 `contracts/openapi.yaml`", "同步生成的 schema / API 类型"),
+        "shared/10-verification-checklist.md": ("先以 `contracts/openapi.yaml` 为准", "禁止把生成物当作字段定义入口"),
+    }
+    for rel, markers in required.items():
+        content = read(root / rel)
+        for marker in markers:
+            if marker not in content:
+                errors.append(f"{rel}: frontend v2 coverage missing: {marker}")
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description="Validate frontend rules package consistency")
     parser.add_argument(
@@ -609,6 +667,9 @@ def main() -> int:
     check_eval_topic_manifest(root, errors)
     check_readme_paths(root, errors)
     check_readme_shared_inventory(root, errors)
+    check_shared_titles(root, errors)
+    check_openapi_ssot_wording(root, errors)
+    check_v2_regression_coverage(root, errors)
     check_l0_hard_rule_scope(root, errors)
     check_scaffold_assets(root, errors)
     check_project_local_sample(root, errors)

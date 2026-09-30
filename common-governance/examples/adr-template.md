@@ -1,6 +1,7 @@
 # ADR-NNNN: <Decision Title>
 
-- Status: Proposed
+- Status: proposed
+- Allowed statuses: `proposed` / `accepted` / `deprecated`
 - Date: YYYY-MM-DD
 - Owner: <team-or-person>
 - Reviewers: <required-reviewers>
@@ -10,22 +11,45 @@
 
 说明问题、约束、现状、受影响系统和不做决定的后果。
 
+## Options
+
+至少记录两个可行方案，不得只写已选结论。
+
+### Option A
+
+- Description:
+- Pros:
+- Cons:
+- Risks:
+
+### Option B
+
+- Description:
+- Pros:
+- Cons:
+- Risks:
+
 ## Decision
 
-写明选择的方案、适用边界、接口或数据影响，以及生效时间。
+写明选择的方案、未选择其他方案的原因、适用边界、接口或数据影响，以及生效时间。
 
-## Alternatives
+## Impact
 
-列出认真评估过的方案和未采用原因。
+- Affected APIs / modules:
+- Compatibility and data migration:
+- Security / privacy impact:
+- Performance and observability impact:
+- Operational impact:
 
-## Consequences
+## Migration and Rollback
 
-记录收益、代价、兼容性、迁移、可观测性、安全和运维影响。
+- Migration / rollout steps:
+- Verification evidence and stop conditions:
+- Compatibility plan:
+- Rollback or forward-fix plan and Owner:
 
-## Rollout and Rollback
+## Follow-up
 
-写明灰度步骤、验证证据、停止条件、回滚或前滚方案和 Owner。
-
-## Review
-
-写明复查日期、触发条件和废弃本 ADR 的方式。
+- Tasks:
+- Review date and trigger:
+- Deprecation criteria:

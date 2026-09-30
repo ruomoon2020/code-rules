@@ -13,7 +13,7 @@ globs:
 Read `rules/shared/05-api-contract-request.md`、`rules/shared/06-login-auth-session.md`、`rules/shared/09-privacy-permission.md`。
 
 - 页面禁止直接 `uni.request`，必须走统一 request。
-- API 字段来自 OpenAPI / schema / generated，禁止手改 generated。
+- API 字段来自 `contracts/openapi.yaml`；`schema.json` 和 generated 是生成结果，禁止手改。
 - `uni.login`、token 刷新、手机号授权必须统一封装。
 - 401 / session 过期进入统一登录恢复流程。
 - logout 必须清理 store、storage、缓存和待重试队列。

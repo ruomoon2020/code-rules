@@ -87,7 +87,7 @@ GOVERNANCE_REQUIRED_FILES = (
 VERSION_HEADING = re.compile(r"^##\s+([^\s]+)", re.MULTILINE)
 EVIDENCE_URL = re.compile(r"https://[^\s]+$", re.IGNORECASE)
 CONTRACT_DECLARATION = re.compile(
-    r"(?:contract\s+path|contract\s+ssot|契约\s*(?:路径|ssot))\s*[:：]\s*`?([^`\s]+)",
+    r"(?:contract\s+path|contract\s+ssot|openapi\s+ssot|契约\s*(?:路径|ssot))\s*[:：]\s*`?([^`\s]+)",
     re.IGNORECASE,
 )
 PLACEHOLDER_SCRIPT = re.compile(r"^(?:echo\b|printf\b|true$|exit\s+0$)", re.IGNORECASE)
@@ -175,8 +175,6 @@ def check_contracts(repo: Path, errors: list[str], required: bool, flexible: boo
     if flexible:
         candidates.extend(
             [
-                repo / "contracts" / "schema.json",
-                repo.parent / "contracts" / "schema.json",
                 *_declared_contracts(repo),
             ]
         )
@@ -185,7 +183,7 @@ def check_contracts(repo: Path, errors: list[str], required: bool, flexible: boo
     if flexible and _has_external_contract_declaration(repo):
         return
     if required:
-        expected = "contracts/openapi.yaml|openapi.yml|schema.json or declared Contract path"
+        expected = "contracts/openapi.yaml|openapi.yml or declared OpenAPI Contract path"
         errors.append(f"MISSING contract SSOT ({expected})")
 
 
@@ -357,6 +355,111 @@ def check_local_override(repo: Path, errors: list[str], required: bool) -> None:
         errors.append(
             "99-project-local.mdc testing governance still contains sample placeholders; "
             "replace them with project facts or not-applicable + reason"
+        )
+
+
+def _decision_value(text: str, label: str, allowed: set[str]) -> str | None:
+    match = re.search(rf"(?m)^-\s*{re.escape(label)}[：:]\s*`?([A-Z_]+)`?\s*$", text)
+    if match is None or match.group(1) not in allowed:
+        return None
+    return match.group(1)
+
+
+def check_backend_project_profiles(repo: Path, errors: list[str], required: bool) -> None:
+    if not required:
+        return
+    local_path = repo / ".cursor" / "rules" / "99-project-local.mdc"
+    agents_path = repo / "AGENTS.md"
+    if not local_path.is_file() or not agents_path.is_file():
+        return
+
+    all_declared = _declared_contracts(repo)
+    declared = [path for path in all_declared if path.is_file()]
+    for missing in all_declared:
+        if not missing.is_file():
+            errors.append(f"declared OpenAPI contract not found: {missing}")
+    defaults = [
+        repo / "contracts" / "openapi.yaml",
+        repo / "contracts" / "openapi.yml",
+        repo.parent / "contracts" / "openapi.yaml",
+        repo.parent / "contracts" / "openapi.yml",
+    ]
+    contract_path = next(iter(declared), None) or next((path for path in defaults if path.is_file()), None)
+    if contract_path is None:
+        errors.append("backend project profiles need a local OpenAPI contract for x-api-style validation")
+        return
+    if len({path.resolve() for path in declared}) > 1:
+        errors.append("AGENTS.md and 99-project-local.mdc declare different OpenAPI contract paths")
+
+    local = local_path.read_text(encoding="utf-8", errors="replace")
+    agents = agents_path.read_text(encoding="utf-8", errors="replace")
+    specs = (
+        ("架构档", {"CRUD_LITE", "CLASSIC_LAYERED", "DOMAIN_HEXAGONAL"}, "CRUD_LITE"),
+        ("对象命名", {"ENTITY_REQUEST_RESPONSE", "DO_DTO_BO_VO_QUERY"}, "ENTITY_REQUEST_RESPONSE"),
+        ("API 风格", {"RESOURCE_REST", "GET_POST_COMPAT"}, "GET_POST_COMPAT"),
+        ("租户模型", {"NONE", "SHARED_COLUMN", "SCHEMA_PER_TENANT", "DATABASE_PER_TENANT"}, "NONE"),
+    )
+    decisions: dict[str, str] = {}
+    for label, allowed, default in specs:
+        local_value = _decision_value(local, label, allowed)
+        agents_value = _decision_value(agents, label, allowed)
+        local_declared = re.search(rf"(?m)^-\s*{re.escape(label)}[：:]", local) is not None
+        agents_declared = re.search(rf"(?m)^-\s*{re.escape(label)}[：:]", agents) is not None
+        if local_value is None and not local_declared:
+            local_value = default
+        if agents_value is None and not agents_declared:
+            agents_value = default
+        if local_value is None:
+            errors.append(
+                f"99-project-local.mdc has invalid {label}"
+                if local_declared else f"99-project-local.mdc must select one valid {label}"
+            )
+            continue
+        if agents_value is None:
+            errors.append(
+                f"AGENTS.md has invalid {label} for Codex"
+                if agents_declared else f"AGENTS.md must select one valid {label} for Codex"
+            )
+            continue
+        if local_value != agents_value:
+            errors.append(f"project decision drift for {label}: Cursor={local_value}, Codex={agents_value}")
+            continue
+        decisions[label] = local_value
+
+    tenant_signals: list[str] = []
+    for folder in (repo / "src" / "main", repo / "db" / "migration"):
+        if not folder.is_dir():
+            continue
+        for path in folder.rglob("*"):
+            if not path.is_file() or path.suffix.lower() not in {".java", ".kt", ".sql", ".xml"}:
+                continue
+            content = path.read_text(encoding="utf-8", errors="replace")
+            if re.search(r"\btenant_id\b|\bTenantLineInnerInterceptor\b|\bTenantLineHandler\b", content):
+                tenant_signals.append(path.relative_to(repo).as_posix())
+                if len(tenant_signals) >= 3:
+                    break
+        if len(tenant_signals) >= 3:
+            break
+    if tenant_signals and decisions.get("租户模型") == "NONE":
+        errors.append(
+            "tenant implementation signals conflict with 租户模型 NONE: "
+            + ", ".join(tenant_signals)
+            + "; declare the actual tenant model in both project rule files"
+        )
+
+    if decisions.get("租户模型") != "NONE":
+        label = "全局表 / 租户豁免表"
+        if re.search(rf"(?m)^-\s*{re.escape(label)}[：:]\s*\S.+$", local) is None:
+            errors.append(f"99-project-local.mdc must declare {label} for multi-tenant projects")
+        if re.search(rf"(?m)^-\s*{re.escape(label)}[：:]\s*\S.+$", agents) is None:
+            errors.append(f"AGENTS.md must declare {label} for multi-tenant projects")
+
+    contract = _load_yaml(contract_path, errors)
+    contract_style = contract.get("x-api-style", "GET_POST_COMPAT") if contract else None
+    selected_style = decisions.get("API 风格")
+    if selected_style and contract_style != selected_style:
+        errors.append(
+            f"OpenAPI x-api-style drift: project={selected_style}, contract={contract_style or 'missing'}"
         )
 
 
@@ -826,8 +929,9 @@ def run_stack(repo: Path, stack: str, strict: bool, level: int = 0) -> list[str]
 
     if stack == "backend":
         check_build_tool(repo, errors)
-        check_contracts(repo, errors, required=True)
+        check_contracts(repo, errors, required=True, flexible=True)
         check_backend_ci(repo, errors, required=level >= 1)
+        check_backend_project_profiles(repo, errors, required=level >= 1)
     elif stack == "frontend":
         check_package_json_scripts(repo, errors, REQUIRED_FRONTEND_SCRIPTS)
         if level >= 1:

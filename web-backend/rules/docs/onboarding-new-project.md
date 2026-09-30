@@ -53,12 +53,13 @@ your-backend/
 - `examples/config/SecurityConfig.sample.java`
 - `docs/backup-restore-runbook.md`、`docs/PERFORMANCE_BUDGET.template.md`
 
-## 5. 硬门禁接入
+## 5. 必须接入的检查
 
-1. `examples/archunit/LayeredArchitectureTest.java` → `src/test/java`
-2. `mvn verify` / `./gradlew check` 进 CI（`examples/ci/backend-ci-required.yml` 自动识别构建工具）
-3. OpenAPI diff（契约 PR 必跑）
-4. Flyway：MySQL + PostgreSQL 各跑迁移（若声明多库；Maven 样板见 `examples/ci/backend-ci-optional.yml`，Gradle 样板见 `examples/ci/backend-ci-optional-gradle.yml` 且须接 Flyway 插件）
+1. 新项目没写明、也看不出租户时，用轻量分层和 Request / Response，查询用 GET、写入用 POST，按单租户处理，SQL 只访问本模块的表（`CRUD_LITE`、`ENTITY_REQUEST_RESPONSE`、`GET_POST_COMPAT`、`NONE`）。表上已有 `tenant_id`，或平台已有租户插件、拦截器时，沿用共享表加租户列（`SHARED_COLUMN`），不要当成单租户。普通增删改查不用先填决策表。只有旧项目的经典分层、复杂业务的六边形、公网接口、要改隔离方式，或要写其他模块的表时，才在 `99-project-local` 和根 `AGENTS.md` 里写明差异。
+2. `examples/archunit/LayeredArchitectureTest.java` → `src/test/java`
+3. `mvn verify` / `./gradlew check` 进 CI（`examples/ci/backend-ci-required.yml` 自动识别构建工具）
+4. 固定版本 `oasdiff breaking --fail-on WARN`（契约 PR 必跑）
+5. Flyway：MySQL + PostgreSQL 各跑迁移（若声明多库；Maven 样板见 `examples/ci/backend-ci-optional.yml`，Gradle 样板见 `examples/ci/backend-ci-optional-gradle.yml` 且须接 Flyway 插件）
 
 ## 6. 与前端联调
 
@@ -69,7 +70,7 @@ your-backend/
 ## 7. 验证
 
 - `evals/adoption-checklist.md` 按目标 Level 勾选
-- 日常：**Smoke**（`evals/smoke-prompts.md`）；发版：**Full** B01–B67（P0 8/8，P1 ≥53/59）
+- 日常：**Smoke**（`evals/smoke-prompts.md`）；发版：**Full** B01–B71（P0 8/8，P1 ≥57/63）
 - 成熟后台新增业务：优先跑 **Business Extension** B55–B63（建议 9/9）
 - 业务仓 PR：复制 `rules/examples/.github/` → 仓库根 `.github/`
 - 契约 baseline：首次稳定后生成 `contracts/openapi.baseline.yaml` 供 CI diff（见 `examples/README.md`）

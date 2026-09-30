@@ -13,6 +13,19 @@ SPEC.loader.exec_module(validator)
 
 
 class ValidateRulesPackageTests(unittest.TestCase):
+    def test_shared_titles_require_chinese_without_repeated_number(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            shared = root / "shared"
+            shared.mkdir()
+            (shared / "00-must-follow.md").write_text("# Must Follow\n", encoding="utf-8")
+            (shared / "01-project-structure.md").write_text("# 01 项目结构规则\n", encoding="utf-8")
+            (shared / "02-naming.md").write_text("# 命名规则\n", encoding="utf-8")
+            errors: list[str] = []
+            validator.check_shared_titles(root, errors)
+
+        self.assertEqual(len(errors), 2)
+
     def test_project_local_sample_requires_testing_governance_markers(self):
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
@@ -165,3 +178,34 @@ class ValidateRulesPackageTests(unittest.TestCase):
 
         self.assertEqual(sorted(smoke_ids), sorted(validator.TESTING_GOVERNANCE_SUITE))
         self.assertEqual(sorted(readme_ids), sorted(validator.TESTING_GOVERNANCE_SUITE))
+
+    def test_list_form_rule_rejects_ambiguous_schema_source(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            path = root / "shared/12-list-form-pagination.md"
+            path.parent.mkdir(parents=True)
+            path.write_text("字段来自 schema / generated 类型。\n", encoding="utf-8")
+            errors: list[str] = []
+
+            validator.check_openapi_ssot_wording(root, errors)
+
+        self.assertTrue(any("ambiguous OpenAPI SSOT wording" in error for error in errors))
+
+    def test_v2_regression_coverage_rejects_generated_before_openapi(self):
+        rules_root = Path(__file__).parents[2]
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            shutil.copytree(rules_root, root, dirs_exist_ok=True)
+            route = root / "codex/02-page-generation.md"
+            route.write_text(
+                route.read_text(encoding="utf-8").replace(
+                    "先读权威契约 `contracts/openapi.yaml`，再核对同步生成的类型和 API 方法",
+                    "先读 generated，再读权威契约 `contracts/openapi.yaml`",
+                    1,
+                ),
+                encoding="utf-8",
+            )
+            errors: list[str] = []
+            validator.check_v2_regression_coverage(root, errors)
+
+        self.assertTrue(any("must read OpenAPI before generated" in error for error in errors))

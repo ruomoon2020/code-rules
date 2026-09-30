@@ -1,6 +1,15 @@
-# Examples
+# 前端工程与 CI 样板
 
-可复制的工程门禁样板。`00-must-follow.md` §33 要求 views 拦截 **import**、**`<el-*>`** 与 **Element Plus PascalCase（denylist）**。
+本目录提供可复制的前端门禁、脚本和工程骨架，帮助业务仓把规则从文档要求落实为自动检查。样板必须按项目目录和工具链调整，不能仅复制文件就声称已接入。
+
+其中 views 扫描对应 `00-must-follow.md` §33：业务页面需要拦截 Element Plus 的直接 **import**、**`<el-*>`** 标签和 denylist 中的 PascalCase 组件；该限制不等于整个项目禁用 Element Plus。
+
+## 推荐使用顺序
+
+1. 先复制 `99-project-local.mdc.sample`，填写真实目录、Base 组件路径和脚本名。
+2. 按业务仓结构接入 ESLint 和 views 扫描，不放宽扫描范围来适配存量问题。
+3. 按需采用 `scaffold/` 中的 request、store、列表状态和构建预算样板。
+4. 在本地跑 fixture，再将同一命令加入 PR Required Check。
 
 | 文件 | 说明 |
 |---|---|
@@ -10,6 +19,7 @@
 | `run-ci-scan-fixtures.mjs` | 脚本回归测试 |
 | `package-scripts.sample.json` | 业务仓 scripts 示例 |
 | `ci/rules-package-validate.yml` | 嵌入 `rules/` 时 PR 校验规则包一致性（复制到 `.github/workflows/`） |
+| `.github/pull_request_template.md` | 前端 PR 模板（复制到业务仓根 `.github/pull_request_template.md`） |
 | `scaffold/` | ESLint / Prettier / Stylelint、request、store 清理、列表状态与 bundle budget 工程样板 |
 
 ## 规则包一致性（维护者 / 嵌入 rules/ 的业务仓）
@@ -46,6 +56,8 @@ Monorepo 见仓库根 `.github/workflows/validate-rules-packages.yml`。
 ```bash
 node rules/examples/run-ci-scan-fixtures.mjs
 ```
+
+自测通过后，还应在业务仓准备至少一个真实违规文件验证 CI 会失败，再移除该文件。这样可以证明门禁确实被触发，而不是因路径或条件配置错误而空跑。
 
 ## ci-scan 检测清单
 

@@ -4,9 +4,10 @@
 
 ## 发布前
 
-- [ ] OpenAPI diff 已 Review；`openapi.baseline.yaml` 已更新或 PR 说明策略
+- [ ] 固定版本 `oasdiff breaking --fail-on WARN` 已相对上一已发布 baseline / PR base Review；baseline 仅在变更获批并合并后由 Owner 更新，禁止在 PR 中提前覆盖以隐藏差异
+- [ ] OpenAPI 已声明 `x-api-style`、认证、主要错误响应、正确的 `201/202/204`，且 Controller / DTO 与所选 GET/POST 或资源型风格对齐
 - [ ] Flyway 已在目标库 validate；破坏性变更走 expand → migrate → contract
-- [ ] Feature Flag / 配置变更有 owner、默认值、回滚方案
+- [ ] Feature Flag / 灰度 / 实验配置通过 `common-governance/docs/environment-promotion.md` 的统一生命周期清单
 - [ ] 核心链路监控看板与告警已确认（SLO、5xx、慢 SQL、外部依赖）
 - [ ] 失败请求可用响应 traceId 找到诊断主事件；401/403/404/429 不误记为 5xx
 - [ ] 测试失败可凭报告和 run/test id 定位；flaky 有期限，禁止重试洗绿

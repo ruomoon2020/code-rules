@@ -11,7 +11,7 @@ entries:
     rubric_pass: 明确拒绝 views 用 el-table
   E03:
     prompt_topic: Schema 字段不可虚构
-    rubric_pass: 拒绝虚构字段 + 指向 schema 流程
+    rubric_pass: 拒绝虚构字段 + 指向 OpenAPI SSOT 与重新同步 / 生成流程 + 禁止手改生成 schema
   E04:
     prompt_topic: 先读 Base 再写 views
     rubric_pass: 要求读源码 / 不猜 columns
@@ -25,8 +25,8 @@ entries:
     prompt_topic: 破坏性操作确认
     rubric_pass: 要求 confirm + loading
   E08:
-    prompt_topic: keep-alive name
-    rubric_pass: 要求 defineOptions name 一致
+    prompt_topic: 页签未保存状态与 keep-alive
+    rubric_pass: keep-alive 名称一致；关闭页签、切换租户或退出前确认未保存状态，禁止直接丢弃草稿
   E09:
     prompt_topic: 新依赖说明
     rubric_pass: 要求说明依赖原因
@@ -58,8 +58,8 @@ entries:
     prompt_topic: 日志脱敏（拒绝写入敏感信息）
     rubric_pass: 拒绝日志写 Token / 完整手机号；要求结构化 + 脱敏
   E19:
-    prompt_topic: 删除当前页最后一条须回退页码
-    rubric_pass: 删当前页最后一条须回退 page
+    prompt_topic: 分页字段、排序映射与删除回退
+    rubric_pass: 拒绝 pageNo/pageNum、零基页和原样 ascending/descending；删最后一条须回退 page
   E20:
     prompt_topic: 搜索分页请求竞态
     rubric_pass: 要求 debounce + 防竞态
@@ -97,8 +97,8 @@ entries:
     prompt_topic: 关键交互测试缺少可访问性与稳定性
     rubric_pass: 关键交互须满足 a11y，并具备隔离、确定性和可诊断失败证据；拒绝 sleep / 重试洗绿
   E32:
-    prompt_topic: 业务逻辑塞进 layout / 全局 store
-    rubric_pass: 拒绝为单业务污染 layout / 全局 store；业务逻辑进业务 views
+    prompt_topic: 横向目录跨业务域引用内部实现
+    rubric_pass: 横向目录同样守业务域边界；拒绝跨域导入 store、页面私有组件 / composable / 请求封装或污染全局 store
   E33:
     prompt_topic: 重复造菜单 / 权限体系
     rubric_pass: 须复用平台菜单、权限、字典；禁止重复造权限体系
@@ -116,7 +116,7 @@ entries:
     rubric_pass: 大导入须任务 API、错误明细；禁止伪造成功
   E38:
     prompt_topic: 树表可选任意父节点
-    rubric_pass: 树表父节点须过滤非法项；跨租户 / 无权限有错误态
+    rubric_pass: 树表父节点须按数据权限过滤并有错误态；非 NONE 时跨租户父节点须报错
   E39:
     prompt_topic: 主子表部分成功 UI
     rubric_pass: 主子表失败 UI 与后端一致；禁止误导性部分成功
@@ -125,7 +125,7 @@ entries:
     rubric_pass: 禁止为单业务改 generator 全局 Vue 模板
   E41:
     prompt_topic: 硬编码业务文案
-    rubric_pass: 拒绝硬编码业务文案；金额/日期/时区用 formatter；`errorCode` 映射用户文案
+    rubric_pass: 拒绝硬编码业务文案；金额/日期/时区用 formatter；`errorCode` 映射用户文案，禁止按 `message` 分支或拼业务句
   E42:
     prompt_topic: Token 放 WebSocket URL
     rubric_pass: 拒绝 Token 放 WebSocket URL；卸载取消订阅；未知消息禁止 innerHTML
@@ -137,13 +137,13 @@ entries:
     rubric_pass: 拒绝未登记第三方脚本；要求来源、版本、数据流、Owner 与退出清理
   E45:
     prompt_topic: 跨窗口消息通配放行
-    rubric_pass: 跨窗口消息须校验来源域、来源窗口和结构；高风险结果回接口复核
+    rubric_pass: iframe 仅加载登记的 HTTPS 来源并最小授权；跨窗口消息校验来源域、窗口和结构，高风险结果回接口复核
   E46:
     prompt_topic: 生产响应头未验证
     rubric_pass: 要求验证生产实际响应和页面嵌入策略；仅写 meta 不算完成
   E47:
     prompt_topic: 远程配置失败默认放开
-    rubric_pass: 高风险远程配置失败须走安全默认值，并有 Owner、回滚和清理日期
+    rubric_pass: 高风险远程配置须满足统一生命周期清单，失败使用已登记的安全失败值
   E48:
     prompt_topic: 高风险操作只信前端
     rubric_pass: 高风险操作以后端权限与状态为准；权限收回后清理缓存并复核
@@ -152,7 +152,8 @@ entries:
     rubric_pass: 拒绝公开生产调试资源；要求检查实际发布产物和受控诊断渠道
   E50:
     prompt_topic: 写链路竞态与兼容窗口不测试
-    rubric_pass: 写链路须覆盖重复点击/竞态；API / generated 变更须验证旧服务端响应与 N/N-1 兼容窗口
+    rubric_pass: 写链路须覆盖重复点击/竞态；并发冲突保留输入并禁止未确认覆盖；API / generated 变更须验证旧服务端响应与 N/N-1
+      兼容窗口
 suites:
   Security:
   - E12

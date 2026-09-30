@@ -1,7 +1,7 @@
 -- 审计日志只追加，不更新、不软删除。保留周期和归档方式写入项目配置，禁止无限增长。
+-- 默认租户模型为 NONE。项目已有租户机制时，按项目约定显式补充 tenant_id 和租户前缀索引。
 CREATE TABLE IF NOT EXISTS sys_audit_log (
     id              BIGINT        NOT NULL PRIMARY KEY COMMENT '雪花 ID，由应用分配',
-    tenant_id       VARCHAR(64)   NOT NULL COMMENT '租户 ID',
     operator_id     VARCHAR(64)   NOT NULL COMMENT '操作者用户 ID 或系统主体 ID',
     action          VARCHAR(64)   NOT NULL COMMENT '操作动作编码',
     resource_type   VARCHAR(64)   NOT NULL COMMENT '资源类型编码',
@@ -16,10 +16,10 @@ CREATE TABLE IF NOT EXISTS sys_audit_log (
     ip              VARCHAR(64)   NULL COMMENT '客户端 IP，可含 IPv6',
     user_agent      VARCHAR(512)  NULL COMMENT '客户端 User-Agent',
     occurred_at     DATETIME(3)   NOT NULL COMMENT '业务发生时间（UTC）',
-    created_at      DATETIME(3)   NOT NULL DEFAULT CURRENT_TIMESTAMP(3) COMMENT '记录入库时间（UTC）',
+    created_at      DATETIME(3)   NOT NULL DEFAULT (UTC_TIMESTAMP(3)) COMMENT '记录入库时间（UTC）',
     CONSTRAINT ck_sys_audit_log_result CHECK (result IN ('SUCCESS', 'FAIL')),
-    KEY idx_sys_audit_log_tenant_occurred (tenant_id, occurred_at),
-    KEY idx_sys_audit_log_tenant_operator (tenant_id, operator_id, occurred_at),
-    KEY idx_sys_audit_log_tenant_action (tenant_id, action, occurred_at),
-    KEY idx_sys_audit_log_tenant_resource (tenant_id, resource_type, resource_id)
+    KEY idx_sys_audit_log_occurred (occurred_at),
+    KEY idx_sys_audit_log_operator (operator_id, occurred_at),
+    KEY idx_sys_audit_log_action (action, occurred_at),
+    KEY idx_sys_audit_log_resource (resource_type, resource_id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='系统审计日志；只追加。保留周期见项目配置，到期归档';

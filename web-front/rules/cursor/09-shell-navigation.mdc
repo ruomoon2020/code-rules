@@ -14,6 +14,8 @@ alwaysApply: false
 
 - 壳层在 `layouts` / `components/layout`；业务 `views` 不写全局导航。
 - 路由 `name`、meta、菜单、权限、keep-alive 对齐。
+- 关闭页签、切换租户或退出前检查未保存状态，复用统一确认，禁止直接销毁表单草稿。
+- iframe 只加载项目登记的 HTTPS 来源，并设置最小 `sandbox` / `allow`；外链使用来源白名单与窗口隔离。
 - 登录 / Dashboard 等特殊页型见 shared。
 
 全文：**`rules/shared/17-shell-navigation.md`**、**`rules/shared/06-state-route-permission.md`**

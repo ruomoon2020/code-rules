@@ -13,6 +13,8 @@ alwaysApply: false
 
 - 消费须幂等；重试有上限与死信策略。
 - 禁止事务内同步外部 HTTP；异步出站保留审计与关联 ID。
+- 传递 actorId、traceId，消费端恢复数据权限和对象级授权。租户模型不是 `NONE` 时同时传递 tenantId；禁止改用无数据范围的系统身份写入。
+- 长流程须定义步骤顺序、每步幂等、终态、补偿与人工接管。
 - 与事件契约、服务间认证规则一并遵守。
 
 全文：`rules/shared/17-messaging-async.md`、`rules/shared/18-idempotency-concurrency.md`

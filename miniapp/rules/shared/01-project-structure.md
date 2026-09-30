@@ -1,4 +1,4 @@
-# 01 Project Structure
+# 项目结构规则
 
 ## 推荐目录
 
@@ -11,7 +11,7 @@ src/
 ├─ components/            # 通用展示组件
 ├─ base/                  # 项目 Base 组件与基础移动组件封装
 ├─ api/                   # request 封装、allowed-hosts、API 方法
-├─ api/generated/         # OpenAPI / schema 生成，禁止手改
+├─ api/generated/         # 由 openapi.yaml 生成，禁止手改
 ├─ services/              # 业务流程服务
 ├─ composables/           # 页面组合逻辑
 ├─ stores/                # Pinia store

@@ -1,14 +1,32 @@
-# Frontend AI Rules
+# Web 前端研发规则包
 
 版本见 `VERSION`，变更见 `CHANGELOG.md`。维护者发版见 `RELEASE.md`。
 
-本目录是前端项目 AI 编码规则的**唯一执行入口**。
+本目录是 Vue 3 + TypeScript 管理端项目的规则执行入口，覆盖架构边界、Base 组件、OpenAPI 生成类型、列表与表单状态、权限路由、质量门禁和高敏场景。它既服务于开发者，也为 Codex 和 Cursor 提供按任务加载的路由。
+
+## 使用后应达到的结果
+
+- 业务页面只负责编排，不绕过项目 Base 组件和请求边界。
+- API 字段、分页、错误码和权限码来自契约或项目明确的 SSOT。
+- Codex/Cursor 能按文件和任务读取必要规则，不需要在提示词中重复整套规范。
+- lint、type-check、测试、构建、契约和关键 UI 行为有可追踪的验证证据。
+- 规则校验与业务评审分开：工具通过不代表页面流程、权限和数据口径正确。
 
 - **Codex**：`codex/AGENTS.md` → 复制到业务仓库根目录 `AGENTS.md`。
 - **Cursor**：`cursor/*.mdc` → 复制到业务仓库 `.cursor/rules/`。
 - **共用**：`shared/` 为 Codex 与 Cursor 的 SSOT；Cursor 的 `.mdc` 多为触发摘要，正文以 `shared/` 为准。
 - **历史来源**：旧母文档仅作迁移期来源记录，AI 日常不直接当执行规则读取；规则包应可独立使用。
 - **测试治理**：`shared/15-testing.md` 覆盖确定性、失败证据、竞态恢复与 N/N-1；具体阈值和条件工具由项目覆盖层声明。
+
+## 首次接入
+
+1. 优先选择“整包同步”，将本目录作为业务仓 `rules/`。
+2. 将 `codex/AGENTS.md` 复制到业务仓根 `AGENTS.md`，将 `cursor/*.mdc` 复制到 `.cursor/rules/`。
+3. 从 `examples/99-project-local.mdc.sample` 创建本地覆盖层，填写真实目录、Base 组件、OpenAPI、脚本和采纳 Level。
+4. 接入规则包校验、views Element Plus 扫描、lint、type-check、测试、构建和 API 检查。
+5. 用一个真实页面 PR 验证路由和门禁，而不是只检查文件是否存在。
+
+完整的新项目步骤见 `docs/onboarding-new-project.md`；存量项目接入见仓库根的 [项目接入指南](../../docs/project-adoption-guide.md)。
 
 ## 使用原则
 
@@ -35,7 +53,7 @@ Cursor alwaysApply 概览
   → pnpm lint / type-check / api:check / evals
 ```
 
-## 落地方式（三选一，团队择一写进 onboarding）
+## 部署方式（三选一，团队需固定一种）
 
 ### 方式 A — 整包同步（推荐）
 
@@ -52,7 +70,8 @@ your-front/
 ├─ AGENTS.md                    # 复制自 rules/codex/AGENTS.md
 ├─ rules/                       # 整包
 ├─ .cursor/rules/*.mdc          # 复制自 rules/cursor/
-├─ contracts/schema.json        # 或 OpenAPI 生成后的 schema / types
+├─ contracts/openapi.yaml       # 权威契约 SSOT
+├─ contracts/schema.json        # 可选生成物，禁止手改
 ├─ src/
 │  ├─ views/
 │  ├─ components/
@@ -103,6 +122,8 @@ your-front/
 | 路由 / 菜单 / 权限 | 路由权限相关 `.mdc` |
 | 设计 Token / 样式 | design token 相关 `.mdc` |
 
+完整的 25 个 Cursor 文件名、场景主题与 shared 正文映射见 `docs/cursor-shared-map.md`，不要按编号猜映射。
+
 不要把所有 `.mdc` 设成 `alwaysApply: true`。项目特有路径用业务仓本地 `99-project-local.mdc` 描述。
 
 ## 业务仓本地覆盖层
@@ -117,7 +138,7 @@ your-front/
 - 业务页面路径：`src/views/{module}/`
 - Base 组件路径：`src/components/Base*/` 或项目实际目录
 - API 生成目录：`src/api/generated/`
-- Schema 来源：`contracts/schema.json` 或后端 OpenAPI 生成物
+- 契约来源：`contracts/openapi.yaml`；`contracts/schema.json` 与 generated types 是生成物
 - 成熟后台栈：RuoYi-Vue-Plus / 自研管理端
 - 新增业务页默认对齐后端 `web-backend/rules/docs/fullstack-contract.md`
 ```
@@ -126,18 +147,31 @@ your-front/
 
 本地覆盖层只写项目路径、脚本和业务栈，不要复制 `00`、`11`、`12` 或 `22` 全文。
 
-## 怎么写真实业务
+## 业务研发流程
+
+无论是新页面还是成熟后台二开，都按以下顺序推进：
+
+```text
+需求与验收条件
+  → 核对 OpenAPI / 权限 / Base 组件
+  → 设计页面状态与失败恢复
+  → 实现 API、状态和页面编排
+  → lint / type-check / test / build / api:check
+  → 浏览器验证与业务 Review
+```
+
+业务 Review 重点检查：字段与后端是否一致，角色和按钮权限是否闭环，加载/空/错误/无权限/成功状态是否完整，重复提交和竞态是否可恢复，删除末条、分页、导入导出等边界是否正确。
 
 ### 成熟后台新增业务页面
 
 适用于 RuoYi / Jeecg / 自研后台的 CRUD、列表、详情、导入导出页面。
 
-1. 先确认后端 OpenAPI / schema 已更新并生成类型。
+1. 先确认后端权威契约 `contracts/openapi.yaml` 已更新，并已同步生成 schema / API 类型。
 2. 页面只使用项目 Base 组件；`src/views/**` 禁止直接写 `el-*` 或导入 `element-plus`。
 3. 列表页按 Header / Filter / Toolbar / Table / Pagination 骨架组织。
-4. 表格列、表单字段、详情字段必须来自 schema / generated 类型。
+4. 表格列、表单字段、详情字段必须来自 `contracts/openapi.yaml` 及其同步生成的类型，禁止手改生成物。
 5. 菜单、路由 `name`、按钮权限码与后端一致；禁止只隐藏 UI。
-6. 导入导出按模板下载、任务状态、错误明细、下载鉴权、操作记录刷新闭环处理。
+6. 导入导出要有模板下载、任务状态、错误明细和下载鉴权，做完后刷新操作记录。
 7. 树表 / 主子表页面要处理非法父节点禁选、子表错误明细、失败态回滚提示。
 
 必读：
@@ -152,14 +186,14 @@ your-front/
 ### 普通页面 / 组件
 
 1. 写 `views` 前先读真实 Base 组件源码或 `11-base-components-context.md`。
-2. 写字段前读 schema / generated 类型。
+2. 写字段前先读 `contracts/openapi.yaml`，再核对同步生成的 schema / API 类型。
 3. 列表页必须有加载、空、错误、正常四态。
 4. 组件 props / emits / slots 以源码为准，禁止猜。
 5. 单文件超过 400 行时拆组合函数、子组件或配置。
 
-### API / schema 变更
+### OpenAPI 契约变更
 
-1. 后端先更新 OpenAPI / schema。
+1. 后端先更新权威契约 `contracts/openapi.yaml`；不得直接修改生成的 `schema.json`。
 2. 前端运行 `schema:sync` / `api:gen` / `api:check`（按项目脚本）。
 3. 禁止手改 `src/api/generated`。
 4. 删除或改名字段要同步页面、表单、导入导出、权限与测试。
@@ -244,6 +278,7 @@ CI 硬门禁建议至少包含：`lint`、`type-check`、`build`、schema check�
 | `scripts/validate-rules-package.py` | 规则包一致性校验 | 发版前 |
 | `scripts/README.md` | 校验脚本说明 | 维护者 |
 | `docs/contributing-rules-package.md` | 维护者变更治理 | 改 rules |
+| `docs/enterprise-governance.md` | 独立规则包的治理入口 | 治理接入 |
 | `docs/fullstack-contract.md` | 管理端本地全栈契约摘要 | 独立复制 rules/、联调 |
 | `docs/onboarding-new-project.md` | 新项目接入步骤 | 首次接入 rules/ |
 | `docs/rules-package-index.md` | 规则主题索引 | 不确定读哪个规则 |
@@ -257,7 +292,7 @@ CI 硬门禁建议至少包含：`lint`、`type-check`、`build`、schema check�
 | `examples/ci/rules-package-validate.yml` | 业务仓 CI 校验样板 | 嵌入 rules/ |
 | `RELEASE.md` | 维护者发版 checklist | 发版前 |
 | `docs/business-feature-playbook-frontend.md` | 成熟后台新增业务页面落地 | 新 CRUD / 菜单 / 权限 |
-| `examples/ci-scan-views-el-tags.mjs` 等 | 硬门禁样板 | 业务仓 CI 接入 |
+| `examples/ci-scan-views-el-tags.mjs` 等 | CI 检查样板 | 业务仓 CI 接入 |
 | `examples/run-ci-scan-fixtures.mjs` | ci-scan 回归 | 规则包发版前 |
 | `examples/scaffold/` | 工具链、request、store、列表状态、bundle budget 样板 | 新项目接入 |
 
@@ -277,7 +312,7 @@ CI 硬门禁建议至少包含：`lint`、`type-check`、`build`、schema check�
 - **软约束**：写 `views` 前读 `11-base-components-context`、`12-schema-ssot`。
 - **硬门禁**：业务项目用 ESLint、type-check、schema check、CI 保证违规即失败；样板见 `examples/`。
 
-## 硬门禁样板
+## CI 检查样板
 
 见 `examples/README.md`，须**组合**使用：
 

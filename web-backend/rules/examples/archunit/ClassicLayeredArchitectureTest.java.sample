@@ -1,0 +1,36 @@
+package com.example.architecture;
+
+import com.tngtech.archunit.core.domain.JavaClasses;
+import com.tngtech.archunit.core.importer.ClassFileImporter;
+import org.junit.jupiter.api.Test;
+
+import static com.tngtech.archunit.lang.syntax.ArchRuleDefinition.noClasses;
+
+/** CLASSIC_LAYERED：Web -> Service -> Manager(可选) -> DAO。 */
+class ClassicLayeredArchitectureTest {
+
+    private static final String BASE = "com.company.product";
+    private final JavaClasses classes = new ClassFileImporter().importPackages(BASE);
+
+    @Test
+    void web_should_not_depend_on_dao() {
+        noClasses().that().resideInAnyPackage("..api..", "..controller..")
+                .should().dependOnClassesThat().resideInAnyPackage("..dao..", "..mapper..")
+                .check(classes);
+    }
+
+    @Test
+    void manager_should_not_depend_on_web() {
+        noClasses().that().resideInAPackage("..manager..")
+                .should().dependOnClassesThat().resideInAnyPackage("..api..", "..controller..")
+                .check(classes);
+    }
+
+    @Test
+    void dao_should_not_depend_upward() {
+        noClasses().that().resideInAnyPackage("..dao..", "..mapper..")
+                .should().dependOnClassesThat().resideInAnyPackage(
+                        "..api..", "..controller..", "..service..", "..manager..")
+                .check(classes);
+    }
+}

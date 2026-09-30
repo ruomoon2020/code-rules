@@ -10,12 +10,13 @@ API、表单、表格字段必须以契约为单一事实来源。
 4. 错误须经项目 **error normalizer**（如 `normalizeError`、`toAppError`，以仓库实际导出为准）转为稳定字段 `code` / `message` / `errorCode` / `traceId`，再供页面 logger / 错误 UI 使用；禁止在业务代码直接假设 `err.code` / `err.status` / 平台原文案字段形态。既有响应壳映射见后端 `docs/fullstack-contract.md` §既有响应壳适配。
 5. api 层不直接弹 Toast / Message；UI 反馈由页面或统一错误层处理。
 
-## Schema SSOT
+## OpenAPI 契约 SSOT
 
 优先级：
 
 ```text
-contracts/schema.json
+contracts/openapi.yaml
+  -> contracts/schema.json（若项目生成）
   -> src/api/generated
   -> src/api/* thin wrapper
   -> views / components
@@ -23,10 +24,10 @@ contracts/schema.json
 
 规则：
 
-1. 写表单字段、表格列、查询条件前，先读 `contracts/schema.json` 或 generated 类型。
-2. 禁止添加 schema 中不存在的字段。
+1. 写表单字段、表格列、查询条件前，先读 `contracts/openapi.yaml`，再核对由它同步生成的 schema / API 类型。
+2. 只使用 `contracts/openapi.yaml` 已定义的字段；生成物不是字段定义入口。
 3. 禁止手写与 generated 重复或冲突的 DTO。
-4. `src/api/generated` 禁止手改。
+4. `contracts/schema.json`（若为同步产物）与 `src/api/generated` 禁止手改。
 5. 契约变更后必须重新 `schema:sync` + `api:gen` + `api:check`。
 
 ## API 兼容

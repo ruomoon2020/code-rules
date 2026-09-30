@@ -1,4 +1,4 @@
-# 04 Platform Capability
+# 平台能力
 
 改平台能力时：
 

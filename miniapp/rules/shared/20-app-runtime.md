@@ -1,4 +1,4 @@
-# 20 App Runtime
+# 应用运行时规则
 
 应用级生命周期与全局初始化。页面级规则见 `04-page-ui-lifecycle.md`。
 

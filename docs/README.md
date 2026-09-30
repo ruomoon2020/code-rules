@@ -1,8 +1,20 @@
-# 企业级治理文档索引
+# 跨端研发治理中心
 
-> 本目录是治理文档 SSOT。业务仓优先引入由它生成的 [`common-governance/`](../common-governance/README.md) 可分发包；不要手工维护第二份副本。
+本目录是治理文档的维护 SSOT，面向规则维护者、架构师和项目负责人。业务仓应优先使用由这里生成的 [`common-governance/`](../common-governance/README.md) 发布包，不得手工维护第二份副本。
 
-## 文档
+## 按研发阶段使用
+
+| 阶段 | 先读 | 产出 |
+|---|---|---|
+| 项目接入 / 存量迁移 | `project-adoption-guide.md`、`migration-baseline.md` | 采纳 Level、项目覆盖层、债务基线、接入 PR |
+| 立项 / 架构方案 | `architect-engineering-checklist.md`、`requirements-traceability.md` | 边界、Owner、风险、验收条件、ADR |
+| 开发 / Review | `business-correctness-review.md`、`definition-of-done.md` | 业务评审结论、测试与契约证据 |
+| 合并 / 发布 | `environment-promotion.md`、`release-evidence.md`、`branch-protection.md` | Required Checks、发布证据、灰度与回滚计划 |
+| 例外 / 事故 | `rule-exception-process.md`、`incident-response.md` | 有时限的豁免、响应记录、复盘行动项 |
+
+如果只是开发某个页面或接口，不需要通读本目录；应从业务仓 `AGENTS.md` 进入对应技术栈规则。这里负责跨端和组织级治理。
+
+## 文档目录
 
 | 文档 | 用途 |
 |---|---|
@@ -31,11 +43,10 @@
 | [`git-pr-governance.md`](git-pr-governance.md) | Conventional Commits、PR 证据、本地 hook 与 CI 边界 |
 | [`monorepo-layout.md`](monorepo-layout.md) | 全栈 monorepo 推荐布局（**仅维护仓**；不随 `common-governance` 分发） |
 | [`adr/0001-rules-governance-baseline.md`](adr/0001-rules-governance-baseline.md) | 根级治理原则基线 ADR（**仅维护仓**） |
-| [`rule-catalog.yaml`](rule-catalog.yaml) | 编码规则索引（由 `scripts/generate-rule-catalog.py` 生成并在 CI 校验；引用覆盖不等于行为评测覆盖） |
-| [`research/exception-observability-practices.md`](research/exception-observability-practices.md) | 国内外官方异常日志实践研究（研究依据，不是执行 SSOT） |
+| [`rule-catalog.yaml`](rule-catalog.yaml) | 编码规则索引（由 `scripts/generate-rule-catalog.py` 生成并在 CI 校验；规范动词词频不是规则强度，引用覆盖不等于行为评测覆盖） |
 | [`../SECURITY.md`](../SECURITY.md) | 安全策略与漏洞报告入口（含 SLA / secret 泄露处置） |
 
-## 脚本
+## 配套脚本
 
 | 脚本 | 用途 |
 |---|---|
@@ -64,4 +75,10 @@
 python common-governance/scripts/check-project-adoption.py --repo . --stack frontend --level 2
 ```
 
-各规则包内链：`web-*/rules/docs/enterprise-governance.md`。
+接入完成后，用一个真实 PR 验证规则入口、Required Checks 和证据链均能工作。各规则包的治理入口见 `web-*/rules/docs/enterprise-governance.md`。
+
+## 规则文件命名与标题
+
+- `rules/shared/` 的文件名必须使用稳定的英文 kebab-case，并保留两位编号，例如 `13-form-and-detail.md`；文件名用于路由、交叉引用和机器目录，不随展示语言变化。
+- Markdown 一级标题必须使用中文，不重复文件名前的编号；OpenAPI、DTO、CI、Vue 等技术专名可保留英文。
+- 新增或修改规则后必须运行 `python scripts/validate-repository.py` 和 `python scripts/generate-rule-catalog.py`；前者阻止标题语言再次漂移，后者将标题同步到根目录及各规则包目录。

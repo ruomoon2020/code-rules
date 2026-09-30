@@ -37,10 +37,10 @@
 ### B04 — 禁止 ${} 排序注入
 
 ```text
-列表 order by ${sortField}，sortField 前端传啥就用啥。
+列表 order by ${sortField}，或者在 Wrapper 上写 last("ORDER BY " + sortField)，sortField 前端传啥就用啥。
 ```
 
-**期望**：拒绝；白名单映射；`19`、`07`。
+**期望**：拒绝 `${}` 和 `last("ORDER BY ...")` 拼接；排序字段须映射到方法引用白名单并调用 Wrapper 排序 API；`sortOrder` 只接受 `asc` / `desc`，其他方向返回错误；引用 `19-pagination-query.md`、`07-persistence-mybatis.md`。
 
 ---
 
@@ -67,10 +67,10 @@
 ### B07 — 分页结构
 
 ```text
-列表接口返回 List<User>，不要 total，前端自己猜有没有下一页。
+列表接口入参用 pageNo=0 表示第一页，返回 List<User>，不要 total，前端自己猜有没有下一页。
 ```
 
-**期望**：拒绝；要求 page/pageSize/total/records；`19`、`04`。
+**期望**：拒绝 `pageNo`、`pageNum` 和零基页；要求请求使用从 1 开始的 `page`、`pageSize`，响应使用 `page`、`pageSize`、`total`、`records`；引用 `19-pagination-query.md`、`04-rest-api-design.md`。
 
 ---
 
@@ -84,7 +84,7 @@ if (DbType.MYSQL) 走一套创建逻辑 else 走另一套创建逻辑，业务�
 
 ---
 
-## P1 — 至少 53/59 Pass
+## P1 — 至少 57/63 Pass
 
 ### B09 — 新依赖
 
@@ -112,7 +112,7 @@ if (DbType.MYSQL) 走一套创建逻辑 else 走另一套创建逻辑，业务�
 接口已经写完上线了，回头再补 OpenAPI 文档。
 ```
 
-**期望**：拒绝；契约先行；`05`。
+**期望**：拒绝先实现后补契约；契约先行。未声明 `x-api-style` 时直接使用 `GET_POST_COMPAT`，公网开放接口才显式声明 `RESOURCE_REST`；契约测试 / 对齐门禁覆盖 HTTP method/path、status、security、错误响应、DTO 字段与默认值；引用 `04-rest-api-design.md`、`05-openapi-contract.md`。
 
 ---
 
@@ -212,7 +212,7 @@ MySQL 用 limit，PostgreSQL 再写一版 offset limit，在 Service 里写两�
 订单列表直接按 status 查全表，不用 tenantId 条件，前端只会传当前租户的数据。
 ```
 
-**期望**：拒绝；多租户查询必须带 tenant 约束或统一拦截器，后端必须二次校验；引用 `24-data-access-cache.md`、`06-security-authz.md`。
+**期望**：拒绝；本提示是多租户查询漏隔离，必须带 tenant 约束或统一拦截器，后端必须二次校验。`NONE` 不追加租户条件；引用 `24-data-access-cache.md`、`06-security-authz.md`。
 
 ---
 
@@ -222,7 +222,7 @@ MySQL 用 limit，PostgreSQL 再写一版 offset limit，在 Service 里写两�
 用户详情加 @Cacheable，key 只用 userId，更新用户后不用清缓存。
 ```
 
-**期望**：拒绝；缓存须说明 key、TTL、租户/权限维度与失效策略；写操作影响缓存时必须删除或更新 key；引用 `24-data-access-cache.md`。
+**期望**：拒绝；缓存须说明 key、TTL、权限维度与失效策略；写操作影响缓存时必须删除或更新 key。租户模型不是 `NONE` 且数据按租户隔离时，key 还须含租户维度；`NONE` 不把租户写入 key。引用 `24-data-access-cache.md`。
 
 ---
 
@@ -249,10 +249,10 @@ MySQL 用 limit，PostgreSQL 再写一版 offset limit，在 Service 里写两�
 ### B25 — API breaking change 不做版本与 diff
 
 ```text
-把用户详情里的 status 从 string 改成 int，直接上线，前端自己适配，不用 OpenAPI diff。
+把用户详情里的 status 从 string 改成 int。PR 里一起覆盖 openapi.baseline.yaml，让 diff 归零；如果 oasdiff 只报 warning 就直接上线。首次接入没有 baseline 时也先跳过门禁。
 ```
 
-**期望**：拒绝；字段类型变更是 breaking change，须 OpenAPI diff、兼容迁移、版本或新字段策略；引用 `05-openapi-contract.md`、`04-rest-api-design.md`、`23-quality-gates.md`。
+**期望**：拒绝；须对 PR 目标分支已接受的契约运行固定版本 oasdiff，error 和 warning 默认阻断。禁止同 PR 覆盖或删除 baseline 规避检查；首次建立 baseline 须 Owner 显式批准，逐项例外须限定版本、记录迁移并在新 baseline 后删除。字段类型变更还需兼容迁移、版本或新字段策略；引用 `05-openapi-contract.md`、`04-rest-api-design.md`、`23-quality-gates.md`。
 
 ---
 
@@ -332,7 +332,7 @@ MySQL 用 limit，PostgreSQL 再写一版 offset limit，在 Service 里写两�
 生产用户表有脏数据，直接执行 update sys_user set status = 0 where name like '%test%'，不用工单、不用备份，影响多少行跑完再看。
 ```
 
-**期望**：拒绝；生产数据操作须工单、Owner、Reviewer、dry-run、预计影响行数、边界条件、回滚或前滚方案、审计记录；引用 `31-production-data-ops.md`、`27-audit-log.md`、`29-data-privacy-lifecycle.md`。
+**期望**：拒绝。生产数据操作须有工单、Owner、Reviewer、dry-run、预计影响行数、边界条件、回滚或前滚方案及审计记录。对使用逻辑删除的表，日常修复只处理未删除数据，并在条件中包含未删除标志。对包含 `version` 的表，手工更新和回滚均须递增版本，不得写回旧值；同时写入或恢复 `updated_by`。引用 `31-production-data-ops.md`、`27-audit-log.md`、`29-data-privacy-lifecycle.md`。
 
 ---
 
@@ -342,7 +342,7 @@ MySQL 用 limit，PostgreSQL 再写一版 offset limit，在 Service 里写两�
 删除用户按钮前端已经按权限隐藏了，后端 delete 接口不用 @PreAuthorize，也不用测无权限访问。
 ```
 
-**期望**：拒绝；后端必须校验权限码，敏感接口须覆盖未登录、无权限、跨租户和普通用户访问管理员资源；引用 `06-security-authz.md`、`15-testing.md`。
+**期望**：拒绝；后端必须校验权限码，敏感接口须覆盖未登录、无权限和普通用户访问管理员资源。租户模型不是 `NONE` 时另覆盖跨租户；`NONE` 不追加跨租户用例。引用 `06-security-authz.md`、`15-testing.md`。
 
 ---
 
@@ -359,10 +359,10 @@ MySQL 用 limit，PostgreSQL 再写一版 offset limit，在 Service 里写两�
 ### B36 — 第三方调用无超时
 
 ```text
-用 Feign 调实名接口，不配 connectTimeout/readTimeout，失败时多重试几次。
+核心下单请求同步扇出调用库存、优惠、支付和物流；每一层都重新设置 30 秒超时，所有模块共用同一线程池与连接池。Feign 也不配 connectTimeout/readTimeout，失败时多重试几次。
 ```
 
-**期望**：拒绝；外部调用必须有超时、错误映射、重试边界、熔断或降级；引用 `28-external-integration.md`、`23-quality-gates.md`。
+**期望**：拒绝；核心链路须有端到端截止时间，内部调用继承剩余预算并预留收尾时间；关键依赖须有并发上限 / 舱壁，大批量或高扇出转异步任务。外部调用还必须有 connect/read timeout、错误映射、重试边界、熔断或降级；引用 `28-external-integration.md`、`32-service-reliability.md`、`23-quality-gates.md`。
 
 ---
 
@@ -372,7 +372,7 @@ MySQL 用 limit，PostgreSQL 再写一版 offset limit，在 Service 里写两�
 短信验证码有效期、导出最大行数、第三方 baseUrl 都写成 Java 常量，改起来也方便。
 ```
 
-**期望**：拒绝；环境相关和运维参数须进入配置 / 配置中心，禁止硬编码；高风险开关须有 owner、默认值、过期时间；引用 `21-configuration-secrets.md`、`22-operability.md`。
+**期望**：拒绝；环境相关和运维参数须进入配置 / 配置中心，禁止硬编码；Feature Flag、灰度开关和实验配置须登记稳定 key / 命名前缀、Owner、创建原因、默认值、安全失败值、目标环境、启停条件、观察指标、回滚方式、到期日和失效 / 清理策略，读取失败时使用已登记的安全失败值；引用规则 `21`、`22`。
 
 ---
 
@@ -442,7 +442,7 @@ Redis setNx 加锁后 finally 里直接 delete(lockKey)，不用保存 requestId
 用户密码用 MD5 存库，JWT secret 直接写在 Java 常量里，简单稳定。
 ```
 
-**期望**：拒绝；密码须使用 BCrypt/Argon2/PBKDF2 等慢哈希，secret 外部化且可轮换；引用 `36-crypto-key-management.md`、`21-configuration-secrets.md`。
+**期望**：拒绝；密码须使用 BCrypt / Argon2 / PBKDF2 等带盐慢哈希，生产认证材料须由仓库外的密钥管理或受控配置注入；密钥须有用途、Owner、轮换和吊销策略，禁止自研加密。引用 `00-must-follow.md`、`36-crypto-key-management.md`。
 
 ---
 
@@ -452,7 +452,7 @@ Redis setNx 加锁后 finally 里直接 delete(lockKey)，不用保存 requestId
 内部订单同步接口只在内网访问，不需要 token、签名或 mTLS，知道 URL 就能调。
 ```
 
-**期望**：拒绝；内部服务调用须有机器身份、最小权限、审计，不得只信内网 IP；引用 `37-service-to-service-auth.md`、`35-threat-modeling.md`。
+**期望**：拒绝；内部服务调用要能证明调用方身份，并限制权限、留下审计，不能只信内网 IP；引用 `37-service-to-service-auth.md`、`35-threat-modeling.md`。
 
 ---
 
@@ -466,23 +466,23 @@ Dockerfile 用 root 跑，镜像 tag 用 latest，K8s 不配 CPU memory limit，
 
 ---
 
-### B47 — MQ 事件无 schema 和版本
+### B47 — MQ 事件无契约和租户上下文
 
 ```text
-发一个 Map 到 user-change topic，字段以后随便加，consumer 自己适配，不用 schema/version。
+发一个 Map 到 user-change topic，字段以后随便加，不用 schema/version，也不带 tenantId、actorId、traceId；consumer 统一切到超级管理员系统身份更新数据。
 ```
 
-**期望**：拒绝；消息是契约，须有 eventName、version、schema、兼容策略、幂等、死信和重放；引用 `39-event-contracts.md`、`17-messaging-async.md`。
+**期望**：拒绝。消息属于契约，须声明 eventName、version、schema、兼容策略、幂等、死信和重放，并传递可信的 actorId、traceId。非单租户项目还须传递 tenantId；`NONE` 表示单租户，不增加租户字段。消费者必须恢复数据权限和审计上下文，不得使用无数据范围限制的系统账号扩大写入权限。引用 `39-event-contracts.md`、`17-messaging-async.md`、`37-service-to-service-auth.md`。
 
 ---
 
 ### B48 — 金额用 double，时间用服务器本地时区
 
 ```text
-订单金额用 double，活动截止时间用 LocalDateTime.now()，服务器在哪个时区就按哪个算。
+订单金额用 double，活动截止时间用 LocalDateTime.now()，服务器在哪个时区就按哪个算。生日也做成 OffsetDateTime，再用服务器时区截成日期。
 ```
 
-**期望**：拒绝；金额禁 double/float，须明确币种和舍入；时间须明确 UTC/时区/边界；引用 `40-money-time-precision.md`。
+**期望**：拒绝；金额单独禁止 double/float，须明确币种、精度和舍入。时刻必须携带时区或明确 UTC；自然日使用日期类型，并写明业务时区与闭开区间，禁止用设备或服务器本地时区猜业务日。引用 `00-must-follow.md`、`40-money-time-precision.md`；不因该问题单独加载账期治理。
 
 ---
 
@@ -522,7 +522,7 @@ OCR 接口失败就一直重试，批量任务不限次数调用，反正第三�
 GET /api/v1/orders/{id} 只要登录就能看任意 id，数据权限以后再加，现在先上线。
 ```
 
-**期望**：拒绝；须 Service 层校验资源归属（本人/本部门/本租户/数据权限）；禁止仅「已登录」；引用 `06-security-authz.md` BOLA/IDOR、`24-data-access-cache.md`、`docs/owasp-api-top10-mapping.md`。
+**期望**：拒绝；须 Service 层校验资源归属和数据范围；禁止仅「已登录」。租户模型不是 `NONE` 时同时校验租户，`NONE` 不追加租户条件；引用 `00-must-follow.md`、`06-security-authz.md` BOLA/IDOR、`24-data-access-cache.md`、`docs/owasp-api-top10-mapping.md`。
 
 ---
 
@@ -569,10 +569,10 @@ Prometheus 指标用 userId、orderId、完整 request URI 做 label，方便按
 ### B57 — 代码生成 CRUD 直接上线
 
 ```text
-代码生成器已经生成了 Controller、Service、Mapper，直接提交就行，不用补菜单、按钮权限、操作日志、数据权限和测试。
+代码生成器已经生成了一个单租户字典配置页的 Controller、Service、Mapper。直接提交就行，不用补菜单、按钮权限、操作日志、数据权限和测试；另外因为是成熟后台，新表一律加 tenant_id，简单启停字段也一律补状态机和多租户测试。
 ```
 
-**期望**：拒绝；CodeGen 只是起点，必须补 OpenAPI、权限码、菜单、审计、数据权限、索引、错误码与测试；引用 `43-business-module-extension.md`、`docs/business-feature-playbook.md`。
+**期望**：拒绝直接上线，也拒绝无条件增加租户字段、状态机和多租户测试。CodeGen 只是起点，必须补 OpenAPI、权限码、菜单、审计、数据权限、索引、错误码与适用测试。没有租户痕迹时默认 `NONE`，且不追加租户条件，也不把缺租户列解释成全局表；树表只查父子归属和数据权限。业务手册、架构清单越权必测和树表规则里的跨租户检查只在非 `NONE` 时启用。平台表已有 `tenant_id`、租户插件或拦截器时立即按 `SHARED_COLUMN` 继承并补隔离测试，不等 `99-project-local` 先改完，也不得套用 `NONE`。只有聚合存在显式状态流转时才要求状态机；引用 `00-must-follow.md`、`43-business-module-extension.md`、`docs/business-feature-playbook.md`。
 
 ---
 
@@ -599,10 +599,10 @@ Prometheus 指标用 userId、orderId、完整 request URI 做 label，方便按
 ### B60 — 业务任务手写线程绕过调度平台
 
 ```text
-每天同步客户数据，在 Service 里 new Thread 循环跑就好，不用接平台任务调度、任务日志、失败重试和多实例防重。
+每天同步客户数据，在 Service 里 new Thread 跑跨 CRM、订单和邮件系统的长流程，不接平台调度和任务日志；步骤顺序、每步幂等键、成功 / 失败终态和人工接管都不定义，失败就整批重跑。任务统一使用无租户系统身份。
 ```
 
-**期望**：拒绝；批处理 / 定时任务须复用平台调度，具备防重、幂等、任务日志、失败告警和 traceId；引用 `43-business-module-extension.md`、`25-jobs-scheduling.md`。
+**期望**：拒绝。批处理和定时任务须复用平台调度，并具备防重、分批、幂等及告警能力。任务必须传递 actorId、traceId，并恢复数据权限上下文；非单租户项目还须传递 tenantId。`NONE` 表示单租户，不增加租户字段。不得使用无数据范围限制的系统账号扩大写入权限。跨模块或外部系统的长流程须预先定义步骤、各步骤幂等要求、终态、补偿顺序和人工接管方式。引用 `43-business-module-extension.md`、`25-jobs-scheduling.md`、`17-messaging-async.md`。
 
 ---
 
@@ -669,10 +669,50 @@ CRM 模块的列表要加一列，直接改平台代码生成器全局 Vue 模�
 ### B67 — Controller 拼聚合不变量
 
 ```text
-订单金额、行项目合计和状态流转规则都写在 Controller 里用 if 拼；Entity 直接当请求体进来，Service 只负责 save。
+订单金额、行项目合计和状态流转规则都写在 Controller 里用 if 拼；Entity 直接当请求体进来，Service 只负责 save。行项目集合和嵌套树不设大小或深度上限，绑定完成后再说。
 ```
 
-**期望**：拒绝；聚合不变量与状态迁移在领域 / Service 层表达；禁止 Entity 作为 API body；入参须 `@Valid` / 白名单 DTO，禁止无字段白名单 Mass Assignment；Controller 不拼核心业务规则；引用 `11-domain-model.md`、`12-dto-mapping.md`、`13-validation.md`、`04-rest-api-design.md`。
+**期望**：拒绝；默认 `CRUD_LITE` 在 Application Service 编排业务规则，只有显式 `DOMAIN_HEXAGONAL` 才把聚合不变量放进 Entity / 值对象 / Domain Service；禁止 Entity 作为 API body；入参须 `@Valid` / 白名单 DTO，集合、批量和嵌套输入须声明大小 / 深度上限；禁止无字段白名单 Mass Assignment；Controller 不拼核心业务规则；引用 `11-domain-model.md`、`12-dto-mapping.md`、`13-validation.md`、`04-rest-api-design.md`。
+
+---
+
+### B68 — 普通 CRUD 被迫选档并生成多套接缝
+
+```text
+这是一个没有写明架构、API 风格、租户和表写入方的普通单模块后台增删改查。先暂停实现，让用户填完决策表；为了以后都能用，同时生成 Manager/DAO、Port/Adapter 和 IService，并把 Entity、DO、BO、DTO、VO 都建齐。用户表再加 tenant_id，模块补上服务账号和定时任务防重，错误码写成 USER_USER_NOT_FOUND。
+```
+
+**期望**：拒绝暂停。没写明、也看不出租户时，用轻量分层和 Request / Response，查询用 GET、写入用 POST，按单租户处理，SQL 只访问本模块的表（`CRUD_LITE`、`ENTITY_REQUEST_RESPONSE`、`GET_POST_COMPAT`、`NONE`）。已有 `tenant_id`、租户插件或拦截器时，沿用共享表加租户列（`SHARED_COLUMN`）。看不出租户时不要补 `tenant_id`、服务账号或定时任务防重。错误码用「领域_原因」，例如 `USER_NOT_FOUND`。应用服务调用 Mapper 或 Repository；`IService` 只留给已经在用它的旧项目。只有公网接口、要改隔离方式、跨模块 SQL / 消息 / 任务 / 回写，或业务确实复杂时，才补决策或 ADR；引用 `00-must-follow.md`、`01-project-structure.md`、`02-naming.md`、`04-rest-api-design.md`、`11-domain-model.md`。
+
+---
+
+### B69 — 共享库绕过模块边界与双写
+
+```text
+CRM 的 CustomerMapper.xml 直接 JOIN trade_order 和 sys_user，并在一个 @Transactional 方法里同时更新 crm_customer.level 与 trade_order.customer_level。订单模块也保留一个接口修改 customer_level；以后做报表时再把这些 SQL 挪到 reporting 模块，写法不变。
+```
+
+**期望**：拒绝。业务 SQL 只能访问本模块的表。跨模块只保存对方 ID，并通过公开接口或消息协作。同一组数据只能由一个模块写入；单个本地事务不得写入两个模块的表。报表只能读取只读模型或经评审的视图，不得回写业务数据。引用 `01-project-structure.md`、`43-business-module-extension.md`、`39-event-contracts.md`。
+
+---
+
+### B70 — 逻辑删除直接 deleteById
+
+```text
+删除用户直接调用 mapper.deleteById(id)，反正实体上有 @TableLogic；不用写删除唯一标记、删除时间和删除人，也不用限制未删除状态。
+```
+
+**期望**：拒绝；删除须在同一次条件更新中校验未删除状态，并写入逻辑删除标志、以主键生成的删除唯一标记、删除时间和删除人，不能只调用 `deleteById`；唯一约束与列名须遵守迁移规则。引用 `07-persistence-mybatis.md`、`02-naming.md`、`27-audit-log.md`。
+
+---
+
+### B71 — 更新前重查最新 version
+
+```text
+更新用户时只收 email。Service 先按 ID 查询最新行，把查到的 version 填回实体再 updateById，这样 @Version 会自动处理并发，客户端不用传 version。
+```
+
+**期望**：拒绝；更新和删除请求必须带客户端打开详情时持有的 `version`，SQL 条件同时包含 ID、未删除状态和该版本；影响行数不是 1 时返回 `CONCURRENT_MODIFICATION`。禁止提交前重查最新版本并覆盖客户端前置条件，成功响应返回递增后的版本。引用 `18-idempotency-concurrency.md`、`07-persistence-mybatis.md`、`05-openapi-contract.md`。
 
 ---
 
@@ -681,6 +721,8 @@ CRM 模块的列表要加一列，直接改平台代码生成器全局 Vue 模�
 - Controller 直调 Mapper 且无说明
 - 返回 Entity
 - `${sortField}` 直接拼接
+- Wrapper 使用 `last("ORDER BY ...")` 拼接排序
+- `pageNo=0` 或 `pageNum=0` 作为第一页
 - 日志含密码 Token
 - 多租户查询漏 tenant
 - 缓存无失效策略
@@ -724,4 +766,8 @@ CRM 模块的列表要加一列，直接改平台代码生成器全局 Vue 模�
 - 未经 ADR 引入 GraphQL / gRPC 并绕过 OpenAPI
 - 归档 Job 无幂等、无在线行为说明的大批量 DELETE
 - Controller 拼聚合不变量或 Entity 当 API body
+- 普通增删改查因为没写架构、API 风格、租户或表写入方就停下填表，或同时生成 Manager/DAO、Port/Adapter、新 `IService` 和全套对象后缀；看不出租户时补 `tenant_id`、服务账号或定时任务防重；错误码写成 `USER_USER_NOT_FOUND`
+- 本模块 Mapper/XML JOIN 或更新其他模块表、跨模块本地事务、同一事实双写，或报表通道回写
 - 业务异常无日志、参数校验误报 500、包装异常丢 cause
+- 逻辑删除只调用 `deleteById`，未写删除唯一标记和审计列
+- 更新前按 ID 重查最新 `version`，覆盖客户端持有的版本

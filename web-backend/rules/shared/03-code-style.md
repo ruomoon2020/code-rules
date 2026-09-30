@@ -1,4 +1,4 @@
-# Code Style Rules（Java）
+# 代码风格规则（Java）
 
 适用于 Spring Boot 3.x + Java 17+；Spring Boot 4.x 项目须先按依赖治理规则完成迁移评估。
 

@@ -19,5 +19,7 @@ alwaysApply: false
 - 路由 `name`、按钮权限码与后端一致；禁止仅隐藏 UI。
 - 列表须 Base 组件 + 四态 + 分页竞态；CodeGen 页不得直接上线。
 - 导入 / 导出须权限、脱敏、操作记录刷新。
+- 树表父节点按数据权限过滤。租户模型不是 `NONE` 时，跨租户父节点必须报错，不可静默挂载。
+- 横向目录也禁止跨业务域引用对方 store、页面私有组件和请求封装；共享只来自 Base、OpenAPI 同步生成的 API 类型与壳层公开接口。
 
 全文：**`rules/shared/22-business-module-extension.md`**、步骤 **`rules/docs/business-feature-playbook-frontend.md`**

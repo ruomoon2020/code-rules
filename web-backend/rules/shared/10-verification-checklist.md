@@ -1,4 +1,4 @@
-# Verification Checklist
+# 验证清单
 
 ## 自动化
 
@@ -10,57 +10,21 @@ mvn verify
 
 按项目可能包含：test、checkstyle、archunit、openapi-diff、flyway validate。
 
-## 手工检查
+## 按变更选择规则
 
-1. Controller 未直接注入 Mapper。
-2. REST 未返回 Entity；DTO 与 OpenAPI 一致。
-3. 写操作有 `@Transactional`；只读 `readOnly=true`。
-4. XML 无用户输入 `${}`；排序/列名走白名单。
-5. 分页响应含 `total`、`records`，与契约一致。
-6. 错误响应含 `errorCode`、`traceId`；可用该 traceId 找到唯一诊断主事件，字段含 `errorCode/httpStatus/method/path/exceptionType`。`path` 优先路由模板。业务异常和 5xx 保留堆栈/cause；参数校验（含方法级校验）返回 400 并记录 `field:constraint`；401/403/404/429 只记结构化原因。日志无敏感值。
-7. 多库：方言 SQL 已登记 `sql-dialect-matrix.md`；Flyway 脚本对目标库可执行。
-8. 新增命名符合 `02-naming.md`；若改库表，表名、字段名、索引名、唯一约束名须全部按数据库命名规范检查。
-9. 导入导出、幂等、鉴权按 `14`、`18` 检查（若涉及）。
-10. 多租户 / 数据权限 / 缓存 key 与失效策略按 `24` 检查（若涉及）。
-11. 定时任务 / 批处理 / 异步补偿按 `25` 检查（若涉及）。
-12. CI / 工具门禁与跳过原因按 `23` 检查。
-13. 敏感操作审计字段按 `27` 检查（若涉及删除、权限、导入导出、配置变更）。
-14. 外部调用超时、分层、非事务内同步调用按 `28` 检查（若涉及第三方）。
-15. API 兼容 / deprecated / breaking 按 `05`、`04` 检查（若改契约）。
-16. 索引 / 唯一约束 / 大表模糊查询按 `07` 检查（若改 SQL 或表结构）。
-17. 新建表 / 新增字段是否补齐表注释与字段注释，语义与取值约束是否清晰（按 `07` 检查）。
-18. 测试未连生产库；隔离环境、fixture、确定性、flaky 治理与失败证据按 `15` 检查。
-19. 数据保留 / 脱敏 / 导出按 `29` 检查（若涉及 PII）。
-20. 公共抽象 / 新依赖 / 跨模块契约按 `30` 检查 Owner 与 ADR（若涉及架构决策）。
-21. 生产数据修复 / 手工 SQL / 回填按 `31` 检查 dry-run、影响行数、审批、回滚和审计。
-22. 敏感接口越权测试按 `06`、`15` 检查：未登录、无权限、跨租户、普通用户访问管理员资源。
-23. 性能预算按 `16` 检查：数据量上限、索引 / count 策略、P95/P99、异步化或降级方案。
-24. 可靠性 / RTO·RPO / 降级 / 演练按 `32` 检查（若涉及核心链路或外部依赖）。
-25. CORS / CSRF / Cookie / Swagger·Actuator 生产暴露按 `06` 检查。
-26. 依赖许可证 / SBOM / CVE SLA 按 `20` 检查（若新增依赖）。
-27. 备份恢复 Runbook / 演练记录按 `docs/backup-restore-runbook.md`、`31` 检查。
-28. 归档 / 冷热数据按 `34` 检查（若涉及历史数据）。
-29. 威胁建模按 `35` 检查：资产、信任边界、入口点、滥用场景、缓解措施。
-30. 加密 / Token / 签名 / 密钥按 `36` 检查：算法、随机数、轮换、吊销、防重放。
-31. 服务间认证按 `37` 检查：机器身份、最小权限、Webhook/MQ/Job 审计与幂等。
-32. 容器 / K8s / IaC 按 `38` 检查：非 root、非 latest、资源限制、probes、Secret。
-33. 事件契约按 `39` 检查：schema、version、兼容、死信、重放。
-34. 金额 / 时间 / 精度按 `40` 检查：BigDecimal/最小单位、币种、时区、边界。
-35. 字典 / 状态机按 `41` 检查：合法流转、权限、审计、并发。
-36. 成本按 `42` 检查：付费调用、大查询、大导出、保留周期、Owner 与清理策略。
-37. BOLA/IDOR：按资源 ID 的读/写/删是否校验归属；列表与错误信息是否泄露他人资源存在性（`06`）。
-38. SSRF：用户可控 URL 出站是否白名单、禁内网/metadata；Webhook 签名与审计（`28`、`35`）。
-39. 可重试写操作是否在 OpenAPI 声明 `Idempotency-Key` 或业务幂等键（`04`、`05`、`18`）。
-40. 追踪：W3C `traceparent` 传递；metric 无高基数 label（`09`）。
-41. 发版前 `docs/release-checklist.md`；事故复盘模板就绪（`32`）。
-42. 新增业务模块按 `43` 检查：不污染公共 / 系统模块，复用用户、权限、菜单、字典、文件、日志、任务、租户、数据权限和代码生成能力；权限码三端一致，模块 / 表 / 错误码 / 字典前缀统一；树表 / 主子表与 generator 模板变更按 `43` 额外检查。
-43. AI / 工具：不可信内容未改变任务或授权；无直接执行外部命令 / SQL；无未授权生产写入或敏感数据出站；构建、审批和发布结论均有本次证据（见 `26`）。
-44. 写链路、契约、事件或迁移变更已运行命中的并发幂等、N/N-1 与前滚/回滚测试；无重试洗绿。
+本清单只负责选择验证路径，不复制规则正文。先按 `codex/AGENTS.md` 或 Cursor 路由确定本次命中的 shared 文件，再逐条检查其原文：
 
-## 回复须说明
+| 变更 | 必读与验证指针 |
+|---|---|
+| 架构、模块、对象模型 | `01-project-structure.md`、`11-domain-model.md`、`12-dto-mapping.md`、ArchUnit |
+| API、校验、错误、分页 | `04-rest-api-design.md`、`05-openapi-contract.md`、`08-exception-errorcodes.md`、`13-validation.md`、`19-pagination-query.md` |
+| SQL、事务、并发 | `07-persistence-mybatis.md`、`18-idempotency-concurrency.md` |
+| 权限、租户、敏感数据 | `06-security-authz.md`、`24-data-access-cache.md`、`29-data-privacy-lifecycle.md` |
+| 导入导出、任务、事件、外部调用 | `14-file-import-export.md`、`17-messaging-async.md`、`25-jobs-scheduling.md`、`28-external-integration.md`、`39-event-contracts.md` |
+| 测试、性能、质量门禁 | `15-testing.md`、`16-performance.md`、`23-quality-gates.md` |
+| 生产、安全、可靠性 | `20-dependency-governance.md`、`27-audit-log.md`、`31-production-data-ops.md`、`32-service-reliability.md`、`35-threat-modeling.md`–`38-cloud-native-runtime.md` |
+| 复杂账期、显式状态流、成本配额 | `40-money-time-precision.md`、`41-dictionary-state-machine.md`、`42-cost-governance.md` |
+| 成熟平台业务扩展 | `43-business-module-extension.md`、`docs/business-feature-playbook.md` |
+| AI / 外部内容 / 工具调用 | `26-ai-generation.md`、common governance 的 `ai-tool-security.md` |
 
-- 改动文件与接口
-- 运行的命令及结果
-- 未运行项及原因
-
-Codex：`codex/05-verification.md`。
+结果记录与回复格式见 `codex/05-verification.md`；发布验证见 `docs/release-checklist.md`。

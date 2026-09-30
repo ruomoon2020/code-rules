@@ -13,7 +13,7 @@
 |---|---|---|
 | **硬变更** | 改 `00`、增删 eval 用例、改 P0/P1 门槛、新增 `shared/NN-*.md` | 下表「硬变更清单」全部 |
 | **软变更** | 仅扩写某 shared 段落、docs 附录、examples 注释 | `CHANGELOG.md` + 交叉引用；evals 门槛不变则不必改 rubric |
-| **契约变更** | `contracts/openapi.yaml` | `openapi.baseline.yaml` 策略在 PR 说明；合并后 Owner 更新 baseline |
+| **契约变更** | `contracts/openapi.yaml` | 相对 PR base / 上一发布 baseline 做 diff；合并后 Owner 更新 baseline，PR 中不得提前覆盖隐藏差异 |
 
 ## 硬变更清单（逐项勾选）
 
@@ -34,7 +34,7 @@
 - [ ] `evals/adoption-checklist.md`、`RELEASE.md`、`docs/onboarding-new-project.md`
 - [ ] `cursor/00-project-overview.mdc` 中硬规则条数、evals 门槛
 - [ ] 仓库根 `contracts/openapi.yaml` 与 `05-openapi-contract.md` 描述一致
-- [ ] 发版前：`evals/prompts.md` **Full** B01–B67（P0 8/8，P1 ≥53/59）
+- [ ] 发版前：`evals/prompts.md` **Full** B01–B71（P0 8/8，P1 ≥57/63）
 
 ## Evals 计数约定
 

@@ -1,14 +1,12 @@
-# Configuration & Secrets
+# 配置与密钥规则
 
 1. 配置分环境：`application-{profile}.yml`；敏感项来自环境变量/配置中心。
 2. 禁止提交：`application-prod.yml` 中的密码、密钥、内网地址。
 3. 数据源、Redis、OSS 等连接串外部化。
-4. **Feature Flag**（与前端 `00` 一致）：
-   - 须有 **owner**、**默认值**、**过期/清理日期**；
-   - 命名统一前缀（如 `feature.xxx.enabled`），配置来源统一（配置中心或 `application.yml`，禁止散落硬编码）。
-   - **禁止**灰度/实验开关长期存在；到期须删除代码分支与配置。
-5. 多库：各 profile 指定 `spring.datasource.url` 与 Flyway locations。
-6. 发布与回滚相关开关策略见 `22-operability.md`。
+4. **Feature Flag / 灰度 / 实验配置**必须满足 `common-governance/docs/environment-promotion.md` 的统一生命周期清单；后端负责稳定 key / 命名前缀、服务端安全失败值、配置来源和最终业务判断，禁止散落硬编码。
+5. 开关到期必须删除代码分支与配置；续期必须重新审批并更新 Owner、原因、观察指标、回滚方式和到期日。
+6. 多库：各 profile 指定 `spring.datasource.url` 与 Flyway locations。
+7. 发布与回滚相关开关策略见 `22-operability.md`。
 
 ## Type-safe Configuration
 

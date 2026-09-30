@@ -15,6 +15,8 @@ alwaysApply: false
 - XML：`#{}`；禁止用户输入 `${}`；方言用 databaseId 或 dialect 目录。
 - 支持 MySQL、PostgreSQL 等，见 sql-dialect-matrix。
 - 建表脚本须按 `rules/shared/02-naming.md`：表名、字段名、索引名、唯一约束名统一命名。
+- 主键未声明时用雪花 `ASSIGN_ID`。已有自增表沿用自增，同一库不混用。
+- 逻辑删除未声明时，`@TableLogic` 只绑 `isDeleted`（0/1），并用 `@TableField("is_deleted")` 固定列名。`deleteToken` 保证未删除唯一，删除时写成主键。`deletedAt` 只留删除时间，并与 `deletedBy`、令牌在同一次更新里写入，条件包含未删除标志。禁止只调用 `deleteById`。`@Version` 必须注册乐观锁插件。分页插件不要传入固定 `DbType`。时刻用 `Instant` 或 `OffsetDateTime`，自然日用 `LocalDate`。
 - 查询/JOIN/排序字段评估索引；唯一约束落库；大表禁止无条件 `LIKE '%keyword%'`。
 
 全文：`rules/shared/07-persistence-mybatis.md`

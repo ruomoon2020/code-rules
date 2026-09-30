@@ -14,4 +14,6 @@ Read `rules/shared/22-error-recovery-offline.md`、`rules/shared/06-login-auth-s
 - 401/登录过期走统一 recovery，禁止每页各自 reLaunch。
 - 弱网/离线须有统一提示与重试边界。
 - 列表/详情/表单 error 态须可重试；禁止空 catch。
+- 收到 `CONCURRENT_MODIFICATION` 后保留输入并提供刷新或对比入口。更新和删除请求携带页面当前持有的 `version`；提交前不得重新查询并替换该值，也不得自动覆盖重试。
+- 创建成功使用响应中的初始 `version`，保存成功后采用响应中递增后的版本；恢复动作按稳定 `errorCode` 映射，禁止按 `message` 文案分支。
 - 支付/授权中断须可恢复路径。

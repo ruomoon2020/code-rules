@@ -1,4 +1,4 @@
-# Threat Modeling
+# 威胁建模规则
 
 与 `06-security-authz.md`、`27-audit-log.md`、`29-data-privacy-lifecycle.md` 互补，用于在高风险后端变更前识别攻击面与缓解措施。
 

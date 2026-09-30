@@ -21,8 +21,9 @@ contracts/openapi.yaml
 | 字段 | 前端职责 |
 |---|---|
 | `traceId` | request / logger 关联；错误页和操作记录可供排障查询 |
-| `errorCode`、`message` | 统一 normalizer；禁止页面各自猜码或硬编码不一致文案 |
+| `errorCode`、`message` | 统一 normalizer；`errorCode` 是稳定契约并映射 i18n，`message` 仅作允许的 fallback；禁止页面猜码、按 message 分支或拼业务句 |
 | `page`、`pageSize`、`total`、`records` | 列表状态、空态与删末页回退遵守 `shared/19-list-pagination.md` |
+| `sortField`、`sortOrder` | `sortOrder` 只传 `asc` / `desc`；`ascending` / `descending` 在请求前映射 |
 | 权限码 | 路由、按钮和后端 `@PreAuthorize` 同源或可追溯；UI 仅作体验收敛 |
 | `Idempotency-Key` | 创建、支付等可重试写操作复用同一键；不因重试生成新业务请求 |
 
@@ -32,7 +33,7 @@ contracts/openapi.yaml
 
 - 复用平台菜单、权限指令、字典、壳层、文件与操作记录；约束见 `shared/22-business-module-extension.md`。
 - 列表、详情、导出、批量操作和异步任务均按后端数据权限结果展示；403/业务错误须明确反馈，不能伪造成功。
-- 导入导出需要模板下载、任务状态、错误明细、下载鉴权、审计记录刷新闭环。
+- 导入导出需要模板下载、任务状态、错误明细、下载鉴权，并在完成后刷新审计记录。
 - 树表 / 主子表需处理非法父节点禁选、子表错误明细和失败态；后端事务与归属校验仍是安全边界。
 
 ## i18n / 实时 / 富文本

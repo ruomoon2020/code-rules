@@ -8,7 +8,7 @@
 
 - Node.js 与 pnpm 版本、包管理器锁文件
 - views、Base 组件、request wrapper、store、generated API、schema 和 layout 路径
-- OpenAPI / schema 唯一来源及同步方式
+- 权威 OpenAPI 路径及 schema / client 生成方式
 - 当前采纳 Level、目标 Level、Owner 和计划迭代
 - 实际存在的 lint、type-check、test、build、api check、E2E 和发布命令
 
@@ -29,7 +29,7 @@
 
 ## 3. 契约与组件上下文
 
-1. 设置 OpenAPI / schema 的唯一来源，接入 `schema:sync`、`api:gen`、`api:check` 或等价命令。
+1. 把 `contracts/openapi.yaml`（或项目明确声明的等价 OpenAPI 路径）设为唯一契约源；schema / client 只由它生成，并接入 `schema:sync`、`api:gen`、`api:check` 或等价命令。
 2. generated 目录只由生成器更新，禁止手改或维护重复 DTO。
 3. 首个页面实现前读取真实 Base 组件源码，记录 props、events、slots、loading / empty / error 行为。
 4. 确认菜单、路由、按钮权限、字典和后端鉴权的映射；前端权限只改善体验。

@@ -1,4 +1,4 @@
-# 25 Dependency Supply Chain
+# 依赖与供应链规则
 
 npm 依赖与第三方 SDK 治理。新依赖说明见 `00` §6。
 

@@ -13,6 +13,8 @@ on:
       - "common-governance/**"
       - "contracts/openapi.yaml"
       - "contracts/openapi.baseline.yaml"
+      - "contracts/oasdiff-approved-v1-to-v2.txt"
+      - "contracts/oasdiff-approved-warnings-v1-to-v2.txt"
       - "README.md"
       - "AGENTS.md"
       - "建议.md"
@@ -33,6 +35,8 @@ on:
       - "common-governance/**"
       - "contracts/openapi.yaml"
       - "contracts/openapi.baseline.yaml"
+      - "contracts/oasdiff-approved-v1-to-v2.txt"
+      - "contracts/oasdiff-approved-warnings-v1-to-v2.txt"
       - "README.md"
       - "AGENTS.md"
       - "建议.md"
@@ -51,9 +55,11 @@ permissions:
 jobs:
   validate-backend-rules:
     runs-on: ubuntu-latest
-    timeout-minutes: 5
+    timeout-minutes: 10
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          fetch-depth: 0
       - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5
         with:
           python-version: "3.12"
@@ -61,12 +67,52 @@ jobs:
         with:
           distribution: temurin
           java-version: "17"
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with:
+          node-version: "22"
+      - uses: actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e # v7.0.0
+        with:
+          go-version: "1.26.8"
+          cache: false
       - name: Install validator dependencies
         run: pip install pyyaml
       - name: Run backend validator unit tests
         run: python -m unittest discover -s web-backend/rules/scripts/tests -v
       - name: Validate backend rules package
         run: python web-backend/rules/scripts/validate-rules-package.py
+      - name: Lint OpenAPI contract
+        run: npx --yes --package @redocly/cli@2.14.0 redocly lint contracts/openapi.yaml
+      - name: Install pinned OpenAPI diff tool
+        if: github.event_name == 'pull_request'
+        run: |
+          go install github.com/oasdiff/oasdiff@v1.32.1
+          echo "$(go env GOPATH)/bin" >> "$GITHUB_PATH"
+      - name: Smoke-test OpenAPI breaking detection
+        if: github.event_name == 'pull_request'
+        shell: bash
+        run: |
+          set +e
+          output=$(oasdiff breaking --format singleline --fail-on ERR -- web-backend/rules/examples/openapi-diff-fixtures/base.yaml web-backend/rules/examples/openapi-diff-fixtures/breaking.yaml 2>&1)
+          status=$?
+          set -e
+          printf '%s\n' "$output"
+          test "$status" -eq 1
+          for rule in new-required-request-parameter request-parameter-type-changed request-property-type-changed response-property-type-changed; do
+            grep -Fq "[$rule]" <<< "$output"
+          done
+      - name: Diff OpenAPI against pull request base
+        if: github.event_name == 'pull_request'
+        shell: bash
+        run: |
+          git show "${{ github.event.pull_request.base.sha }}:contracts/openapi.yaml" > "$RUNNER_TEMP/openapi-base.yaml"
+          if [ -f contracts/oasdiff-approved-v1-to-v2.txt ] || [ -f contracts/oasdiff-approved-warnings-v1-to-v2.txt ]; then
+            test -f contracts/oasdiff-approved-v1-to-v2.txt
+            test -f contracts/oasdiff-approved-warnings-v1-to-v2.txt
+            python -c 'import sys, yaml; base=yaml.safe_load(open(sys.argv[1], encoding="utf-8")); current=yaml.safe_load(open(sys.argv[2], encoding="utf-8")); migration=current.get("x-breaking-change") or {}; sys.exit(0 if base["info"]["version"] == "1.0.0" and current["info"]["version"] == "2.0.0" and migration.get("from-version") == "1.0.0" and migration.get("migration") else 1)' "$RUNNER_TEMP/openapi-base.yaml" contracts/openapi.yaml || { echo "The temporary 1.0-to-2.0 exceptions are expired or lack migration metadata." >&2; exit 1; }
+            oasdiff breaking --fail-on WARN --err-ignore contracts/oasdiff-approved-v1-to-v2.txt --warn-ignore contracts/oasdiff-approved-warnings-v1-to-v2.txt -- "$RUNNER_TEMP/openapi-base.yaml" contracts/openapi.yaml
+          else
+            oasdiff breaking --fail-on WARN -- "$RUNNER_TEMP/openapi-base.yaml" contracts/openapi.yaml
+          fi
 
   validate-frontend-rules:
     runs-on: ubuntu-latest

@@ -1,4 +1,4 @@
-# Quality Gates and CI Rules
+# 质量门禁与 CI 规则
 
 用于把规则落到工具、CI 和 Review 阻断级别。规则缺工具时，PR / Codex 最终回复必须明确“项目未配置该门禁”，不得伪造通过。
 
@@ -9,7 +9,7 @@
 | 编译与单测 | `mvn verify` / `./gradlew check` | PR 必须阻断 |
 | 分层架构 | ArchUnit（见 `examples/archunit`） | PR 必须阻断 |
 | Java 风格 | Checkstyle / Spotless / PMD（按项目） | PR 建议阻断 |
-| OpenAPI 契约 | openapi-diff / Spectral / contract test | API 变更必须阻断 |
+| OpenAPI 契约 | 固定版本 `oasdiff breaking --fail-on WARN` + contract test | API 变更必须阻断 |
 | Flyway 迁移 | `flyway validate` + Testcontainers 或等价真实引擎的多库迁移 | DB 变更必须阻断 |
 | SQL 安全 | 扫描 / Review：`${}`、排序白名单、N+1 | PR 必须阻断 |
 | 依赖安全 | OWASP Dependency-Check / SCA / license check / SBOM | 高危漏洞必须阻断 |
@@ -29,7 +29,7 @@
 | 级别 | 门禁 | 说明 |
 |---|---|---|
 | **Required** | `mvn verify` / `./gradlew check` | 含编译、单测；ArchUnit 建议在 verify 内 |
-| **Required** | OpenAPI diff / Spectral | 契约 PR 必跑；无 baseline 须在 PR 说明 skip |
+| **Required** | 固定版本 `oasdiff breaking --fail-on WARN` | 契约 PR 必跑；首次 baseline 必须使用 Owner 施加的 `openapi-baseline-bootstrap-approved` 标签。已有目标分支契约时初始 baseline 必须与它一致，绿地项目则与新契约一致；否则门禁失败，禁止以 PR 说明 skip |
 | **Required** | Secret scan（gitleaks 等） | PR 必跑 |
 | **Conditional** | Flyway validate + 多库迁移 | 仅 DB migration PR；MySQL + PostgreSQL 各一次 |
 | **Conditional** | OWASP Dependency-Check / SCA / license | 按合规策略；高危 CVE 阻断 |
@@ -39,16 +39,16 @@
 
 ## CI 基线
 
-1. PR 至少运行 **Required** 项；契约变更加 OpenAPI diff。
+1. PR 至少运行 **Required** 项；契约变更运行固定版本 `oasdiff breaking --fail-on WARN`。
 2. DB 变更必须跑 Flyway validate（**Conditional**）；多库项目至少 MySQL + PostgreSQL 各跑一次迁移。
 3. 生产发布分支必须运行集成测试或 Testcontainers 等价用例。
-4. 跳过门禁必须写明原因、风险、owner 与补跑计划（`docs/pull-request-template.md`）。
+4. 一般门禁如因受控环境故障暂时跳过，必须写明原因、风险、Owner 与补跑计划（`docs/pull-request-template.md`）；OpenAPI breaking 门禁不得用此条绕过，首次 baseline 和逐项例外遵守 `05-openapi-contract.md`。
 5. GitHub Actions 样板见 `examples/ci/github-actions-backend.yml`；**仅为参考**，须按项目裁剪；未启用的 job 不得伪造通过（见 `examples/README.md`）。
 6. Required 测试失败后重跑通过时，原始失败仍须可见并进入 flaky 治理；禁止 job 内吞掉首次失败后只上报绿色。
 
 ## 安全测试分层
 
-1. PR 必跑静态分析、依赖/凭据扫描及高风险接口鉴权、跨租户回归。
+1. PR 必跑静态分析、依赖/凭据扫描及高风险接口鉴权回归。租户模型不是 `NONE` 时另跑跨租户回归。
 2. 存在可部署隔离环境时，高风险 API 按项目威胁模型启用 DAST 或接口模糊测试；未配置须说明适用性与补偿检查。
 3. 人工渗透测试按监管要求、风险等级或大版本发布启用，不作为所有日常 PR 的统一门禁。
 

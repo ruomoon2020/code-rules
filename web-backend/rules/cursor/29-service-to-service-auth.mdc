@@ -1,5 +1,5 @@
 ---
-description: 服务间认证与机器身份
+description: 服务之间的调用身份，不是登录用户
 globs:
   - "src/main/java/**/*Client.java"
   - "src/main/java/**/*Feign*.java"
@@ -11,6 +11,6 @@ alwaysApply: false
 
 # 服务间认证
 
-内部调用、Webhook、MQ、Job 不得只信内网；须有机器身份、签名/Token/mTLS、最小权限、审计和可轮换凭证。
+内部调用、Webhook、消息和定时任务不能只因为在内网就信任。要能证明调用方身份，例如签名、Token 或双向 TLS，并限制权限、留下审计，凭证要能轮换。
 
 全文：`rules/shared/37-service-to-service-auth.md`

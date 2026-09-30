@@ -1,4 +1,4 @@
-# Domain & Persistence
+# 领域与持久化
 
 - Entity 与表结构、Flyway 脚本同步变更。
 - 复杂 SQL 放 XML；简单 CRUD 用 MP。

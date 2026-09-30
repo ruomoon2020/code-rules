@@ -17,6 +17,6 @@ alwaysApply: false
 
 - 单个业务需求禁止进入公共 / 系统 / generator 全局模板。
 - 确需改平台能力时，必须补 Owner、ADR、兼容策略、迁移脚本、回滚方案和回归用例。
-- 新增业务默认扩展业务模块，并复用平台用户、权限、字典、日志、文件、任务、租户、数据权限和代码生成能力。
+- 新增业务默认加在业务模块里，并复用平台已经有的用户、权限、字典、日志、文件、任务、数据权限和代码生成。看不出租户时，不要再加租户字段。
 
 全文：`rules/shared/43-business-module-extension.md`、`rules/shared/30-ownership-adr.md`

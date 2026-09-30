@@ -6,6 +6,7 @@ name: backend-ci-required
 
 on:
   pull_request:
+    types: [opened, synchronize, reopened, labeled, unlabeled]
     paths:
       - "src/**"
       - "contracts/**"
@@ -60,21 +61,65 @@ jobs:
   openapi-diff:
     needs: verify
     runs-on: ubuntu-latest
-    if: needs.verify.outputs.openapi == 'true'
+    if: needs.verify.result == 'success'
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          fetch-depth: 0
 
       - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
         with:
           node-version: "20"
 
-      - name: OpenAPI diff
+      - uses: actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e # v7.0.0
+        with:
+          go-version: "1.26.8"
+          cache: false
+
+      - name: OpenAPI lint and diff
+        shell: bash
         run: |
-          if [ -f contracts/openapi.baseline.yaml ]; then
-            npx @redocly/cli diff contracts/openapi.baseline.yaml contracts/openapi.yaml
-          else
-            echo "contracts/openapi.baseline.yaml not found; record this skip in the PR."
+          base="${{ github.event.pull_request.base.sha }}"
+          if [ ! -f contracts/openapi.yaml ]; then
+            if git cat-file -e "$base:contracts/openapi.yaml" 2>/dev/null || git cat-file -e "$base:contracts/openapi.baseline.yaml" 2>/dev/null; then
+              echo "OpenAPI contract was removed; breaking gate cannot be skipped." >&2
+              exit 1
+            fi
+            echo "No OpenAPI contract in either revision; skipping."
+            exit 0
           fi
+          npx --yes --package @redocly/cli@2.14.0 redocly lint contracts/openapi.yaml
+          if [ ! -f contracts/openapi.baseline.yaml ]; then
+            echo "OpenAPI baseline is missing; deletion cannot disable the gate." >&2
+            exit 1
+          fi
+          if git cat-file -e "$base:contracts/openapi.baseline.yaml" 2>/dev/null; then
+            git show "$base:contracts/openapi.baseline.yaml" > "$RUNNER_TEMP/openapi-base.yaml"
+            if ! cmp -s "$RUNNER_TEMP/openapi-base.yaml" contracts/openapi.baseline.yaml; then
+              git show "$base:contracts/openapi.yaml" > "$RUNNER_TEMP/openapi-previous.yaml"
+              if cmp -s "$RUNNER_TEMP/openapi-previous.yaml" contracts/openapi.yaml && cmp -s contracts/openapi.yaml contracts/openapi.baseline.yaml; then
+                echo "Owner baseline promotion without a contract change; no new API diff."
+                exit 0
+              fi
+              echo "Baseline changed in the same PR as the API; promote it only after the API change is accepted." >&2
+              exit 1
+            fi
+          else
+            if [ "$(jq -r '.pull_request.labels | any(.name == "openapi-baseline-bootstrap-approved")' "$GITHUB_EVENT_PATH")" != true ]; then
+              echo "First baseline requires the Owner-applied openapi-baseline-bootstrap-approved label." >&2
+              exit 1
+            fi
+            if git cat-file -e "$base:contracts/openapi.yaml" 2>/dev/null; then
+              git show "$base:contracts/openapi.yaml" > "$RUNNER_TEMP/openapi-base.yaml"
+              cmp -s "$RUNNER_TEMP/openapi-base.yaml" contracts/openapi.baseline.yaml || { echo "Initial baseline must equal the target branch contract." >&2; exit 1; }
+            else
+              cmp -s contracts/openapi.yaml contracts/openapi.baseline.yaml || { echo "Greenfield baseline must equal the new contract." >&2; exit 1; }
+              echo "Approved greenfield baseline; no previous API to compare."
+              exit 0
+            fi
+          fi
+          go install github.com/oasdiff/oasdiff@v1.32.1
+          "$(go env GOPATH)/bin/oasdiff" breaking --fail-on WARN -- "$RUNNER_TEMP/openapi-base.yaml" contracts/openapi.yaml
 
   secret-scan:
     runs-on: ubuntu-latest

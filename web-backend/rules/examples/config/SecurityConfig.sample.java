@@ -19,7 +19,7 @@ import org.springframework.security.web.SecurityFilterChain;
  *       CSRF</strong>（见 {@code shared/06-security-authz.md}）。
  *   <li><strong>生产 Swagger / Actuator</strong>：禁止 {@code permitAll} 对 {@code /v3/api-docs/**}、{@code
  *       /swagger-ui/**}、敏感 {@code /actuator/**} 公网暴露；仅 dev 可临时放开（evals B40）。
- *   <li>配合 {@code @PreAuthorize}、审计查询 {@code audit:read}、CORS 白名单（evals B39）。
+ *   <li>配合 {@code @PreAuthorize}、审计查询 {@code system:audit-log:read}、CORS 白名单（evals B39）。
  * </ul>
  *
  * @see rules/shared/06-security-authz.md

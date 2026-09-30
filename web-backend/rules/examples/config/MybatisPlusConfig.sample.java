@@ -1,7 +1,7 @@
 package com.company.product.config;
 
-import com.baomidou.mybatisplus.annotation.DbType;
 import com.baomidou.mybatisplus.extension.plugins.MybatisPlusInterceptor;
+import com.baomidou.mybatisplus.extension.plugins.inner.OptimisticLockerInnerInterceptor;
 import com.baomidou.mybatisplus.extension.plugins.inner.PaginationInnerInterceptor;
 import org.apache.ibatis.mapping.DatabaseIdProvider;
 import org.apache.ibatis.mapping.VendorDatabaseIdProvider;
@@ -11,7 +11,7 @@ import org.springframework.context.annotation.Configuration;
 import java.util.Properties;
 
 /**
- * 样板：复制到业务项目并按支持的数据库调整 DbType。
+ * 样板：分页方言按当前连接识别，不要写死 MySQL 或 PostgreSQL。
  */
 @Configuration
 public class MybatisPlusConfig {
@@ -19,8 +19,10 @@ public class MybatisPlusConfig {
     @Bean
     public MybatisPlusInterceptor mybatisPlusInterceptor() {
         MybatisPlusInterceptor interceptor = new MybatisPlusInterceptor();
-        // 多库：按当前数据源动态设置，或使用多个 PaginationInnerInterceptor（按项目方案）
-        interceptor.addInnerInterceptor(new PaginationInnerInterceptor(DbType.MYSQL));
+        // 不传 DbType。MySQL 的 LIMIT offset, count 在 PostgreSQL 上是语法错误。
+        interceptor.addInnerInterceptor(new PaginationInnerInterceptor());
+        // 更新走 @Version 时必须注册。分页只改查询，乐观锁只改更新，先后不影响版本条件。
+        interceptor.addInnerInterceptor(new OptimisticLockerInnerInterceptor());
         return interceptor;
     }
 

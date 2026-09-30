@@ -1,8 +1,8 @@
-# Miniapp AI Rules
+# 小程序研发规则包
 
 版本见 `VERSION`，变更见 `CHANGELOG.md`。维护者发版见 `RELEASE.md`。
 
-本目录是企业级小程序项目 AI 编码规则的**唯一执行入口**。
+本目录是 Vue 3 + TypeScript + uni-app 小程序项目的规则执行入口，覆盖页面与分包、API 契约、登录态、隐私授权、支付分享、弱网恢复、内容安全、包体积和多平台差异，并为 Codex 与 Cursor 提供按场景加载的路由。
 
 测试治理由 `shared/16-testing-quality-gates.md` 统一约束确定性、失败证据、支付/回调重放与兼容窗口；具体阈值和平台工具由项目覆盖层声明。
 
@@ -13,6 +13,24 @@ Vue 3 + TypeScript + uni-app + Vite
 目标端：小程序优先，第一阶段以微信小程序为最严格基线
 暂不覆盖：App、nvue、原生插件、App 打包
 ```
+
+## 使用后应达到的结果
+
+- 页面只负责生命周期和交互编排，业务流程、请求、认证和平台能力各自归位。
+- 新业务优先进入分包，主包体积、合法域名、隐私声明和目标平台配置可验证。
+- 登录、支付、订阅、分享和上传等高风险流程以后端状态和明确契约为准。
+- 弱网、超时、重复回调、授权拒绝和登录过期都有恢复路径。
+- lint、type-check、目标平台构建、契约、包体积和真机验证形成完整证据。
+
+## 首次接入
+
+1. 将本目录整包放入小程序业务仓 `rules/`。
+2. 复制 `rules/codex/AGENTS.md` 到根 `AGENTS.md`，复制 `rules/cursor/*.mdc` 到 `.cursor/rules/`。
+3. 从 `rules/examples/99-project-local.mdc.sample` 创建本地覆盖层，填写目标平台、分包、合法域名、登录与隐私路径、预算和脚本。
+4. 合并 `examples/package-scripts.sample.json` 中适用的 lint、type-check、构建、契约和包体积命令。
+5. 用一个真实分包页面验证规则路由、构建和 CI，再开展批量业务开发。
+
+新项目完整步骤见 `docs/onboarding-new-project.md`，新业务分包流程见 `docs/business-feature-playbook-miniapp.md`。
 
 ## 使用原则
 
@@ -25,7 +43,7 @@ Vue 3 + TypeScript + uni-app + Vite
 ## 规则层级
 
 ```text
-L0  shared/00-must-follow.md       — 通用不变量（15 条）；场景规则命中时强制
+L0  shared/00-must-follow.md       — 所有项目都要遵守的基础条款（15 条）；场景规则命中时强制
 L1  shared/01–26                  — 场景规则
 L2  codex/*.md、cursor/*.mdc       — 任务入口与触发摘要
 ```
@@ -56,7 +74,7 @@ your-miniapp/
 ├─ rules/
 ├─ .cursor/rules/
 ├─ contracts/
-│  └─ openapi.yaml 或 schema.json
+│  └─ openapi.yaml          # 契约来源；schema.json 若存在则为生成物，禁止手改
 ├─ src/
 │  ├─ pages/
 │  ├─ subpackages/
@@ -84,7 +102,7 @@ your-miniapp/
 - 平台能力进 `platform/`，禁止页面堆大量条件编译。
 - 登录态、token、用户信息进 `auth/` 与 `stores/`，禁止散落 storage。
 - 隐私授权进 `privacy/`，采集能力必须和隐私用途一致。
-- 字段来自 OpenAPI / schema / generated 类型，禁止页面手写后端字段。
+- 字段来自 `contracts/openapi.yaml` 和 generated 类型，禁止页面手写后端字段，禁止手改生成物。
 
 ## Codex 怎么用
 
@@ -98,7 +116,7 @@ your-miniapp/
 新增 member 分包，按 18 + business-feature-playbook-miniapp。
 ```
 
-Codex 必须在改代码前输出「实现前命中声明」：任务包、将读取规则、不读取原因。
+Codex 必须在改代码前先说明：这次改动对应哪一类、将读取哪些规则、为什么不读其余规则。
 
 ## Cursor 怎么用
 
@@ -128,9 +146,18 @@ Codex 必须在改代码前输出「实现前命中声明」：任务包、将�
 | 安全加固 / 风控 | `26-security-hardening-risk.mdc` |
 | 新业务分包 | `18-business-module-extension.mdc`（仅新业务扩展；见 `99-project-local`） |
 
-## 真实业务开发流程
+## 业务研发流程
 
-1. 先确认后端 OpenAPI / schema（见 `docs/fullstack-contract.md`）。
+```text
+需求与平台能力确认
+  → OpenAPI / 登录 / 隐私 / 分包设计
+  → service、API、store 与页面实现
+  → 异常、弱网、重复回调和授权拒绝测试
+  → lint / type-check / build / api:check / size:check
+  → 真机、审核与发布验证
+```
+
+1. 先确认后端 `contracts/openapi.yaml`（见 `docs/fullstack-contract.md`），再生成类型。
 2. 新业务页默认放分包，主包只放启动链路、tabBar、登录和基础能力。
 3. 页面读取 generated 类型和 API 方法，不手写字段。
 4. 涉及登录、手机号、位置、相册、相机、订阅消息、支付时先读对应 shared。
@@ -186,7 +213,9 @@ Codex 必须在改代码前输出「实现前命中声明」：任务包、将�
 | `docs/business-feature-playbook-miniapp.md` | 新业务分包步骤 |
 | `docs/compliance-wechat-checklist.md` | 微信合规与审核 |
 | `docs/contributing-rules-package.md` | 维护者变更清单 |
+| `docs/enterprise-governance.md` | 独立规则包的治理入口 |
 | `docs/onboarding-new-project.md` | 新建小程序项目落地 |
+| `docs/pull-request-template.md` | 小程序业务仓 PR 模板 |
 | `docs/release-checklist.md` | 业务发布 / 灰度 / 回滚证据清单 |
 | `docs/component-engineering-coverage.md` | 组件、样式、生命周期、测试与性能覆盖矩阵 |
 | `docs/rules-package-index.md` | shared 00–26 索引 |

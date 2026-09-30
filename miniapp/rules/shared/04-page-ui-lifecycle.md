@@ -1,4 +1,4 @@
-# 04 Page UI Lifecycle
+# 页面、UI 与生命周期规则
 
 > 应用级 `onLaunch` / 全局错误 / `scene` 见 `20-app-runtime.md`。弱网与统一 error 恢复见 `22-error-recovery-offline.md`。本文约束 Vue 组件与 uni-app 页面生命周期的协作边界。
 

@@ -7,8 +7,19 @@ alwaysApply: true
 
 - 业务模块路径：`src/main/java/com/acme/modules/{biz}/`
 - 公共层路径：`src/main/java/com/acme/{common,framework,system,generator}/`
-- 成熟后台栈：RuoYi-Vue-Plus 5.x（非 RuoYi 项目请删除 `35-business-module-extension.mdc` 或收窄其 globs）
+- 成熟后台栈：RuoYi-Vue-Plus 5.x（本示例未启用租户插件；非 RuoYi 项目请删除 `35-business-module-extension.mdc` 或收窄其 globs）
 - OpenAPI SSOT：`contracts/openapi.yaml`
+- 架构档：`CRUD_LITE`
+- 架构偏离说明：普通项目保留默认；存量经典分层或复杂域有 ADR 时才改值
+- 对象命名：`ENTITY_REQUEST_RESPONSE`
+- 对象命名兼容说明：只有已有稳定 DO/DTO/BO/VO/Query 约定的存量项目才改值
+- API 风格：`GET_POST_COMPAT`
+- API 风格偏离说明：公网开放接口才显式改为资源型 REST
+- 租户模型：`NONE`
+- 租户模型可选值：`NONE` / `SHARED_COLUMN` / `SCHEMA_PER_TENANT` / `DATABASE_PER_TENANT`，上行只能保留一项
+- 租户继承说明：默认可执行样板是 `NONE`，不含租户列和租户条件。表上已有 `tenant_id`，或平台已有租户插件 / 拦截器时，改为 `SHARED_COLUMN`，不得保留 `NONE`；实体、查询、写入、审计、索引、契约和隔离测试须成套适配
+- 全局表 / 租户豁免表：例如 `sys_dict_type`；逐项填写 Owner、业务原因、访问权限与审计策略；没有则写 `NONE`
+- 数据所有权：默认当前模块只写自己的表；出现跨模块 SQL、事件、任务或回写其他模块状态时，再补充 `crm -> crm_*` 等清单；每个业务表和聚合只能有一个写入模块
 - 采纳 Level：1（见 `rules/docs/rule-maturity-model.md`）
 - 构建工具：`mvn verify` 或 `./gradlew check`（CI 见 `rules/examples/ci/backend-ci-required.yml`）
 - 新增 CRUD PR 建议跑 evals Business Extension B55–B63

@@ -18,10 +18,12 @@ import java.util.List;
 public interface UserConverter {
 
     @Mapping(target = "id", ignore = true)
-    @Mapping(target = "tenantId", ignore = true)
     @Mapping(target = "phone", ignore = true)
     @Mapping(target = "status", constant = "ENABLED")
+    @Mapping(target = "isDeleted", ignore = true)
+    @Mapping(target = "deleteToken", ignore = true)
     @Mapping(target = "deletedAt", ignore = true)
+    @Mapping(target = "deletedBy", ignore = true)
     @Mapping(target = "version", ignore = true)
     @Mapping(target = "createdAt", ignore = true)
     @Mapping(target = "updatedAt", ignore = true)

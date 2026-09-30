@@ -31,7 +31,7 @@
 | **B 分仓** | 前后端独立发布、多团队 | **选一个仓**或独立 `contracts` 仓 | 每个业务仓各自 `rules/` |
 | **C 单端** | 纯前端、纯后端、或小程序独立产品 | 本仓 `contracts/` 或消费方提供 | 本仓 `rules/` |
 
-无论哪种形态，**OpenAPI / schema 只能有一份权威定义**；管理端 `api:gen`、小程序 `api:gen`、后端实现必须指向同一契约。
+无论哪种形态，**权威契约只能是 `contracts/openapi.yaml`（或项目明确声明的等价 OpenAPI 路径）**；`schema.json`、管理端和小程序的 generated 类型都是生成结果，后端实现与各端 `api:gen` 必须指向该 OpenAPI 契约。
 
 ---
 
@@ -111,7 +111,7 @@ git submodule add <backend-rules-repo-url> rules
 ### 1.4 契约与联调流
 
 ```text
-1. 改 contracts/openapi.yaml（PR 须 OpenAPI diff）
+1. 改 contracts/openapi.yaml（PR 须相对目标分支已接受基线运行固定版本 `oasdiff breaking --fail-on WARN`）
 2. 后端实现 + `mvn verify` / `./gradlew check`
 3. 管理端 pnpm api:gen + api:check + 页面
 4. 小程序（若有）api:gen + 联调
@@ -126,7 +126,7 @@ git submodule add <backend-rules-repo-url> rules
 
 | Workflow | 路径触发 | 内容 |
 |---|---|---|
-| `backend-ci-required.yml` | `web-backend/**` | `mvn verify` / `./gradlew check`、OpenAPI diff、secret scan |
+| `backend-ci-required.yml` | `web-backend/**` | `mvn verify` / `./gradlew check`、固定版本 `oasdiff breaking --fail-on WARN`、secret scan |
 | 前端 lint/build | `web-front/**` | `pnpm lint`、`type-check`、`build` |
 | `supply-chain-required.yml` | 根 / 各端 lockfile | npm/pnpm audit、Maven/Gradle OWASP、license-checker |
 | `artifact-trust-required.yml` | 生产构建产物 | SPDX SBOM、构建 provenance / attestation |
@@ -219,7 +219,7 @@ admin-portal/
 ├─ AGENTS.md              ← web-front/rules/codex/AGENTS.md
 ├─ rules/                 ← web-front/rules 整包
 ├─ .cursor/rules/
-├─ contracts/schema.json  # 或 openapi.yaml，须单一 SSOT
+├─ contracts/openapi.yaml # 权威契约 SSOT；schema.json 若存在则为生成物
 └─ src/
 ```
 
@@ -260,7 +260,7 @@ api-service/
 mvn verify                # Maven：含单测 + ArchUnit（若接入）
 # 或
 ./gradlew check           # Gradle：等价门禁
-# CI：OpenAPI diff、gitleaks
+# CI：固定版本 oasdiff breaking --fail-on WARN、gitleaks
 ```
 
 **成熟度**：`web-backend/rules/docs/rule-maturity-model.md`（Level 0 起；核心域 Level 1–2）。
@@ -330,7 +330,7 @@ pnpm size:check           # 主包体积
 
 - `views` / `modules` / 分包根路径
 - Base 组件、request、generated API 路径
-- OpenAPI / schema 路径
+- 权威 OpenAPI 路径及生成物目录
 - `采纳 Level: 0 | 1 | 2`
 - 实际 npm / Maven / Gradle 脚本名（如 `mvn verify`、`./gradlew check`）
 - 测试治理参数：覆盖率策略、N/N-1 或迁移兼容窗口、flaky 登记与隔离期限、失败证据保留、测试数据隔离/清理、风险专项触发条件
@@ -347,7 +347,7 @@ pnpm size:check           # 主包体积
 - 业务模块：src/views/crm/ | modules/crm/
 - 成熟后台栈：RuoYi-Vue-Plus 5.x（若适用）
 - 采纳 Level：1
-- 联调：traceId 头 X-Trace-Id；分页 page/size/total
+- 联调：traceId 头 X-Trace-Id；分页 page、pageSize、total、records
 ```
 
 ### 4.3 Cursor 配置要点
@@ -489,7 +489,7 @@ python common-governance/scripts/validate-release-evidence.py --file releases/<v
 | i18n / 实时 / 富文本 | E41–E43 | — | — |
 | 金融 / 政务 / 高敏 Web | E44–E49 | — | M39–M44（小程序对应加固） |
 | UGC / 恢复 | — | — | M35–M38 |
-| 发版 / 规则升级 | Full E01–E50 | Full B01–B67 | Full M01–M52 |
+| 发版 / 规则升级 | Full E01–E50 | Full B01–B69 | Full M01–M52 |
 
 操作：向 AI 发送 `rules/evals/prompts.md` 中固定提示词，对照 `rubric.md` 打分。AI Tool Safety 结果必须写入结构化 YAML，并通过 `validate-ai-eval-results.py` 绑定套件摘要、模型版本和独立评测人。详见各端 `rules/evals/README.md`。
 

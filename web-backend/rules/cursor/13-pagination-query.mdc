@@ -1,5 +1,5 @@
 ---
-description: 分页、排序白名单、列表查询
+description: 分页、排序白名单、列表查询、全文检索与搜索引擎查询边界
 globs:
   - "**/api/**/*Controller.java"
   - "**/application/**/*Service.java"
@@ -9,7 +9,9 @@ alwaysApply: false
 
 # 分页与查询
 
-- 统一 MP `Page`；响应含 `total`、`records`。
-- `sortField` 白名单映射；禁止 `order by ${userInput}`。
+- 全文检索 / 搜索引擎须限制字段白名单、数据权限过滤、查询深度、结果窗口与成本上限。租户模型不是 `NONE` 时同时过滤租户。同时读取 `rules/shared/20-dependency-governance.md`、`rules/shared/42-cost-governance.md`。
+
+- 统一 MP `Page`；入参出参使用 `page`、`pageSize`、`total`、`records`。`page` 从 1 开始，禁止 `pageNo` / `pageNum`。
+- `sortField` 用方法引用 / Wrapper 列表达式白名单映射。`sortOrder` 只允许 `asc`、`desc`；其他值返回错误，不当成降序。排序调用 Wrapper API，禁止 `order by ${userInput}`，也禁止白名单列名再拼成 `last("ORDER BY ...")`。
 
 全文：`rules/shared/19-pagination-query.md`

@@ -1,4 +1,4 @@
-# Alternate API Paradigms（GraphQL / gRPC / WebSocket / SSE）
+# 其他 API 范式（GraphQL / gRPC / WebSocket / SSE）
 
 本规则包默认 **REST + OpenAPI** 为对外契约（见 `05-openapi-contract.md`）。
 

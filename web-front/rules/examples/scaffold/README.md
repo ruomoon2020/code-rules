@@ -1,6 +1,8 @@
-# Frontend Engineering Scaffold
+# 前端工程基线样板
 
-这些文件用于补齐新项目的工程基线。复制 `.sample` 后缀文件时先去掉后缀，再按业务仓真实依赖和路径调整。
+本目录提供可选的工程配置和边界代码，用于新项目补齐 lint、格式化、请求、状态清理、列表状态和构建体积门禁。它不是完整 Vue 应用，也不应覆盖业务仓已有配置。
+
+复制 `.sample` 文件时去掉后缀，再按项目真实依赖、目录、Base 组件和构建产物调整。
 
 | 样板 | 用途 |
 |---|---|
@@ -19,6 +21,8 @@
 3. request 与 store 样板只定义边界；将 transport、日志、鉴权和具体 Pinia stores 绑定到项目现有实现。
 4. 列表状态骨架不声明任何 Base 组件 Props。创建 `.vue` 页面前必须读取实际 Base 组件源码，再绑定 slots、events 和 v-model。
 5. 在 CI 至少设置一个 bundle 预算后运行脚本；首屏预算依赖 Vite `build.manifest: true` 生成的 `dist/.vite/manifest.json`，禁止沿用不适合项目的随意阈值。
+
+完成标准是：配置已与现有工程合并、示例中的占位实现已替换、所有声明的脚本能在 CI 中实际运行。只复制文件但不接入 `package.json` 和 Required Check，不算完成。
 
 ## 配置依赖
 

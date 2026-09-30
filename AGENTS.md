@@ -1,27 +1,27 @@
-# Code Rules Repository Instructions
+# 代码规则仓库说明
 
-## Scope
+## 适用范围
 
-This repository maintains reusable frontend, backend, miniapp, and cross-stack governance packages. It is not a business application.
+本仓库维护可复用的管理端、后端、小程序和跨端治理规则包，不是业务应用。
 
-## Sources of Truth
+## 权威来源
 
-- Executable coding rules live in each stack package under `rules/shared/`.
-- Codex routing lives in each package `rules/codex/AGENTS.md`; Cursor routing lives in `rules/cursor/`.
-- Root `docs/` is the governance SSOT. `common-governance/docs/` is generated; never edit generated copies directly.
-- For project initiation, architecture proposals, and pre-release reviews, use `docs/architect-engineering-checklist.md`; mandatory merge and release gates remain in `docs/definition-of-done.md`.
-- Project-specific paths, scripts, technology choices, and adoption Level belong in the consuming repository's `AGENTS.md` and `99-project-local.mdc`.
-- For existing-project adoption, keep target rules in the stack package and record current debt in a machine baseline; follow `docs/migration-baseline.md` rather than weakening shared rules.
+- 可执行编码规则位于各技术栈包的 `rules/shared/`。
+- Codex 路由位于各包的 `rules/codex/AGENTS.md`，Cursor 路由位于 `rules/cursor/`。
+- 根目录 `docs/` 是治理 SSOT；`common-governance/docs/` 为生成目录，不得直接修改。
+- 立项、架构方案和上线前评审使用 `docs/architect-engineering-checklist.md`；合并与发布强制门禁以 `docs/definition-of-done.md` 为准。
+- 项目路径、脚本、技术选择和采纳 Level 写入业务仓的 `AGENTS.md` 与 `99-project-local.mdc`。
+- 存量项目接入时，目标规则仍保留在规则包，以机器基线记录现有债务；遵循 `docs/migration-baseline.md`，不得通过弱化共享规则迁移。
 
-## Change Closure
+## 变更收口
 
-When changing a rule, update its routing, verification checklist, eval coverage where behavior changes, package VERSION, CHANGELOG, README/index, and release checklist. Do not add a rule that has no trigger or validation path.
+修改规则时，同步更新路由、验证清单、行为变化对应的评测覆盖、包 VERSION、CHANGELOG、README/索引和发布清单。不得新增没有触发路径或验证路径的规则。
 
-Keep Level 0 limited to universal invariants. Scenario-specific or advanced controls belong in conditional routing and the maturity model.
+Level 0 只写所有项目都要遵守的条款。遇到具体场景，再读对应规则和成熟度说明。
 
-## Validation
+## 验证
 
-Run the nearest package validator and tests, then the governance suite:
+先运行最近的包校验器和测试，再运行仓库治理套件：
 
 ```text
 python web-front/rules/scripts/validate-rules-package.py
@@ -38,4 +38,4 @@ python common-governance/scripts/validate-package.py
 git diff --check
 ```
 
-Report skipped checks and residual risk. Passing validators proves package consistency, not business correctness.
+报告跳过的检查和剩余风险。校验器通过只能证明规则包一致，不能单独证明业务正确。

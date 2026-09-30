@@ -1,8 +1,21 @@
-# Common Governance Package
+# Common Governance：业务仓通用治理包
 
-跨前端、后端、小程序和其他技术栈复用的治理发布包。它约束 DoD、测试闭环、例外、Owner、供应链、数据分级、Git / PR 和发布证据，不替代各端编码规则，也不要求 AI 每次读取全部文档。
+这是可直接分发到业务仓的跨技术栈治理包，统一约定需求追踪、完成标准、业务正确性评审、Owner、例外、供应链、数据分级、Git / PR、环境晋级和发布证据。
 
-## 安装
+它不替代前端、后端或小程序编码规则，也不会要求 AI 每次读取全部治理文档。只有命中接入、评审、合并、发布、例外或事故场景时，才读取对应入口。
+
+## 适用方式
+
+| 场景 | 使用内容 |
+|---|---|
+| 新项目接入 | 项目接入指南、采纳 Level、项目规则覆盖层 |
+| 需求开发 | 需求追踪、业务正确性评审、DoD |
+| 合并与发布 | 分支保护、环境晋级、发布证据、供应链门禁 |
+| 存量治理 | 迁移基线、债务不可增长门禁、阶段性升级 |
+| 临时例外 | 机器可读豁免、补偿控制、到期复查 |
+| 生产事故 | 响应流程、证据保全、复盘模板 |
+
+## 接入业务仓
 
 将整个 `common-governance/` 复制、发布或以独立子模块放到业务仓根：
 
@@ -15,9 +28,15 @@ your-project/
 └─ ...
 ```
 
-项目在根 `AGENTS.md` 或 README 中声明采纳 Level；只有命中合并、发布、例外、数据分级、供应链等任务时才读取对应治理文档。
+接入后执行以下步骤：
 
-## 内容
+1. 在根 `AGENTS.md` 或项目规则文件中声明采纳 Level、Owner、真实命令和证据路径。
+2. 从 `examples/` 选择适用的 PR、commitlint、SECURITY、ADR 和 CI 样板并完成项目化调整；具体文件名见下表。
+3. 运行接入校验，修复缺口；存量项目另建迁移基线，不修改共享规则来迁就现状。
+4. 在真实 PR 中验证 Required Checks 会执行并能阻断违规。
+5. 将平台配置、生产权限和发布流程的实际状态纳入人工评审。
+
+## 内容与职责
 
 | 入口 | 用途 |
 |---|---|
@@ -43,7 +62,12 @@ your-project/
 | `docs/control-catalog.yaml` | SSDF / ASVS / OSPS / SLSA 版本化控制映射 |
 | `docs/branch-protection.md` | Required Checks 与紧急流程 |
 | `docs/git-pr-governance.md` | Commit、PR 和本地 hook / CI 边界 |
-| `examples/` | PR、commitlint、SECURITY、ADR 与 Required CI 样板 |
+| `docs/exceptions/README.md` | 机器可读豁免目录、文件结构与关闭记录说明 |
+| `examples/pull_request_template.md` | 业务仓 PR 描述模板 |
+| `examples/commitlint.config.cjs.sample` | commitlint 配置样板 |
+| `examples/SECURITY.md.sample` | 安全策略与漏洞报告入口样板 |
+| `examples/adr-template.md` | ADR 样板 |
+| `examples/` | 其他治理与 Required CI 样板 |
 | `examples/ci/credential-scan-required.yml` | 凭据泄露扫描 Required Check |
 | `examples/ci/rules-adoption-required.yml` | 规则采纳 Level 2 Required Check |
 | `examples/ci/debt-baseline-required.yml` | 存量债务不可增长 Required Check |
@@ -68,14 +92,17 @@ your-project/
 | `scripts/validate-release-evidence.py` | 发布证据 YAML 机器校验 |
 | `examples/release-evidence.yaml` | 生产发布证据样板 |
 | `examples/rule-exception.yaml` | 已关闭豁免记录样板 |
+| `VERSION` | 治理包版本 |
+| `CHANGELOG.md` | 治理包版本变更记录 |
+| `MANIFEST.json` | 发布包文件清单与 SHA-256 |
 
 `docs/` 是从 code-rules 根目录 SSOT 生成的发布副本。维护者不得直接修改包内副本，应修改根 `docs/` 后运行同步脚本。
 
 文档中出现的 `web-front/rules/`、`web-backend/rules/`、`miniapp/rules/` 路径是对应技术栈的扩展依据；业务仓未安装该端规则包时可忽略，不应改写治理结论。
 
-## 验证
+## 验证与完成标准
 
-业务仓验证发布文件与 manifest 的一致性：
+先验证发布文件与 manifest 的一致性：
 
 ```bash
 python common-governance/scripts/validate-package.py
@@ -93,7 +120,7 @@ python scripts/sync-common-governance.py
 python common-governance/scripts/check-project-adoption.py --repo . --stack frontend --level 2
 ```
 
-`--level 2` 会自动要求完整治理包，并校验固定资产清单、版本和 SHA-256；只存在同名文件不算通过。SHA-256 用于发现复制或发布漂移，不替代来自可信发布渠道的签名或 release checksum。
+`--level 2` 会自动要求完整治理包，并校验固定资产清单、版本和 SHA-256；只存在同名文件不算通过。SHA-256 用于发现复制或发布漂移，不替代可信发布渠道的签名或 release checksum。
 
 仅当 Level < 2 仍要强制校验治理包时，再显式加 `--require-governance`；需要 CODEOWNERS / PR 模板时叠加 `--strict`：
 
@@ -110,3 +137,5 @@ python common-governance/scripts/validate-control-catalog.py
 python common-governance/scripts/validate-release-evidence.py --file releases/1.8.0/release-evidence.yaml --artifact dist/app.tar.gz
 python common-governance/scripts/validate-exceptions.py --root .
 ```
+
+接入完成至少需要同时具备：静态校验通过、真实 CI 已触发、业务要求与测试可追踪、人工 Review 已完成、剩余风险有 Owner。校验器通过本身不等于业务功能正确或平台控制已经启用。

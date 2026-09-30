@@ -7,10 +7,11 @@ alwaysApply: true
 
 Spring Boot 3.x + Java 17+ + MyBatis-Plus + MySQL/PostgreSQL。Spring Boot 4.x 项目须先按 `shared/20-dependency-governance.md` 完成迁移评估。规则版本见 `rules/VERSION`。
 
-- Level 0 硬规则：`rules/shared/00-must-follow.md`（当前 27 条）；高阶主题按条件路由和项目采纳 Level 触发
+- 所有项目都要遵守的条款：`rules/shared/00-must-follow.md`（当前 28 条）。更后面的主题，遇到对应改动，并按项目采纳级别再读
+- 架构默认：没写明时用轻量分层，接口对象用 Request / Response（`CRUD_LITE`、`ENTITY_REQUEST_RESPONSE`）。经典分层只留给已经这样写的旧项目。六边形只在业务复杂且有 ADR 时使用
 - Codex：`rules/codex/AGENTS.md` → 根 `AGENTS.md`
 - 全栈契约：`rules/docs/fullstack-contract.md`
-- Evals：P0 8/8，P1 ≥53/59（B09–B67）；日常 Smoke、发版 Full（见 `evals/README.md`）
+- Evals：P0 8/8，P1 ≥57/63（B09–B71）；日常 Smoke、发版 Full（见 `evals/README.md`）
 - 采纳分层：`rules/docs/rule-maturity-model.md`
 - Cursor 路由：`cursor/*.mdc` 按 globs 触发；**编号 ≠ shared**，对照表见 `rules/docs/cursor-shared-map.md`。常用：业务扩展 `35`、平台边界 `36`、AI `42`。处理网页 / Issue / 日志 / 工具输出时追加 `shared/26-ai-generation.md`。
 - 立项 / 架构方案 / 上线评审：读取 `common-governance/docs/architect-engineering-checklist.md`、`common-governance/docs/definition-of-done.md` 与 `common-governance/docs/dod-maturity-mapping.md`。

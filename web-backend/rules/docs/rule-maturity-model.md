@@ -1,6 +1,6 @@
 # 规则成熟度模型（采纳分层）
 
-> **与文件编号区分**：`shared/00` 只保存 Level 0 不变量；`shared/01–43` 是按场景读取的正文，不代表全部属于 Level 1；`codex/`、`cursor/` 是索引与触发入口。本文 **Level 0–3** 指企业分阶段采纳节奏，避免新项目被 43 个 shared 一次性压垮。
+> **与文件编号区分**：`shared/00` 只保存所有项目都要遵守的基础条款；`shared/01–43` 是按场景读取的正文，不代表全部属于 Level 1；`codex/`、`cursor/` 是索引与触发入口。本文 **Level 0–3** 指企业分阶段采纳节奏，避免新项目被 43 个 shared 一次性压垮。
 
 ## 总览
 
@@ -34,7 +34,7 @@
 | CI 最低 | `mvn verify` / `./gradlew check`、ArchUnit、`examples/archunit` |
 | Evals | **P0** B01–B08（8/8） |
 
-`00` 文末的条件触发路由只负责“命中场景时应读什么”，不会把 Level 2/3 能力变成所有 Level 0 项目的默认门禁。
+`00` 文末只说明遇到哪类改动要再读哪份规则。Level 2、Level 3 的要求不会因此变成所有新项目第一期的合并条件。
 
 ---
 
@@ -53,7 +53,7 @@
 | 审计 / 外部 / 隐私 | `27-audit-log.md`、`28-external-integration.md`、`29-data-privacy-lifecycle.md` |
 | **成熟后台二开** | `43-business-module-extension.md`、`docs/business-feature-playbook.md`（**基于 RuoYi / Jeecg 等且持续加 CRUD 时，Level 1 起必读**） |
 | Docs | `fullstack-contract.md`、`sql-dialect-matrix.md` |
-| CI | OpenAPI diff、secret scan（见 `examples/README.md` 必选清单） |
+| CI | 固定版本 `oasdiff breaking --fail-on WARN`、secret scan（见 `examples/README.md` 必选清单） |
 | PR | `docs/pull-request-template.md`（复制到业务仓） |
 | Evals | **Smoke**：B01–B08 + 核心 P1（见 `evals/README.md`，建议 ≥18/21） |
 
@@ -76,12 +76,12 @@
 
 ## Level 3 — 平台化治理
 
-**能力**：多 API 范式治理、归档、加密与服务间认证、云原生、事件契约、金额时间、状态机、成本。
+**能力**：多 API 范式治理、归档、密钥托管与轮换、统一服务身份、云原生、事件契约、账期状态机和成本配额。Level 0 仍执行 `00-must-follow.md` 中的弱密码哈希禁令、金额禁用浮点数、时刻与自然日分开等安全与数据不变量；Level 3 增加的是平台化生命周期与统一治理证据。
 
 | 类型 | 文件 / 资产 |
 |---|---|
-| Shared | `33-alternate-api-paradigms.md`、`34-data-archival.md`、`36`–`42` |
-| Cursor | 对照 `docs/cursor-shared-map.md`；Level 3 正文见 shared `33`/`34`/`36`–`42`（Cursor `25`/`26`/`28`–`34`）；威胁建模 `cursor/27`↔shared `35` 属 Level 2 |
+| Shared | `33-alternate-api-paradigms.md`、`34-data-archival.md`、`36-crypto-key-management.md`、`37-service-to-service-auth.md`、`38-cloud-native-runtime.md`、`39-event-contracts.md`、`40-money-time-precision.md`、`41-dictionary-state-machine.md`、`42-cost-governance.md` |
+| Cursor | 对照 `docs/cursor-shared-map.md`，按完整文件名加载 Level 3 对应入口；威胁建模属于 Level 2 |
 | CI 可选 | 容器扫描、Pact、性能冒烟（见 `23-quality-gates.md`）；跨项目 Scorecard |
 | Evals | **Contract** 子集 + 全量 **Full**（规则包发版 / 大版本必跑） |
 
@@ -95,7 +95,7 @@
 | Security | 见 `evals/README.md` | 建议全 Pass | 鉴权/安全/隐私 PR |
 | Contract | 见 `evals/README.md` | 建议全 Pass | OpenAPI / 事件契约 PR |
 | Business Extension | B55–B63 | 建议 9/9 | 成熟后台新增业务 / CRUD / 树表主子表 PR |
-| Full | B01–B67 | P0 8/8；P1 ≥53/59 | 发版、规则包升级、大版本 |
+| Full | B01–B71 | P0 8/8；P1 ≥57/63 | 发版、规则包升级、大版本 |
 
 索引提示词：`evals/smoke-prompts.md`（仅索引，正文在 `prompts.md`）。
 

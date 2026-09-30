@@ -9,7 +9,6 @@ public record AuditLogResponse(
         String id,
         String operatorId,
         String operatorName,
-        String tenantId,
         String action,
         String resourceType,
         String resourceId,

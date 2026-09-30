@@ -1,4 +1,4 @@
-# 11 Platform Differences
+# 平台差异规则
 
 ## Adapter 原则
 

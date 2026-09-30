@@ -69,6 +69,17 @@ HIGH_LEVEL_TOPIC_MARKERS = (
     "gRPC",
     "mTLS",
 )
+L0_BASELINE_MARKERS = (
+    "密码必须使用带盐慢哈希",
+    "金额禁止使用 `double` / `float`",
+    "时刻必须携带时区或明确 UTC",
+    "禁止静默改变已有语义",
+)
+CONDITIONAL_ROUTE_DUPLICATE_MARKERS = (
+    "禁止自研加密、弱密码哈希",
+    "金额禁止 `double` / `float`",
+    "禁止静默改语义或绕过状态机",
+)
 
 # Expected smoke core P1 count (Smoke suite)
 SMOKE_CORE_P1_COUNT = 21
@@ -87,17 +98,37 @@ PROJECT_LOCAL_TESTING_MARKERS = (
     "测试数据",
     "风险专项",
 )
+PROJECT_LOCAL_ARCHITECTURE_MARKERS = (
+    "架构档：",
+    "对象命名：",
+    "API 风格：",
+    "租户模型：",
+    "全局表 / 租户豁免表：",
+    "数据所有权：",
+)
+PROJECT_LOCAL_DEFAULT_MARKERS = (
+    "架构偏离说明",
+    "对象命名兼容说明",
+)
+ARCHITECTURE_PROFILES = {"CRUD_LITE", "CLASSIC_LAYERED", "DOMAIN_HEXAGONAL"}
+OBJECT_NAMING_PROFILES = {"ENTITY_REQUEST_RESPONSE", "DO_DTO_BO_VO_QUERY"}
+API_STYLES = {"RESOURCE_REST", "GET_POST_COMPAT"}
+TENANCY_MODELS = {"NONE", "SHARED_COLUMN", "SCHEMA_PER_TENANT", "DATABASE_PER_TENANT"}
 SCAFFOLD_REQUIRED = (
     "README.md",
+    "java/common/datascope/DataScope.java",
+    "java/common/datascope/DataScopePolicy.java",
     "java/common/exception/BusinessException.java",
     "java/common/exception/GlobalExceptionHandler.java",
     "java/common/observability/TraceIdFilter.java",
     "java/common/web/ApiResult.java",
     "java/common/web/PageResponse.java",
     "java/modules/system/api/UserController.java",
+    "java/modules/system/api/dto/UserDeleteRequest.java",
     "java/modules/system/application/UserService.java",
     "java/modules/system/infrastructure/mapper/UserMapper.java",
     "resources/mapper/system/UserMapper.xml",
+    "java/test/UserControllerIT.sample.java",
 )
 
 # Files that should mention Full evals threshold (min_pass/total_p1 style)
@@ -288,11 +319,100 @@ def check_readme_shared_inventory(root: Path, errors: list[str]) -> None:
             errors.append(f"README.md file inventory missing {rel}")
 
 
+def check_shared_titles(root: Path, errors: list[str]) -> None:
+    for path in sorted((root / "shared").glob("*.md")):
+        lines = read(path).splitlines()
+        title = lines[0].strip() if lines else ""
+        if not title.startswith("# "):
+            errors.append(f"{path.name}: must start with an H1 title")
+            continue
+        if re.match(r"^#\s+\d{2}(?:\s|$)", title):
+            errors.append(f"{path.name}: H1 must not repeat the filename number")
+        if not re.search(r"[\u4e00-\u9fff]", title):
+            errors.append(f"{path.name}: H1 must use a Chinese display title")
+
+
 def check_scaffold_assets(root: Path, errors: list[str]) -> None:
     scaffold = root / "examples" / "scaffold"
     missing = [rel for rel in SCAFFOLD_REQUIRED if not (scaffold / rel).is_file()]
     if missing:
         errors.append(f"examples/scaffold missing: {', '.join(missing)}")
+
+
+def check_architecture_profile_assets(root: Path, errors: list[str]) -> None:
+    assets = {
+        "examples/archunit/LayeredArchitectureTest.java": (
+            "controller_should_not_depend_on_mapper",
+            "application_should_not_depend_on_api_layer",
+        ),
+        "examples/archunit/ClassicLayeredArchitectureTest.java.sample": (
+            "web_should_not_depend_on_dao",
+            "manager_should_not_depend_on_web",
+            "dao_should_not_depend_upward",
+        ),
+        "examples/archunit/HexagonalArchitectureTest.java.sample": (
+            "domain_should_not_depend_on_framework_or_infrastructure",
+            "application_should_not_depend_on_adapters",
+            "api_should_not_bypass_application",
+        ),
+        "examples/AGENTS.project-section.md.sample": (
+            "架构档：`CRUD_LITE`",
+            "对象命名：`ENTITY_REQUEST_RESPONSE`",
+            "普通项目直接使用上述组合",
+            "复杂域升级 Hexagonal 须有 ADR",
+            "API 风格：`GET_POST_COMPAT`",
+            "租户模型：`NONE`",
+            "全局表 / 租户豁免表：",
+            "数据所有权：默认当前模块只写自己的表",
+        ),
+    }
+    for rel, markers in assets.items():
+        path = root / rel
+        if not path.is_file():
+            errors.append(f"missing architecture profile asset: {rel}")
+            continue
+        content = read(path)
+        missing = [marker for marker in markers if marker not in content]
+        if missing:
+            errors.append(f"{rel} missing architecture markers: {', '.join(missing)}")
+
+
+def check_openapi_diff_assets(root: Path, errors: list[str]) -> None:
+    fixture_dir = root / "examples" / "openapi-diff-fixtures"
+    for name in ("base.yaml", "breaking.yaml"):
+        if not (fixture_dir / name).is_file():
+            errors.append(f"missing OpenAPI diff smoke fixture: {name}")
+
+    command_files = (
+        "examples/README.md",
+        "examples/ci/backend-ci-required.yml",
+        "examples/ci/github-actions-backend.yml",
+        "examples/.github/pull_request_template.md",
+        "docs/pull-request-template.md",
+    )
+    for rel in command_files:
+        content = read(root / rel)
+        if "github.com/oasdiff/oasdiff@v1.32.1" not in content:
+            errors.append(f"{rel} must install pinned oasdiff v1.32.1")
+        if "oasdiff" not in content or "breaking --fail-on WARN" not in content:
+            errors.append(f"{rel} must enforce pinned oasdiff breaking --fail-on WARN")
+        if "check-openapi-breaking.py" in content or "redocly diff" in content or "@redocly/cli diff" in content:
+            errors.append(f"{rel} references an unsupported OpenAPI diff command")
+        if "说明 skip 原因" in content or "OpenAPI diff / Spectral" in content:
+            errors.append(f"{rel} must not allow the OpenAPI breaking gate to be skipped or replaced by Spectral")
+    for rel in ("examples/ci/backend-ci-required.yml", "examples/ci/github-actions-backend.yml"):
+        content = read(root / rel)
+        required = (
+            "github.event.pull_request.base.sha",
+            "fetch-depth: 0",
+            "openapi-baseline-bootstrap-approved",
+            "git show \"$base:contracts/openapi.baseline.yaml\"",
+            "Baseline changed in the same PR",
+            "needs.verify.result == 'success'",
+        )
+        missing = [marker for marker in required if marker not in content]
+        if missing:
+            errors.append(f"{rel} missing target-branch baseline guard: {', '.join(missing)}")
 
 
 def check_project_local_sample(root: Path, errors: list[str]) -> None:
@@ -304,6 +424,26 @@ def check_project_local_sample(root: Path, errors: list[str]) -> None:
     missing = [marker for marker in PROJECT_LOCAL_TESTING_MARKERS if marker not in text]
     if missing:
         errors.append(f"project-local testing governance markers missing: {', '.join(missing)}")
+    missing_architecture = [marker for marker in PROJECT_LOCAL_ARCHITECTURE_MARKERS if marker not in text]
+    if missing_architecture:
+        errors.append(f"project-local architecture/API markers missing: {', '.join(missing_architecture)}")
+    missing_defaults = [marker for marker in PROJECT_LOCAL_DEFAULT_MARKERS if marker not in text]
+    if missing_defaults:
+        errors.append(f"project-local default/compatibility markers missing: {', '.join(missing_defaults)}")
+    profile_specs = (
+        ("架构档", ARCHITECTURE_PROFILES),
+        ("对象命名", OBJECT_NAMING_PROFILES),
+        ("API 风格", API_STYLES),
+        ("租户模型", TENANCY_MODELS),
+    )
+    for label, allowed in profile_specs:
+        line_match = re.search(rf"(?m)^- {re.escape(label)}：(.+)$", text)
+        selected = {
+            value for value in allowed
+            if line_match is not None and re.search(rf"\b{re.escape(value)}\b", line_match.group(1))
+        }
+        if len(selected) != 1:
+            errors.append(f"project-local {label} must select exactly one of: {', '.join(sorted(allowed))}")
 
 
 def check_scaffold_runtime(root: Path, errors: list[str]) -> None:
@@ -346,6 +486,535 @@ def check_scaffold_runtime(root: Path, errors: list[str]) -> None:
     syntax_errors = sorted({line.strip() for line in diagnostics.splitlines() if any(code in line for code in syntax_codes)})
     if syntax_errors:
         errors.append(f"scaffold Java syntax failed: {'; '.join(syntax_errors[:5])}")
+
+
+def check_scaffold_openapi_alignment(root: Path, errors: list[str]) -> None:
+    """Guard the executable example against drifting from the monorepo contract.
+
+    The rules package may be distributed without the repository-level contract,
+    so this gate activates when a nearby contracts/openapi.yaml is available.
+    """
+    contract_candidates = [
+        root / "contracts" / "openapi.yaml",
+        root.parent / "contracts" / "openapi.yaml",
+    ]
+    if len(root.parents) > 1:
+        contract_candidates.append(root.parents[1] / "contracts" / "openapi.yaml")
+    contract_path = next((path for path in contract_candidates if path.is_file()), None)
+    if contract_path is None:
+        return
+
+    scaffold = root / "examples" / "scaffold" / "java"
+    controller_path = scaffold / "modules" / "system" / "api" / "UserController.java"
+    create_path = scaffold / "modules" / "system" / "api" / "dto" / "UserCreateRequest.java"
+    update_path = scaffold / "modules" / "system" / "api" / "dto" / "UserUpdateRequest.java"
+    page_path = scaffold / "modules" / "system" / "api" / "dto" / "UserPageQuery.java"
+    audit_page_path = scaffold / "modules" / "system" / "api" / "dto" / "AuditLogPageQuery.java"
+    required_files = (controller_path, create_path, update_path, page_path, audit_page_path)
+    if not all(path.is_file() for path in required_files):
+        return
+
+    contract = read(contract_path)
+    controller = read(controller_path)
+    create_dto = read(create_path)
+    update_dto = read(update_path)
+    page_dto = read(page_path)
+    audit_page_dto = read(audit_page_path)
+
+    style_match = re.search(r"(?m)^x-api-style:\s*(RESOURCE_REST|GET_POST_COMPAT)\s*$", contract)
+    api_style = style_match.group(1) if style_match else None
+    contract_markers = (
+        "security:\n  - BearerAuth: []",
+        "securitySchemes:\n    BearerAuth:",
+        "        '201':\n          description: Created",
+        "            Location:",
+        "        '204':\n          description: No Content",
+        "'#/components/responses/BadRequest'",
+        "'#/components/responses/Unauthenticated'",
+        "'#/components/responses/AccessDenied'",
+        "'#/components/responses/NotFound'",
+        "'#/components/responses/Conflict'",
+        "'#/components/responses/RateLimited'",
+        "'#/components/responses/InternalError'",
+        "    ApiError:",
+        "    ApiResultUserDetail:\n      allOf:\n        - $ref: '#/components/schemas/ApiResultBase'\n        - type: object\n          required: [data]",
+        "      required: [username]",
+        "      required: [email, version]",
+        "      minProperties: 1",
+        "x-permission: system:user:read",
+        "x-permission: system:user:create",
+        "x-permission: system:user:update",
+        "x-permission: system:user:delete",
+        "    UserDeleteRequest:\n      type: object\n      required: [version]",
+        "x-permission: system:audit-log:read",
+    )
+    missing_contract = [marker for marker in contract_markers if marker not in contract]
+    if api_style is None:
+        missing_contract.append("x-api-style: RESOURCE_REST | GET_POST_COMPAT")
+    elif api_style == "GET_POST_COMPAT":
+        compat_markers = (
+            "  /api/v1/system/users/{id}/update:\n    post:\n      operationId: systemUserUpdate",
+            "  /api/v1/system/users/{id}/delete:\n    post:\n      operationId: systemUserDelete",
+        )
+        missing_contract.extend(marker for marker in compat_markers if marker not in contract)
+    else:
+        rest_markers = (
+            "    patch:\n      operationId: systemUserUpdate",
+            "    delete:\n      operationId: systemUserDelete",
+        )
+        missing_contract.extend(marker for marker in rest_markers if marker not in contract)
+    if missing_contract:
+        errors.append(
+            "contracts/openapi.yaml missing API-style/security/error markers: "
+            + ", ".join(missing_contract)
+        )
+
+    controller_markers = [
+        ".created(",
+        "ResponseEntity.noContent()",
+        "system:user:read",
+        "system:user:create",
+        "system:user:update",
+        "system:user:delete",
+        "@RequestBody UserDeleteRequest",
+    ]
+    forbidden_controller_markers: tuple[str, ...] = ()
+    if api_style == "GET_POST_COMPAT":
+        controller_markers.extend(('@PostMapping("/{id}/update")', '@PostMapping("/{id}/delete")'))
+        forbidden_controller_markers = ('@PatchMapping(', '@PutMapping(', '@DeleteMapping(')
+    elif api_style == "RESOURCE_REST":
+        controller_markers.extend(('@PatchMapping("/{id}")', '@DeleteMapping("/{id}")'))
+        forbidden_controller_markers = ('@PostMapping("/{id}/update")', '@PostMapping("/{id}/delete")')
+    missing_controller = [marker for marker in controller_markers if marker not in controller]
+    unexpected_controller = [marker for marker in forbidden_controller_markers if marker in controller]
+    if missing_controller or unexpected_controller:
+        errors.append(
+            "scaffold UserController API-style/auth contract drift: "
+            + ", ".join(missing_controller + [f"unexpected {marker}" for marker in unexpected_controller])
+        )
+
+    if re.search(r"\bString\s+status\b", create_dto + update_dto):
+        errors.append("scaffold user request DTO exposes status absent from the aligned contract")
+    if "@Email String email" not in create_dto:
+        errors.append("scaffold UserCreateRequest must enforce OpenAPI email format")
+    if "@NotNull @Email String email" not in update_dto or "@NotNull @Min(0) Integer version" not in update_dto:
+        errors.append("scaffold UserUpdateRequest must enforce required email, format, and client version")
+    service_path = scaffold / "modules" / "system" / "application" / "UserService.java"
+    if service_path.is_file():
+        service = read(service_path)
+        service_markers = (
+            "int affected = userMapper.updateById(user)",
+            "userMapper.update(null, new LambdaUpdateWrapper<User>()",
+            "!request.version().equals(user.getVersion())",
+            ".eq(User::getVersion, user.getVersion())",
+            ".set(User::getVersion, user.getVersion() + 1)",
+            "ErrorCodes.CONCURRENT_MODIFICATION",
+            "HttpStatus.CONFLICT",
+        )
+        missing_service = [marker for marker in service_markers if marker not in service]
+        if service.count("!request.version().equals(user.getVersion())") < 2:
+            missing_service.append("client version compare on both update and delete")
+        if "entity.setVersion(0)" not in service:
+            missing_service.append("entity.setVersion(0)")
+        if service.count("if (affected != 1)") < 2:
+            missing_service.append("affected-row conflict handling on both update and delete")
+        if missing_service:
+            errors.append("scaffold UserService concurrency result handling missing: " + ", ".join(missing_service))
+    delete_dto_path = scaffold / "modules" / "system" / "api" / "dto" / "UserDeleteRequest.java"
+    if not delete_dto_path.is_file() or "@NotNull @Min(0) Integer version" not in read(delete_dto_path):
+        errors.append("scaffold UserDeleteRequest must require the client version")
+    concurrency_test_path = scaffold / "test" / "UserControllerIT.sample.java"
+    concurrency_test_markers = (
+        "same_version_should_allow_only_first_update",
+        "stale_delete_should_preserve_row_and_roll_back_success_audit",
+        'jsonPath("$.errorCode").value("CONCURRENT_MODIFICATION")',
+        'jsonPath("$.data.version").value(0)',
+        "expectDeleteAuditCount(created.id(), 0)",
+        "expectDeleteAuditCount(created.id(), 1)",
+    )
+    if not concurrency_test_path.is_file():
+        errors.append("scaffold UserControllerIT concurrency sample missing")
+    else:
+        concurrency_test = read(concurrency_test_path)
+        missing_tests = [marker for marker in concurrency_test_markers if marker not in concurrency_test]
+        if missing_tests:
+            errors.append("scaffold concurrency behavior tests missing: " + ", ".join(missing_tests))
+    for label, dto in (("UserPageQuery", page_dto), ("AuditLogPageQuery", audit_page_dto)):
+        if "page = page == null ? 1 : page" not in dto or "pageSize = pageSize == null ? 20 : pageSize" not in dto:
+            errors.append(f"scaffold {label} defaults drift from OpenAPI page=1/pageSize=20")
+
+    baseline_path = contract_path.with_name("openapi.baseline.yaml")
+    if baseline_path.is_file() and not read(baseline_path).startswith("openapi:"):
+        errors.append("contracts/openapi.baseline.yaml must be a standalone released OpenAPI document")
+    if re.search(r"in: path\s+required: true\s+schema:\s+type: integer", contract):
+        errors.append("contracts/openapi.yaml path id must be string, not integer/int64")
+    if "IdPath:" in contract and not re.search(
+        r"IdPath:\n      name: id\n      in: path\n      required: true\n      schema:\n        type: string\n",
+        contract,
+    ):
+        errors.append("contracts/openapi.yaml IdPath must be a decimal string")
+
+
+def check_scaffold_default_tenancy(root: Path, errors: list[str]) -> None:
+    """Keep the executable scaffold aligned with the repository default: NONE."""
+    relative_paths = (
+        "examples/scaffold/java/common/audit/AuditContext.java",
+        "examples/scaffold/java/common/exception/ErrorCodes.java",
+        "examples/scaffold/java/modules/system/domain/User.java",
+        "examples/scaffold/java/modules/system/domain/AuditLog.java",
+        "examples/scaffold/java/modules/system/application/UserService.java",
+        "examples/scaffold/java/modules/system/application/AuditLogService.java",
+        "examples/scaffold/java/modules/system/application/audit/AuditLogRecorder.java",
+        "examples/scaffold/java/modules/system/application/converter/UserConverter.java",
+        "examples/scaffold/java/modules/system/api/dto/AuditLogSummaryResponse.java",
+        "examples/scaffold/java/modules/system/api/dto/AuditLogResponse.java",
+        "examples/db/migration/mysql/V1__init_system_user.sql",
+        "examples/db/migration/mysql/V2__init_system_audit_log.sql",
+        "examples/db/migration/postgresql/V1__init_system_user.sql",
+        "examples/db/migration/postgresql/V2__init_system_audit_log.sql",
+    )
+    forbidden_code = (
+        "private String tenantId;",
+        "String tenantId,",
+        ".setTenantId(",
+        ".getTenantId(",
+        "currentTenantId(",
+        "requireTenantId(",
+        "TENANT_CONTEXT_MISSING",
+    )
+    for rel in relative_paths:
+        path = root / rel
+        if not path.is_file():
+            continue
+        content = read(path)
+        if path.suffix == ".sql":
+            found = []
+            if re.search(r"(?m)^\s*tenant_id\s+", content):
+                found.append("tenant_id column")
+            if re.search(r"(?m)^\s*(?:CONSTRAINT|UNIQUE KEY|KEY|CREATE INDEX).*\btenant_id\b", content):
+                found.append("tenant_id index or constraint")
+        else:
+            found = [marker for marker in forbidden_code if marker in content]
+        if found:
+            errors.append(f"default NONE scaffold contains tenant implementation in {rel}: {', '.join(found)}")
+
+    contract_candidates = [
+        root / "contracts" / "openapi.yaml",
+        root.parent / "contracts" / "openapi.yaml",
+    ]
+    if len(root.parents) > 1:
+        contract_candidates.append(root.parents[1] / "contracts" / "openapi.yaml")
+    contract_path = next((path for path in contract_candidates if path.is_file()), None)
+    if contract_path is not None:
+        contract = read(contract_path)
+        contract_tenant_markers = ("\n        tenantId:", "- TENANT_CONTEXT_MISSING")
+        found = [marker.strip() for marker in contract_tenant_markers if marker in contract]
+        if found:
+            errors.append("default NONE OpenAPI contains tenant-only contract markers: " + ", ".join(found))
+
+    service_path = root / "examples/scaffold/java/modules/system/application/UserService.java"
+    if service_path.is_file():
+        service = read(service_path)
+        if '.last("ORDER BY' in service:
+            errors.append("scaffold UserService must use Wrapper sorting instead of last(ORDER BY ...)")
+        required_sort_markers = ("SFunction<User, ?>", "wrapper.orderBy(true, asc, column)")
+        missing = [marker for marker in required_sort_markers if marker not in service]
+        if missing:
+            errors.append("scaffold UserService Wrapper sort whitelist missing: " + ", ".join(missing))
+
+
+def check_mysql_utc_and_query_samples(root: Path, errors: list[str]) -> None:
+    mysql_defaults = {
+        "examples/db/migration/mysql/V1__init_system_user.sql": 2,
+        "examples/db/migration/mysql/V2__init_system_audit_log.sql": 1,
+    }
+    for rel, expected_count in mysql_defaults.items():
+        path = root / rel
+        if not path.is_file():
+            continue
+        content = read(path)
+        if "CURRENT_TIMESTAMP(" in content:
+            errors.append(f"{rel}: UTC DATETIME defaults must not depend on CURRENT_TIMESTAMP session time zone")
+        actual_count = content.count("DEFAULT (UTC_TIMESTAMP(3))")
+        if actual_count != expected_count:
+            errors.append(f"{rel}: expected {expected_count} explicit UTC_TIMESTAMP(3) defaults, got {actual_count}")
+
+    datasource = root / "examples/config/application-mybatis.sample.yml"
+    if datasource.is_file():
+        content = read(datasource)
+        for marker in ("connectionTimeZone=UTC", "forceConnectionTimeZoneToSession=true"):
+            if marker not in content:
+                errors.append(f"application-mybatis.sample.yml missing UTC session marker: {marker}")
+        if "serverTimezone=UTC" in content:
+            errors.append("application-mybatis.sample.yml must not rely on serverTimezone alias without forcing UTC session")
+        if "logic-delete-field: isDeleted" not in content or "logic-delete-value: 1" not in content or "logic-not-delete-value: 0" not in content:
+            errors.append("application-mybatis.sample.yml logic delete must filter isDeleted with values 1 and 0")
+        if "logic-delete-field: deletedAt" in content or "1970-01-01" in content or "logic-delete-value: UTC_TIMESTAMP" in content:
+            errors.append("application-mybatis.sample.yml must not use deletedAt or an epoch sentinel as the logic-delete filter")
+
+    mp_config = root / "examples/config/MybatisPlusConfig.sample.java"
+    if mp_config.is_file():
+        content = read(mp_config)
+        if "new OptimisticLockerInnerInterceptor()" not in content:
+            errors.append("MybatisPlusConfig must register OptimisticLockerInnerInterceptor")
+        if "new PaginationInnerInterceptor()" not in content or "PaginationInnerInterceptor(DbType" in content:
+            errors.append("MybatisPlusConfig pagination must detect the dialect from the current connection")
+        if "放在分页插件之前" in content:
+            errors.append("MybatisPlusConfig must not claim plugin order controls whether @Version is applied")
+
+    persistence = root / "shared/07-persistence-mybatis.md"
+    if persistence.is_file():
+        content = read(persistence)
+        for marker in (
+            "logic-delete-field: isDeleted",
+            "logic-delete-value: 1",
+            "logic-not-delete-value: 0",
+            "delete_token",
+            "@TableLogic` 只绑",
+            "OptimisticLockerInnerInterceptor",
+            '@TableField("is_deleted")',
+        ):
+            if marker not in content:
+                errors.append(f"07-persistence-mybatis.md missing logic-delete marker: {marker}")
+        if "1970-01-01" in content or "logic-delete-field: deletedAt" in content:
+            errors.append("07-persistence-mybatis.md must not use deletedAt or an epoch sentinel as the logic-delete filter")
+        if "放在分页插件之前" in content:
+            errors.append("07-persistence-mybatis.md must not claim plugin order controls whether @Version is applied")
+        if "不得传入固定 `DbType`" not in content:
+            errors.append("07-persistence-mybatis.md must keep pagination dialect detection on the current connection")
+        if "(业务键, is_deleted)" not in content:
+            errors.append("07-persistence-mybatis.md must forbid a unique key on the boolean delete flag")
+
+    for rel in (
+        "examples/db/migration/mysql/V1__init_system_user.sql",
+        "examples/db/migration/postgresql/V1__init_system_user.sql",
+    ):
+        path = root / rel
+        if not path.is_file():
+            continue
+        content = read(path)
+        for marker in ("is_deleted", "delete_token", "deleted_by", "uk_sys_user_username_delete_token"):
+            if marker not in content:
+                errors.append(f"{rel} missing logical-delete column or unique key: {marker}")
+        if "1970-01-01" in content or "UNIQUE (username, deleted_at)" in content or "(username, deleted_at)" in content:
+            errors.append(f"{rel} must not use deleted_at as the unique or not-deleted sentinel")
+        if "(username, is_deleted)" in content:
+            errors.append(f"{rel} must not use is_deleted in the unique key")
+
+    data_fix = root / "shared/31-production-data-ops.md"
+    if data_fix.is_file():
+        content = read(data_fix)
+        required_markers = (
+            "updated_at = :executed_at_utc",
+            "CREATE TABLE ops_data_fix_YYYYMMDD_ticket_id AS",
+            "WHERE 1 = 0",
+            "CREATE UNIQUE INDEX ops_data_fix_YYYYMMDD_ticket_id_pk",
+            "truncated to millisecond precision",
+            "DROP TABLE IF EXISTS ops_data_fix_YYYYMMDD_ticket_id_batch;",
+            "CREATE TEMPORARY TABLE ops_data_fix_YYYYMMDD_ticket_id_batch (",
+            "CREATE TABLE ops_data_fix_YYYYMMDD_ticket_id_gate (",
+            "LIMIT :batch_size;",
+            "DELETE FROM ops_data_fix_YYYYMMDD_ticket_id_batch;",
+            "INSERT INTO ops_data_fix_YYYYMMDD_ticket_id_batch (id)",
+            "INSERT INTO ops_data_fix_YYYYMMDD_ticket_id (id, status, updated_at, updated_by)",
+            "updated_by = :operator_id",
+            "OR (u.updated_by IS NULL AND backup.updated_by IS NULL)",
+            "JOIN ops_data_fix_YYYYMMDD_ticket_id_batch batch ON batch.id = u.id",
+            "WHERE NOT EXISTS (",
+            "WHERE id IN (SELECT id FROM ops_data_fix_YYYYMMDD_ticket_id_batch)",
+            "expected_batch_rows",
+            "backed_up_batch_rows",
+            "updated_batch_rows",
+            "WHEN expected_batch_rows = 0 THEN 'BATCH_EMPTY'",
+            "READY_TO_COMMIT",
+            "ROLLBACK_REQUIRED",
+            "FROM ops_data_fix_YYYYMMDD_ticket_id_gate;",
+            "Repeat steps 4-7 only after the previous batch transaction has ended",
+            "Rollback reuses the batch-key table and the gate table",
+            "Repeat steps 9a-9d only after the previous rollback transaction has ended",
+        )
+        for marker in required_markers:
+            if marker not in content:
+                errors.append(f"31-production-data-ops.md missing portable bounded-batch marker: {marker}")
+        if content.count("is_deleted = 0") < 10:
+            errors.append(
+                "31-production-data-ops.md must keep is_deleted = 0 on every live sys_user read and write"
+            )
+        if content.count("version = version + 1") < 4:
+            errors.append(
+                "31-production-data-ops.md must increment version on the fix and again on rollback"
+            )
+        if content.count("LIMIT :batch_size;") < 3:
+            errors.append("31-production-data-ops.md must bound preview, update, and rollback batches")
+        if content.count("INSERT INTO ops_data_fix_YYYYMMDD_ticket_id_batch (id)") < 2:
+            errors.append("31-production-data-ops.md rollback must reload the shared batch-key table")
+        if content.count("WHEN expected_batch_rows = 0 THEN 'BATCH_EMPTY'") < 2:
+            errors.append("31-production-data-ops.md rollback must stop on BATCH_EMPTY")
+        if "ops_data_fix_YYYYMMDD_ticket_id_rollback_batch" in content or re.search(
+            r"CREATE TEMPORARY TABLE\s+\S+\s+AS", content, re.IGNORECASE
+        ):
+            errors.append("31-production-data-ops.md rollback must reuse the forward batch table")
+        if "CREATE TABLE IF NOT EXISTS ops_data_fix_YYYYMMDD_ticket_id AS" in content:
+            errors.append("31-production-data-ops.md must fail instead of reusing a stale rollback backup table")
+        if re.search(
+            r"CREATE TABLE ops_data_fix_YYYYMMDD_ticket_id AS\s+SELECT id, status, updated_at, updated_by\s+"
+            r"FROM sys_user\s+WHERE status = :old_status",
+            content,
+            re.MULTILINE,
+        ):
+            errors.append("31-production-data-ops.md must not copy all candidate rows before bounded batches")
+        if "updated_at = CURRENT_TIMESTAMP" in content or "updated_at = UTC_TIMESTAMP" in content:
+            errors.append("31-production-data-ops.md must bind a portable UTC instant instead of a database-specific timestamp function")
+        active_statements = "\n".join(
+            line for line in content.splitlines() if not line.lstrip().startswith("--")
+        )
+        if re.search(r"(?mi)^\s*COMMIT\s*;", active_statements):
+            errors.append("31-production-data-ops.md must not commit before the executable batch count gate is evaluated")
+        if re.search(r"BEGIN;\s*DROP\s+TABLE", content, re.IGNORECASE):
+            errors.append("31-production-data-ops.md must not drop the batch table inside the transaction")
+        decision = re.search(
+            r"SELECT\s+expected_batch_rows,\s+backed_up_batch_rows,\s+updated_batch_rows,"
+            r".*?FROM ops_data_fix_YYYYMMDD_ticket_id_gate;",
+            content,
+            re.DOTALL,
+        )
+        if decision is None or "ops_data_fix_YYYYMMDD_ticket_id_batch" in decision.group(0):
+            errors.append("31-production-data-ops.md decision query must not reopen the temporary batch table")
+        if "-- UPDATE sys_user u" in content and "-- WHERE u.id = b.id" in content:
+            errors.append("31-production-data-ops.md must not retain PostgreSQL-only UPDATE FROM rollback syntax")
+
+    service_path = root / "examples/scaffold/java/modules/system/application/UserService.java"
+    if service_path.is_file():
+        service = read(service_path)
+        if ".like(User::getUsername" in service:
+            errors.append("scaffold UserService username search must not use two-sided LIKE")
+        for marker in (
+            ".likeRight(User::getUsername",
+            "Instant now = Instant.now()",
+            "entity.setCreatedAt(now)",
+            "entity.setUpdatedAt(now)",
+            "user.setUpdatedAt(Instant.now())",
+            "entity.setIsDeleted(0)",
+            "entity.setDeleteToken(0L)",
+            ".set(User::getIsDeleted, 1)",
+            ".set(User::getDeleteToken, user.getId())",
+            ".set(User::getDeletedAt, now)",
+            ".set(User::getDeletedBy, operatorId)",
+            ".eq(User::getIsDeleted, 0)",
+            ".eq(User::getVersion, user.getVersion())",
+            "DataScope.apply(",
+            "DataScope.assertRecord(",
+        ):
+            if marker not in service:
+                errors.append(f"scaffold UserService missing safe sample marker: {marker}")
+        if "deleteById(" in service:
+            errors.append("scaffold UserService must not deleteById; the delete update must also write the token and audit columns")
+    audit_service_path = root / "examples/scaffold/java/modules/system/application/AuditLogService.java"
+    if audit_service_path.is_file():
+        audit_service = read(audit_service_path)
+        for marker in ("DataScope.apply(", "DataScope.assertRecord(", "审计记录不存在"):
+            if marker not in audit_service:
+                errors.append(f"scaffold AuditLogService missing data-scope marker: {marker}")
+        if "audit log not found:" in audit_service:
+            errors.append("scaffold AuditLogService must not echo the resource id in the not-found message")
+    scope_path = root / "examples/scaffold/java/common/datascope/DataScope.java"
+    scope_policy_path = root / "examples/scaffold/java/common/datascope/DataScopePolicy.java"
+    if scope_path.is_file() and scope_policy_path.is_file():
+        scope = read(scope_path)
+        scope_policy = read(scope_policy_path)
+        for marker in ("DataScopePolicy policy", "DataScopePolicy.ENTIRE_DIRECTORY", "DataScopePolicy.OWNER_ONLY"):
+            if marker not in scope:
+                errors.append(f"scaffold DataScope missing explicit policy marker: {marker}")
+        for forbidden in ("String resourceType", "includesEntireDirectory"):
+            if forbidden in scope:
+                errors.append(f"scaffold DataScope must not infer authorization from resource strings: {forbidden}")
+        if "public enum DataScopePolicy" not in scope_policy:
+            errors.append("scaffold DataScopePolicy must be an explicit enum")
+    elif (root / "examples/scaffold/java").is_dir():
+        errors.append("scaffold DataScope.java missing")
+    user_path = root / "examples/scaffold/java/modules/system/domain/User.java"
+    if user_path.is_file():
+        user = read(user_path)
+        for marker in ("public Integer getIsDeleted()", "public void setIsDeleted(Integer isDeleted)", "public Long getDeleteToken()", "public void setDeleteToken(Long deleteToken)"):
+            if marker not in user:
+                errors.append(f"scaffold User missing logic-delete accessor: {marker}")
+        if user.count("@TableLogic") != 1 or not re.search(
+            r'@TableLogic\s+@TableField\("is_deleted"\)\s+private Integer isDeleted;',
+            user,
+        ):
+            errors.append("scaffold User @TableLogic must bind only isDeleted and pin the column name")
+        if "1970-01-01" in user:
+            errors.append("scaffold User must not use an epoch sentinel for logical delete")
+
+
+ADR_TEMPLATE_MARKERS = (
+    "proposed",
+    "accepted",
+    "deprecated",
+    "### Option A",
+    "### Option B",
+    "- Description:",
+    "## Decision",
+    "## Impact",
+    "- Compatibility and data migration:",
+    "## Migration and Rollback",
+    "- Verification evidence and stop conditions:",
+    "## Follow-up",
+    "- Review date and trigger:",
+    "- Deprecation criteria:",
+)
+
+
+def check_adr_templates(root: Path, errors: list[str]) -> None:
+    candidates = [root / "docs" / "adr" / "0000-template.md"]
+    if len(root.parents) > 1:
+        candidates.append(root.parents[1] / "common-governance" / "examples" / "adr-template.md")
+    for path in candidates:
+        if not path.is_file():
+            continue
+        content = read(path)
+        missing = [marker for marker in ADR_TEMPLATE_MARKERS if marker not in content]
+        if missing:
+            errors.append(f"{path.name}: ADR template missing fields: {', '.join(missing)}")
+
+
+def check_feature_flag_lifecycle(root: Path, errors: list[str]) -> None:
+    configuration_reference = "21-configuration-" + "sec" + "rets.md"
+    required = (
+        "稳定 key / 命名前缀",
+        "Owner",
+        "创建原因",
+        "默认值",
+        "安全失败值",
+        "目标环境",
+        "启停条件",
+        "观察指标",
+        "回滚方式",
+        "到期日",
+        "失效 / 清理策略",
+    )
+    targets = (
+        ("shared/22-operability.md", "1. 灰度开关须登记", True),
+        ("shared/32-service-reliability.md", "3. 功能开关（Feature Flag）", True),
+        ("evals/prompts.md", "**期望**：拒绝；环境相关和运维参数", False),
+    )
+    for rel, prefix, require_exact_reference in targets:
+        path = root / rel
+        if not path.is_file():
+            continue
+        line = next((item for item in read(path).splitlines() if item.startswith(prefix)), "")
+        missing = [marker for marker in required if marker not in line]
+        if require_exact_reference and configuration_reference not in line:
+            missing.append(configuration_reference)
+        if missing:
+            errors.append(f"{rel}: feature flag lifecycle clause missing: {', '.join(missing)}")
+
+    reliability = root / "shared/32-service-reliability.md"
+    if reliability.is_file() and "Owner 与过期时间只是该清单子集" in read(reliability):
+        errors.append("shared/32-service-reliability.md: stale feature flag subset wording must be removed")
+    prompts = root / "evals/prompts.md"
+    if prompts.is_file() and "只是该清单子集" in read(prompts):
+        errors.append("evals/prompts.md: stale feature flag subset wording must be removed")
 
 
 def check_scaffold_exception_contract(root: Path, errors: list[str]) -> None:
@@ -524,17 +1193,80 @@ def check_ai_tool_safety(root: Path, errors: list[str]) -> None:
 
 def check_l0_hard_rule_scope(root: Path, errors: list[str]) -> None:
     text = read(root / "shared" / "00-must-follow.md")
-    if "## 条件触发路由（不计入 Level 0 硬规则）" not in text:
+    boundary = "## 条件触发路由（不计入 Level 0 硬规则）"
+    if boundary not in text:
         errors.append("00-must-follow.md missing conditional routing boundary")
-    numbered = "\n".join(
-        line for line in text.splitlines() if re.match(r"^\d+\.\s", line)
-    )
+    numbered_lines = [line for line in text.splitlines() if re.match(r"^\d+\.\s", line)]
+    numbered = "\n".join(numbered_lines)
     numbered_refs = set(BARE_SHARED_REF.findall(numbered))
     for ref in sorted(numbered_refs - L0_ALLOWED_SHARED_REFS):
         errors.append(f"00-must-follow.md: non-L0 shared rule numbered as L0: {ref}")
     for marker in HIGH_LEVEL_TOPIC_MARKERS:
         if marker in numbered:
             errors.append(f"00-must-follow.md: high-level topic numbered as L0: {marker}")
+    for marker in L0_BASELINE_MARKERS:
+        if marker not in numbered:
+            errors.append(f"00-must-follow.md: missing numbered L0 baseline: {marker}")
+    if boundary in text:
+        conditional = text.split(boundary, 1)[1]
+        for marker in CONDITIONAL_ROUTE_DUPLICATE_MARKERS:
+            if marker in conditional:
+                errors.append(f"00-must-follow.md: L0 baseline duplicated in conditional route: {marker}")
+
+
+def check_v2_regression_coverage(root: Path, errors: list[str]) -> None:
+    quality = read(root / "shared/23-quality-gates.md")
+    for marker in (
+        "oasdiff breaking --fail-on WARN",
+        "openapi-baseline-bootstrap-approved",
+        "已有目标分支契约时初始 baseline 必须与它一致",
+        "OpenAPI breaking 门禁不得用此条绕过",
+    ):
+        if marker not in quality:
+            errors.append(f"23-quality-gates.md missing OpenAPI baseline gate: {marker}")
+    if "无 baseline 须在 PR 说明 skip" in quality:
+        errors.append("23-quality-gates.md must not allow a missing baseline to be skipped")
+
+    agents = read(root / "codex/AGENTS.md")
+    migration_line = next((line for line in agents.splitlines() if "**/db/migration/**" in line), "")
+    for marker in ("02-naming.md", "07-persistence-mybatis.md", "43-business-module-extension.md"):
+        if marker not in migration_line:
+            errors.append(f"codex migration route missing: {marker}")
+
+    prompts = read(root / "evals/prompts.md")
+    for marker in (
+        "pageNo=0",
+        'last("ORDER BY " + sortField)',
+        "### B70 — 逻辑删除直接 deleteById",
+        "### B71 — 更新前重查最新 version",
+    ):
+        if marker not in prompts:
+            errors.append(f"backend v2 negative eval missing: {marker}")
+
+    required = {
+        "shared/00-must-follow.md": ("契约变更须运行固定版本 `oasdiff breaking --fail-on WARN` 并完成兼容性 Review",),
+        "shared/04-rest-api-design.md": ("固定版本 `oasdiff breaking --fail-on WARN` 进 CI",),
+        "shared/15-testing.md": ("oasdiff breaking --fail-on WARN", "OpenAPI breaking 门禁不得靠说明原因跳过"),
+        "cursor/04-rest-controller.mdc": ("路径 ID 使用 `string`", "当前 `version`", "初始 `version`"),
+        "cursor/16-quality-gates.mdc": ("oasdiff breaking --fail-on WARN", "不得用 PR 说明跳过"),
+        "docs/rule-maturity-model.md": ("所有项目都要遵守的基础条款", "oasdiff breaking --fail-on WARN"),
+        "docs/onboarding-new-project.md": ("4. 固定版本 `oasdiff breaking --fail-on WARN`（契约 PR 必跑）",),
+        "docs/release-checklist.md": ("固定版本 `oasdiff breaking --fail-on WARN` 已相对上一已发布 baseline / PR base Review",),
+        "README.md": ("5. 接入 `examples/` 中 ArchUnit、Checkstyle、固定版本 `oasdiff breaking --fail-on WARN`",),
+        "RELEASE.md": (
+            "首次建立 baseline 须由 Owner 显式批准，禁止用 PR 说明代替门禁",
+            "固定版本 `oasdiff breaking --fail-on WARN`",
+        ),
+        "examples/README.md": (
+            "Level 0+：verify（Maven/Gradle 自动识别）、固定版本 `oasdiff breaking --fail-on WARN`、secret scan",
+            "`./gradlew check`（CI 自动识别）、固定版本 `oasdiff breaking --fail-on WARN`、secret scan（gitleaks）",
+        ),
+    }
+    for rel, markers in required.items():
+        content = read(root / rel)
+        for marker in markers:
+            if marker not in content:
+                errors.append(f"{rel}: backend v2 summary missing: {marker}")
 
 
 def main() -> int:
@@ -659,12 +1391,21 @@ def main() -> int:
 
     check_readme_paths(root, errors)
     check_readme_shared_inventory(root, errors)
+    check_shared_titles(root, errors)
     check_scaffold_assets(root, errors)
+    check_architecture_profile_assets(root, errors)
+    check_openapi_diff_assets(root, errors)
     check_project_local_sample(root, errors)
     check_scaffold_runtime(root, errors)
+    check_scaffold_openapi_alignment(root, errors)
+    check_scaffold_default_tenancy(root, errors)
+    check_mysql_utc_and_query_samples(root, errors)
+    check_feature_flag_lifecycle(root, errors)
+    check_adr_templates(root, errors)
     check_scaffold_exception_contract(root, errors)
     check_l0_hard_rule_scope(root, errors)
     check_eval_topic_manifest(root, errors)
+    check_v2_regression_coverage(root, errors)
     check_ai_tool_safety(root, errors)
     check_agents_paths(root, errors)
     check_cursor_shared_refs(root, errors)

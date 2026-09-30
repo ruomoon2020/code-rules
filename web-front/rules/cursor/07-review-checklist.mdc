@@ -15,7 +15,7 @@ alwaysApply: false
 1. `views` 无 `<el-*>`、无 `<ElButton>` 等 EP PascalCase、无 `element-plus` import。
 2. 无新增 `any` / `as any`。
 3. 组件内无 `axios` / `fetch`。
-4. 字段与 schema / generated 一致。
+4. 字段与 `contracts/openapi.yaml` 及其同步生成类型一致，生成物未手改。
 5. loading、empty、error、permission、提交 loading 已处理。
 6. 删除等破坏性操作有确认。
 7. keep-alive 的 `name` 与路由一致。

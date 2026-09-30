@@ -8,9 +8,15 @@
 
 ## 路由与菜单
 
-1. 路由 `name` 使用 PascalCase，与菜单、权限码、keep-alive 一致。
+1. 路由 `name` 使用 PascalCase；启用 keep-alive 时，组件 `defineOptions({ name })` 必须与路由 `name` 一致，细则见 `02-naming.md`、`03-code-style.md`。
 2. `meta` 至少包含项目约定字段：`title`、`permission`、`keepAlive`、`hidden`（按项目裁剪）。
-3. 外链菜单明确 `target` / 安全策略，不在业务页内嵌未知 iframe。
+3. 外链菜单必须明确 `target`、协议与来源白名单；新窗口使用 `noopener,noreferrer` 或等价隔离。禁止在业务页内嵌未知或未登记来源的 iframe。
+4. iframe 只允许加载项目登记的 HTTPS 来源，并设置最小 `sandbox` / `allow` 权限；涉及登录态、跨窗通信或敏感数据时同时遵守 `07-security-performance.md`、`25-regulated-web-hardening.md`。
+
+## 多页签与未保存状态
+
+1. 关闭页签、切换租户、退出登录或批量关闭页签前，必须检查当前页未保存状态；确认策略复用 `04-ui-patterns.md`，禁止壳层直接销毁表单草稿。
+2. 页签恢复只能恢复路由和允许持久化的筛选状态，禁止把密码、Token、完整表单或敏感详情写入本地缓存。
 
 ## 面包屑与页头
 
@@ -35,5 +41,6 @@
 
 - 在 `views` 内写全局 `position: fixed` 顶栏覆盖壳层
 - 绕过统一菜单权限渲染「隐藏入口」
+- 未确认即关闭含未保存修改的页签
 
 详见 `06-state-route-permission.md`。

@@ -1,10 +1,11 @@
-# Exception & Error Codes
+# 异常与错误码规则
 
 ## 统一模型
 
 1. 使用 `@RestControllerAdvice` 全局处理异常。
 2. 业务异常 `BusinessException`（或项目等价）携带非空 **errorCode**、可选 **4xx httpStatus** 与 **cause**；构造器或工厂必须拒绝空错误码和 5xx 状态。只有明确的下游业务拒绝才可保留 cause 后映射成 4xx；数据库、网络、RPC/MQ 不可用等基础设施失败不得降级成业务 4xx，必须保留原始原因进入 5xx 兜底。禁止只复制 `cause.getMessage()`。
 3. 响应体字段与前端 normalizer 对齐：`code`、`message`、`errorCode`、`traceId`（见 `docs/fullstack-contract.md`）。
+4. `errorCode` 是稳定业务契约；`message` 只作服务端 fallback 或诊断文案，不保证语言和长期稳定性。禁止客户端按 `message` 分支，后端也不得要求客户端拼接字段形成业务句。
 
 ## 既有响应壳
 
@@ -12,7 +13,7 @@
 
 ## 错误码
 
-1. 格式：`DOMAIN_REASON`，全大写下划线，如 `USER_NOT_FOUND`。
+1. 格式是「领域_原因」（`DOMAIN_REASON`），全大写，词之间用下划线，例如 `USER_NOT_FOUND`。
 2. 错误码须在枚举或常量类集中维护；禁止魔法字符串散落。
 3. 未知系统异常映射为 `INTERNAL_ERROR`，不向客户端暴露堆栈。
 

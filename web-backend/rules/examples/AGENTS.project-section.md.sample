@@ -1,0 +1,12 @@
+## 后端项目决策（复制到业务仓根 AGENTS.md）
+
+- 架构档：`CRUD_LITE`
+- 对象命名：`ENTITY_REQUEST_RESPONSE`
+- 默认与偏离：普通项目直接使用上述组合；存量经典分层按现状声明，复杂域升级 Hexagonal 须有 ADR
+- API 风格：`GET_POST_COMPAT`
+- 租户模型：`NONE`
+- 全局表 / 租户豁免表：`NONE`
+- 数据所有权：默认当前模块只写自己的表；出现跨模块 SQL、事件、任务或回写其他模块状态时再补所有权清单
+- OpenAPI SSOT：`contracts/openapi.yaml`
+
+上述值均为没有租户痕迹时的缺省值，普通单模块 CRUD 即使未复制本段也直接采用，不得暂停要求填写决策表。已有 `tenant_id`、租户插件或拦截器时改为 `SHARED_COLUMN`，普通 CRUD 不因此暂停。公网开放接口、需要改变隔离模型或跨模块写链路须显式补充偏离；改变任一已声明决策时，同步 ADR（Hexagonal 必需）、ArchUnit、生成客户端和契约兼容说明。

@@ -48,7 +48,8 @@
 ### 1) 契约影响（Contracts / API）
 - [ ] 不涉及 / N/A
 - [ ] 已更新 `contracts/openapi.yaml`（或项目约定契约路径）
-- [ ] 已运行 OpenAPI diff / Spectral（并附结论或链接）：__________
+- [ ] 已对目标分支已接受契约运行固定版本 `oasdiff breaking --fail-on WARN`（并附命令输出或 CI 链接）：__________
+- [ ] oasdiff 的 error / warning 已逐项处置；首次 baseline 使用 Owner 施加的 `openapi-baseline-bootstrap-approved` 标签并满足基线相等性要求；临时忽略项写明 Owner、迁移依据、适用版本和到期条件：__________
 - [ ] 破坏性变更已标注 `deprecated` / 版本策略 / 迁移说明：__________
 - [ ] 若改 API：消费端已完成 `api:gen` + `api:check`（或说明已配置跳过原因）：__________
 
@@ -61,7 +62,7 @@
 
 ### 3) 安全 / PII / 权限（Security & Privacy）
 - [ ] 不涉及 / N/A
-- [ ] 已覆盖鉴权/未登录/无权限/跨租户/BOLA 等用例（如涉及）
+- [ ] 已覆盖鉴权：未登录 / 无权限 / BOLA（他人资源 id）；租户模型不是 `NONE` 时另覆盖跨租户（如涉及）
 - [ ] 无密码/Token/敏感 PII 明文写入日志或异常
 - [ ] 若涉及 PII/导出/留存：已对照 `docs/data-classification-matrix.md` 完成脱敏与审计要求
 - [ ] 高风险接口有越权/可用性回归测试或威胁建模记录（按项目策略）：__________
@@ -99,7 +100,7 @@
 - [ ] PII / 隐私
 - [ ] DB migration / 数据修复
 - [ ] 依赖/供应链
-- [ ] 契约/事件/对外接口（OpenAPI diff / 版本策略）
+- [ ] 契约/事件/对外接口（固定版本 oasdiff breaking / 版本策略）
 
 ## 已运行命令（粘贴或链接 CI）
 ```text

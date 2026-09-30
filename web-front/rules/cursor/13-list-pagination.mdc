@@ -10,7 +10,8 @@ alwaysApply: false
 
 # 列表分页与表格状态
 
-- 分页 / 筛选 / 排序须**单一数据源**；筛选或 pageSize 变化 → `page = 1`。
+- 分页 / 筛选 / 排序须**单一数据源**；筛选或 pageSize 变化 → `page = 1`。字段名是 `page`，禁止 `pageNo` / `pageNum`。
+- 排序请求使用 `sortField`、`sortOrder`。`sortOrder` 只传 `asc` / `desc`，组件的 `ascending` / `descending` 先映射。
 - 删当前页最后一条 → 若 `page > 1` 回退再请求。
 - 批量操作成功后清空 selection；批量删除后按最新 `total` 修正页码；部分失败须反馈成功/失败数。
 - 搜索 / 翻页须 debounce + 防竞态（abort 或 ignore stale）。

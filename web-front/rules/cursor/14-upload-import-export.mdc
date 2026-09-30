@@ -12,7 +12,7 @@ alwaysApply: false
 
 # 上传 / 导入 / 导出
 
-- 导入导出字段必须来自 schema / generated；禁止 schema 外字段。
+- 导入导出字段必须来自 `contracts/openapi.yaml` 及其同步生成类型；禁止 OpenAPI 外字段，禁止手改生成物。
 - 模板下载须说明字段 key、必填、类型、枚举、示例。
 - Excel / CSV / JSON / Word 按格式规则校验；CSV 禁简单 `split(',')` 解析。
 - 导入失败须提供行号、列名、字段 key、错误原因；支持错误明细下载。

@@ -1,8 +1,8 @@
 # 前端规则成熟度模型（采纳分层）
 
-> `shared/00` 是所有项目的 Level 0 不变量；其他 shared 按任务与 Level 读取。Level 不是文件数量评分，必须有可运行命令、Owner 和回归证据。
+> `shared/00` 是所有项目都要遵守的条款；其他 shared 按任务与 Level 读取。Level 不是文件数量评分，必须有可运行命令、Owner 和回归证据。
 
-`00` 文末的条件触发路由只负责“命中场景时应读什么”，不会把 Level 1–3 或受监管能力变成所有 Level 0 项目的默认门禁。
+`00` 文末只说明遇到哪类改动要再读哪份规则。Level 1 到 3，以及金融、政务类要求，不会因此变成所有新项目第一期的合并条件。
 
 ## 总览
 
@@ -10,14 +10,14 @@
 |---|---|---|---|
 | **0** | 能安全构建，页面与契约不失真 | 第 1 个迭代 | lint、type-check、build、rules validator |
 | **1** | 具备上线所需的权限、测试、错误恢复和依赖治理 | 首次上线前 | api check、核心测试、Smoke eval、回滚说明 |
-| **2** | 企业治理与可观测证据闭环 | 核心域 / 企业客户上线前 | E2E、性能预算、数据分级、发布清单、Full eval |
+| **2** | 企业上线前要有测试、监控和发布记录 | 核心业务或企业客户上线前 | E2E、性能预算、数据分级、发布清单、Full eval |
 | **3** | 平台化持续治理 | 平台团队持续维护 | 组件兼容策略、视觉回归、SLO 看板、演练记录 |
 
 DoD × Level 全栈对照见 common governance 包 `docs/dod-maturity-mapping.md`；在本 monorepo 中源文件为 `docs/dod-maturity-mapping.md`。
 
 ## Level 0：必须接入
 
-**能力**：目录与依赖方向、TypeScript 基线、Base 组件边界、schema SSOT、列表基本状态、基础安全。
+**能力**：目录与依赖方向、TypeScript 基线、Base 组件边界、OpenAPI 契约 SSOT、列表基本状态、基础安全。
 
 | 类型 | 文件 / 资产 |
 |---|---|

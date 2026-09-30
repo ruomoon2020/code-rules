@@ -1,19 +1,15 @@
 ---
-description: 金额、时间与精度
+description: 复杂账期与结算边界
 globs:
-  - "src/main/java/**/*Money*.java"
-  - "src/main/java/**/*Payment*.java"
-  - "src/main/java/**/*Order*.java"
   - "src/main/java/**/*Billing*.java"
   - "src/main/java/**/*Settlement*.java"
-  - "src/main/java/**/*Schedule*.java"
-  - "src/main/resources/mapper/**/*.xml"
-  - "contracts/**/*.yaml"
+  - "src/main/java/**/*AccountingPeriod*.java"
+  - "src/main/java/**/*ClosingPeriod*.java"
 alwaysApply: false
 ---
 
 # 金额与时间
 
-金额禁 double/float；时间须明确 UTC/时区/边界；账期、自然日、定时任务需说明闭开区间和夏令时影响。
+仅在复杂计价、结算日、账期关闭或跨期调整场景加载：须定义账期边界、补记 / 重开、跨期处理和审计。浮点金额与无时区时间的 Level 0 禁令已由 `rules/shared/00-must-follow.md` 常驻提供。
 
 全文：`rules/shared/40-money-time-precision.md`

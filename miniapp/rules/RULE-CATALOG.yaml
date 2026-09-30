@@ -5,12 +5,12 @@ stack: miniapp
 rules:
 - id: CR-MA-000
   stack: miniapp
-  title: 00 Must Follow
+  title: 必须遵守的规则（小程序）
   path: shared/00-must-follow.md
   owner_role: Miniapp owner
-  strength:
-    required_markers: 1
-    recommended_markers: 0
+  wording_stats:
+    normative_markers: 1
+    advisory_markers: 0
   routing:
   - codex/05-verification.md
   - codex/AGENTS.md
@@ -21,12 +21,12 @@ rules:
   - scripts/validate-rules-package.py
 - id: CR-MA-001
   stack: miniapp
-  title: 01 Project Structure
+  title: 项目结构规则
   path: shared/01-project-structure.md
   owner_role: Miniapp owner
-  strength:
-    required_markers: 7
-    recommended_markers: 1
+  wording_stats:
+    normative_markers: 7
+    advisory_markers: 1
   routing:
   - codex/AGENTS.md
   - cursor/00-project-overview.mdc
@@ -36,12 +36,12 @@ rules:
   - scripts/validate-rules-package.py
 - id: CR-MA-002
   stack: miniapp
-  title: 02 Naming
+  title: 命名规则
   path: shared/02-naming.md
   owner_role: Miniapp owner
-  strength:
-    required_markers: 4
-    recommended_markers: 1
+  wording_stats:
+    normative_markers: 4
+    advisory_markers: 1
   routing:
   - codex/AGENTS.md
   - cursor/00-project-overview.mdc
@@ -53,12 +53,12 @@ rules:
   - scripts/validate-rules-package.py
 - id: CR-MA-003
   stack: miniapp
-  title: 03 Vue3 TypeScript uni-app
+  title: Vue 3、TypeScript 与 uni-app 规则
   path: shared/03-vue3-typescript-uniapp.md
   owner_role: Miniapp owner
-  strength:
-    required_markers: 11
-    recommended_markers: 0
+  wording_stats:
+    normative_markers: 11
+    advisory_markers: 0
   routing:
   - codex/AGENTS.md
   - cursor/02-vue3-uniapp.mdc
@@ -71,12 +71,12 @@ rules:
   - scripts/validate-rules-package.py
 - id: CR-MA-004
   stack: miniapp
-  title: 04 Page UI Lifecycle
+  title: 页面、UI 与生命周期规则
   path: shared/04-page-ui-lifecycle.md
   owner_role: Miniapp owner
-  strength:
-    required_markers: 8
-    recommended_markers: 2
+  wording_stats:
+    normative_markers: 8
+    advisory_markers: 2
   routing:
   - codex/AGENTS.md
   - cursor/02-vue3-uniapp.mdc
@@ -90,12 +90,12 @@ rules:
   - scripts/validate-rules-package.py
 - id: CR-MA-005
   stack: miniapp
-  title: 05 API Contract Request
+  title: API 契约与请求规则
   path: shared/05-api-contract-request.md
   owner_role: Miniapp owner
-  strength:
-    required_markers: 8
-    recommended_markers: 0
+  wording_stats:
+    normative_markers: 11
+    advisory_markers: 0
   routing:
   - codex/07-network-security.md
   - codex/AGENTS.md
@@ -112,12 +112,12 @@ rules:
   - scripts/validate-rules-package.py
 - id: CR-MA-006
   stack: miniapp
-  title: 06 Login Auth Session
+  title: 登录、认证与会话规则
   path: shared/06-login-auth-session.md
   owner_role: Miniapp owner
-  strength:
-    required_markers: 15
-    recommended_markers: 0
+  wording_stats:
+    normative_markers: 15
+    advisory_markers: 0
   routing:
   - codex/AGENTS.md
   - cursor/05-api-auth.mdc
@@ -133,12 +133,12 @@ rules:
   - scripts/validate-rules-package.py
 - id: CR-MA-007
   stack: miniapp
-  title: 07 Pages Routing Subpackages
+  title: 页面路由与分包规则
   path: shared/07-pages-routing-subpackages.md
   owner_role: Miniapp owner
-  strength:
-    required_markers: 7
-    recommended_markers: 0
+  wording_stats:
+    normative_markers: 7
+    advisory_markers: 0
   routing:
   - codex/AGENTS.md
   - cursor/07-pages-subpackages.mdc
@@ -153,12 +153,12 @@ rules:
   - scripts/validate-rules-package.py
 - id: CR-MA-008
   stack: miniapp
-  title: 08 State Storage Cache
+  title: 状态、存储与缓存规则
   path: shared/08-state-storage-cache.md
   owner_role: Miniapp owner
-  strength:
-    required_markers: 13
-    recommended_markers: 0
+  wording_stats:
+    normative_markers: 13
+    advisory_markers: 0
   routing:
   - codex/AGENTS.md
   - cursor/08-state-storage.mdc
@@ -168,12 +168,12 @@ rules:
   - scripts/validate-rules-package.py
 - id: CR-MA-009
   stack: miniapp
-  title: 09 Privacy Permission
+  title: 隐私与权限规则
   path: shared/09-privacy-permission.md
   owner_role: Miniapp owner
-  strength:
-    required_markers: 9
-    recommended_markers: 0
+  wording_stats:
+    normative_markers: 9
+    advisory_markers: 0
   routing:
   - codex/AGENTS.md
   - cursor/00-project-overview.mdc
@@ -191,12 +191,12 @@ rules:
   - scripts/validate-rules-package.py
 - id: CR-MA-010
   stack: miniapp
-  title: 10 Performance Package Size
+  title: 性能与包体积规则
   path: shared/10-performance-package-size.md
   owner_role: Miniapp owner
-  strength:
-    required_markers: 21
-    recommended_markers: 1
+  wording_stats:
+    normative_markers: 21
+    advisory_markers: 1
   routing:
   - codex/AGENTS.md
   - cursor/00-project-overview.mdc
@@ -212,12 +212,12 @@ rules:
   - scripts/validate-rules-package.py
 - id: CR-MA-011
   stack: miniapp
-  title: 11 Platform Differences
+  title: 平台差异规则
   path: shared/11-platform-differences.md
   owner_role: Miniapp owner
-  strength:
-    required_markers: 16
-    recommended_markers: 0
+  wording_stats:
+    normative_markers: 16
+    advisory_markers: 0
   routing:
   - codex/AGENTS.md
   - cursor/00-project-overview.mdc
@@ -230,30 +230,32 @@ rules:
   - scripts/validate-rules-package.py
 - id: CR-MA-012
   stack: miniapp
-  title: 12 List Form Pagination
+  title: 列表、表单与分页规则
   path: shared/12-list-form-pagination.md
   owner_role: Miniapp owner
-  strength:
-    required_markers: 7
-    recommended_markers: 0
+  wording_stats:
+    normative_markers: 21
+    advisory_markers: 0
   routing:
   - codex/AGENTS.md
   - cursor/00-project-overview.mdc
   - cursor/02-vue3-uniapp.mdc
   - cursor/12-list-form-pagination.mdc
   eval_cases:
+  - M15
   - M18
   - M25
+  - M52
   verification:
   - scripts/validate-rules-package.py
 - id: CR-MA-013
   stack: miniapp
-  title: 13 Upload Download Media
+  title: 上传、下载与媒体规则
   path: shared/13-upload-download-media.md
   owner_role: Miniapp owner
-  strength:
-    required_markers: 8
-    recommended_markers: 0
+  wording_stats:
+    normative_markers: 8
+    advisory_markers: 0
   routing:
   - codex/AGENTS.md
   - cursor/13-upload-media.mdc
@@ -263,12 +265,12 @@ rules:
   - scripts/validate-rules-package.py
 - id: CR-MA-014
   stack: miniapp
-  title: 14 Payment Subscribe Share
+  title: 支付、订阅与分享规则
   path: shared/14-payment-subscribe-share.md
   owner_role: Miniapp owner
-  strength:
-    required_markers: 10
-    recommended_markers: 0
+  wording_stats:
+    normative_markers: 10
+    advisory_markers: 0
   routing:
   - codex/AGENTS.md
   - cursor/00-project-overview.mdc
@@ -282,17 +284,16 @@ rules:
   - M26
   - M27
   - M34
-  - M52
   verification:
   - scripts/validate-rules-package.py
 - id: CR-MA-015
   stack: miniapp
-  title: 15 Logging Observability
+  title: 日志与可观测规则
   path: shared/15-logging-observability.md
   owner_role: Miniapp owner
-  strength:
-    required_markers: 6
-    recommended_markers: 1
+  wording_stats:
+    normative_markers: 6
+    advisory_markers: 1
   routing:
   - codex/AGENTS.md
   - cursor/00-project-overview.mdc
@@ -305,12 +306,12 @@ rules:
   - scripts/validate-rules-package.py
 - id: CR-MA-016
   stack: miniapp
-  title: 16 Testing Quality Gates
+  title: 测试与质量门禁规则
   path: shared/16-testing-quality-gates.md
   owner_role: Miniapp owner
-  strength:
-    required_markers: 9
-    recommended_markers: 3
+  wording_stats:
+    normative_markers: 9
+    advisory_markers: 3
   routing:
   - codex/AGENTS.md
   - cursor/02-vue3-uniapp.mdc
@@ -325,12 +326,12 @@ rules:
   - scripts/validate-rules-package.py
 - id: CR-MA-017
   stack: miniapp
-  title: 17 AI Generation
+  title: AI 生成规则
   path: shared/17-ai-generation.md
   owner_role: Miniapp owner
-  strength:
-    required_markers: 13
-    recommended_markers: 0
+  wording_stats:
+    normative_markers: 13
+    advisory_markers: 0
   routing:
   - codex/AGENTS.md
   - cursor/00-project-overview.mdc
@@ -341,12 +342,12 @@ rules:
   - scripts/validate-rules-package.py
 - id: CR-MA-018
   stack: miniapp
-  title: 18 Business Module Extension
+  title: 业务模块扩展规则（小程序）
   path: shared/18-business-module-extension.md
   owner_role: Miniapp owner
-  strength:
-    required_markers: 8
-    recommended_markers: 0
+  wording_stats:
+    normative_markers: 8
+    advisory_markers: 0
   routing:
   - codex/AGENTS.md
   - cursor/00-project-overview.mdc
@@ -357,12 +358,12 @@ rules:
   - scripts/validate-rules-package.py
 - id: CR-MA-019
   stack: miniapp
-  title: 19 Release Ops
+  title: 发布与运维规则
   path: shared/19-release-ops.md
   owner_role: Miniapp owner
-  strength:
-    required_markers: 9
-    recommended_markers: 0
+  wording_stats:
+    normative_markers: 9
+    advisory_markers: 0
   routing:
   - codex/AGENTS.md
   - cursor/16-quality-gates.mdc
@@ -374,12 +375,12 @@ rules:
   - scripts/validate-rules-package.py
 - id: CR-MA-020
   stack: miniapp
-  title: 20 App Runtime
+  title: 应用运行时规则
   path: shared/20-app-runtime.md
   owner_role: Miniapp owner
-  strength:
-    required_markers: 14
-    recommended_markers: 0
+  wording_stats:
+    normative_markers: 14
+    advisory_markers: 0
   routing:
   - codex/06-app-runtime.md
   - codex/AGENTS.md
@@ -393,12 +394,12 @@ rules:
   - scripts/validate-rules-package.py
 - id: CR-MA-021
   stack: miniapp
-  title: 21 Network Security
+  title: 网络安全规则
   path: shared/21-network-security.md
   owner_role: Miniapp owner
-  strength:
-    required_markers: 12
-    recommended_markers: 0
+  wording_stats:
+    normative_markers: 12
+    advisory_markers: 0
   routing:
   - codex/07-network-security.md
   - codex/AGENTS.md
@@ -414,29 +415,31 @@ rules:
   - scripts/validate-rules-package.py
 - id: CR-MA-022
   stack: miniapp
-  title: 22 Error Recovery Offline
+  title: 错误恢复与离线规则
   path: shared/22-error-recovery-offline.md
   owner_role: Miniapp owner
-  strength:
-    required_markers: 10
-    recommended_markers: 1
+  wording_stats:
+    normative_markers: 17
+    advisory_markers: 1
   routing:
   - codex/08-error-recovery.md
   - codex/AGENTS.md
   - cursor/22-error-recovery.mdc
   eval_cases:
+  - M25
   - M35
   - M36
+  - M52
   verification:
   - scripts/validate-rules-package.py
 - id: CR-MA-023
   stack: miniapp
-  title: 23 Content Safety
+  title: 内容安全规则
   path: shared/23-content-safety.md
   owner_role: Miniapp owner
-  strength:
-    required_markers: 6
-    recommended_markers: 0
+  wording_stats:
+    normative_markers: 6
+    advisory_markers: 0
   routing:
   - codex/09-content-safety.md
   - codex/AGENTS.md
@@ -448,12 +451,12 @@ rules:
   - scripts/validate-rules-package.py
 - id: CR-MA-024
   stack: miniapp
-  title: 24 Design System Mobile
+  title: 移动端设计系统规则
   path: shared/24-design-system-mobile.md
   owner_role: Miniapp owner
-  strength:
-    required_markers: 6
-    recommended_markers: 2
+  wording_stats:
+    normative_markers: 6
+    advisory_markers: 2
   routing:
   - codex/AGENTS.md
   - cursor/02-vue3-uniapp.mdc
@@ -466,12 +469,12 @@ rules:
   - scripts/validate-rules-package.py
 - id: CR-MA-025
   stack: miniapp
-  title: 25 Dependency Supply Chain
+  title: 依赖与供应链规则
   path: shared/25-dependency-supply-chain.md
   owner_role: Miniapp owner
-  strength:
-    required_markers: 5
-    recommended_markers: 1
+  wording_stats:
+    normative_markers: 5
+    advisory_markers: 1
   routing:
   - codex/AGENTS.md
   - cursor/00-project-overview.mdc
@@ -485,12 +488,12 @@ rules:
   - scripts/validate-rules-package.py
 - id: CR-MA-026
   stack: miniapp
-  title: 26 Security Hardening Risk
+  title: 安全加固与风险规则
   path: shared/26-security-hardening-risk.md
   owner_role: Miniapp owner
-  strength:
-    required_markers: 20
-    recommended_markers: 0
+  wording_stats:
+    normative_markers: 20
+    advisory_markers: 0
   routing:
   - codex/AGENTS.md
   - cursor/00-project-overview.mdc

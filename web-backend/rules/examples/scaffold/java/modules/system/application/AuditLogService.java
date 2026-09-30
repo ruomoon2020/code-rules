@@ -2,6 +2,8 @@ package com.company.product.modules.system.application;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.company.product.common.datascope.DataScope;
+import com.company.product.common.datascope.DataScopePolicy;
 import com.company.product.common.exception.BusinessException;
 import com.company.product.common.exception.ErrorCodes;
 import com.company.product.common.web.PageResponse;
@@ -53,6 +55,7 @@ public class AuditLogService {
         if (query.occurredAtTo() != null) {
             wrapper.le(AuditLog::getOccurredAt, query.occurredAtTo());
         }
+        DataScope.apply(wrapper, DataScopePolicy.ENTIRE_DIRECTORY, AuditLog::getOperatorId);
         wrapper.orderByDesc(AuditLog::getOccurredAt);
         auditLogMapper.selectPage(page, wrapper);
         List<AuditLogSummaryResponse> records = page.getRecords().stream()
@@ -62,12 +65,22 @@ public class AuditLogService {
     }
 
     @Transactional(readOnly = true)
-    public AuditLogResponse detail(String id) {
-        AuditLog row = auditLogMapper.selectById(Long.parseLong(id));
+    public AuditLogResponse detail(long id) {
+        AuditLog row = auditLogMapper.selectById(id);
         if (row == null) {
-            throw new BusinessException(ErrorCodes.AUDIT_LOG_NOT_FOUND, "audit log not found: " + id, HttpStatus.NOT_FOUND);
+            throw auditNotFound();
         }
+        DataScope.assertRecord(
+                DataScopePolicy.ENTIRE_DIRECTORY,
+                String.valueOf(row.getId()),
+                row.getOperatorId(),
+                auditNotFound()
+        );
         return toDetail(row);
+    }
+
+    private static BusinessException auditNotFound() {
+        return new BusinessException(ErrorCodes.AUDIT_LOG_NOT_FOUND, "审计记录不存在", HttpStatus.NOT_FOUND);
     }
 
     private AuditLogSummaryResponse toSummary(AuditLog row) {
@@ -75,7 +88,6 @@ public class AuditLogService {
                 String.valueOf(row.getId()),
                 row.getOperatorId(),
                 null,
-                row.getTenantId(),
                 row.getAction(),
                 row.getResourceType(),
                 row.getResourceId(),
@@ -93,7 +105,6 @@ public class AuditLogService {
                 String.valueOf(row.getId()),
                 row.getOperatorId(),
                 null,
-                row.getTenantId(),
                 row.getAction(),
                 row.getResourceType(),
                 row.getResourceId(),

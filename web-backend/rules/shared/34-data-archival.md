@@ -1,4 +1,4 @@
-# Data Archival & Cold / Hot Tiering
+# 数据归档与冷热分层规则
 
 与 `29-data-privacy-lifecycle.md`（保留周期）、`07-persistence-mybatis.md`（查询与索引）、`25-jobs-scheduling.md`（归档任务）互补。
 

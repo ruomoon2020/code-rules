@@ -1,4 +1,4 @@
-# Data Privacy & Lifecycle
+# 数据隐私与生命周期规则
 
 与 `06-security-authz.md`（鉴权）、`24-data-access-cache.md`（脱敏）互补，覆盖数据分级与生命周期。
 

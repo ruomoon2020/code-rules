@@ -1,4 +1,4 @@
-# 06 App Runtime
+# 应用运行时
 
 改 `App.vue`、`src/app/**` 时：
 

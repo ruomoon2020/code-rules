@@ -8,7 +8,7 @@
 ```text
 contracts/openapi.yaml
   → 后端：Controller/DTO、校验、测试
-  → 管理端：schema / src/api/generated
+  → 管理端：同步生成 schema / src/api/generated
   → 小程序：src/api/generated（api:gen）+ api:check
 ```
 
@@ -17,9 +17,10 @@ contracts/openapi.yaml
 | 字段 | 后端 | 小程序 |
 |---|---|---|
 | `traceId` | MDC + 响应头（名以项目为准） | request 自动携带；日志关联 |
-| `errorCode` | `BusinessException` / 枚举 | 统一错误处理；禁止页面硬编码文案与码不一致 |
-| `message` | 用户可读文案 | `uni.showToast` / 模态提示 |
+| `errorCode` | `BusinessException` / 枚举；稳定业务契约 | 统一错误处理后映射项目 i18n；禁止页面硬编码文案与码不一致 |
+| `message` | fallback / 诊断文案，不保证语言和长期稳定性 | 仅作项目允许的 fallback；禁止据此分支或拼业务句 |
 | 分页 `page` / `pageSize` | `Page` 查询 | 列表 composable（`12`） |
+| `sortField` / `sortOrder` | 白名单列；`sortOrder` 仅 `asc` / `desc` | 请求前把组件排序值映射为 `asc` / `desc` |
 | 分页 `total` / `records` | `IPage` | 列表底部、空态判断 |
 | `Idempotency-Key` | 可重试写操作 Header | 下单、支付、创建类请求；重试复用同一键 |
 
@@ -69,7 +70,7 @@ contracts/openapi.yaml
 
 | 步骤 | 后端 | 管理端 | 小程序 |
 |---|---|---|---|
-| 契约 | OpenAPI 路径、DTO、枚举 | schema + api:gen | api:gen + api:check |
+| 契约 | OpenAPI 路径、DTO、枚举 | 读取 OpenAPI，执行 schema:sync + api:gen | 读取 OpenAPI，执行 api:gen + api:check |
 | 权限 | `@PreAuthorize`、数据权限 | 按钮 / 路由权限 | 登录态 + 后端鉴权（不单靠 UI 隐藏） |
 | 列表 | 分页、租户、BOLA | useTable 四态 | 四态 + 删末条回退（`12`） |
 | 支付 | 下单、幂等、订单状态 | 若涉及 | `14` + 后端订单查询 |

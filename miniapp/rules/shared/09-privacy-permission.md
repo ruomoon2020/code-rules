@@ -1,4 +1,4 @@
-# 09 Privacy Permission
+# 隐私与权限规则
 
 ## 隐私原则
 

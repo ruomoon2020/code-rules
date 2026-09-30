@@ -78,6 +78,17 @@ PROJECT_RULES_TESTING_MARKERS = (
     "测试数据",
     "风险专项",
 )
+ADR_TEMPLATE_MARKERS = (
+    "- Status: proposed",
+    "`proposed` / `accepted` / `deprecated`",
+    "## Options",
+    "### Option A",
+    "### Option B",
+    "## Decision",
+    "## Impact",
+    "## Migration and Rollback",
+    "## Follow-up",
+)
 
 
 def safe_package_path(rel: str) -> Path | None:
@@ -153,6 +164,14 @@ def main() -> int:
                 "PROJECT_RULES testing governance markers missing: "
                 + ", ".join(missing_markers)
             )
+    adr_template_path = ROOT / "examples" / "adr-template.md"
+    if adr_template_path.is_file():
+        adr_template = adr_template_path.read_text(encoding="utf-8")
+        missing_markers = [marker for marker in ADR_TEMPLATE_MARKERS if marker not in adr_template]
+        if missing_markers:
+            errors.append("ADR template minimum contract missing: " + ", ".join(missing_markers))
+        if "- Status: Proposed" in adr_template:
+            errors.append("ADR template status must use the lowercase governed enum")
     if errors:
         print("FAILED:", file=sys.stderr)
         for error in errors:

@@ -28,7 +28,8 @@
 ### 契约与 API
 
 - [ ] 已更新 `contracts/openapi.yaml`（或项目约定路径）
-- [ ] 已运行 OpenAPI diff / Spectral（或说明 skip 原因）：__________
+- [ ] 已对目标分支已接受契约运行固定版本 `oasdiff breaking --fail-on WARN`，并附命令输出或 CI 链接：__________
+- [ ] oasdiff 的 error / warning 已逐项处置；首次 baseline 使用 Owner 施加的 `openapi-baseline-bootstrap-approved` 标签并满足基线相等性要求；契约 breaking 检查不得靠说明原因跳过：__________
 - [ ] 破坏性变更已标注 `deprecated` / 版本策略 / 迁移说明（`05-openapi-contract.md`）
 - [ ] 可重试写操作已声明 `Idempotency-Key` 或业务幂等键（若适用）
 
@@ -40,8 +41,8 @@
 
 ### 安全与权限
 
-- [ ] 敏感接口已覆盖：未登录 / 无权限 / 跨租户 / BOLA（他人资源 id）（`06`、`15`）
-- [ ] 数据权限 / 多租户条件与列表、导出一致（`24`）
+- [ ] 敏感接口已覆盖：未登录 / 无权限 / BOLA（他人资源 id）；租户模型不是 `NONE` 时另覆盖跨租户（`06`、`15`）
+- [ ] 数据权限与列表、导出一致；非 `NONE` 时多租户条件也一致（`24`）
 - [ ] 无密码、Token、完整 PII 写入日志或异常
 - [ ] 用户可控 URL 出站已防 SSRF（若适用）（`28`）
 
@@ -75,12 +76,12 @@
 ### 新增业务模块（成熟后台 / RuoYi 系，若适用）
 
 - [ ] 变更仅在业务模块 `modules/{biz}`，未污染 `common` / `framework` / `system`（`43-business-module-extension.md`）
-- [ ] 已复用平台用户、角色、菜单、权限、字典、文件、日志、任务、租户、数据权限（非重复造轮子）
+- [ ] 已复用平台里已经有的用户、角色、菜单、权限、字典、文件、日志、任务和数据权限，没有自己再做一套；看不出租户时，不要再加租户字段
 - [ ] CodeGen 后已补：OpenAPI、权限码、菜单/按钮、数据权限、审计、索引、错误码、测试（`docs/business-feature-playbook.md`）
 - [ ] 后端权限注解、菜单权限码、前端按钮权限码一致或可追踪；禁止仅有菜单 / 前端权限
-- [ ] 模块名、表前缀、权限码、错误码、字典 type 前缀一致；全局表已说明非租户隔离原因
+- [ ] 模块名、表前缀、权限码、错误码、字典 type 前缀一致；非 `NONE` 项目的全局表已说明非租户隔离原因
 - [ ] list / detail / export / delete / batch / job 数据权限与 BOLA 口径一致（`24`、`06`）
-- [ ] 树表 / 主子表已检查父子归属、跨租户、循环关系、事务回滚和孤儿数据
+- [ ] 树表 / 主子表已检查父子归属、循环关系、事务回滚和孤儿数据；非 `NONE` 时另检查跨租户
 - [ ] 未为单个业务修改 generator 全局模板；若修改，已补 Owner、ADR、兼容、回滚和生成场景回归
 - [ ] 建议跑 evals **Business Extension** B55–B63（建议 9/9；或说明 N/A：非成熟后台栈）
 
@@ -100,7 +101,8 @@
 # 示例
 mvn verify
 # 或 ./gradlew check
-npx @redocly/cli diff contracts/openapi.baseline.yaml contracts/openapi.yaml
+go install github.com/oasdiff/oasdiff@v1.32.1
+oasdiff breaking --fail-on WARN -- contracts/openapi.baseline.yaml contracts/openapi.yaml
 ```
 
 ---

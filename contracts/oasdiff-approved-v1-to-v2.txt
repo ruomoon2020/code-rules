@@ -1,0 +1,6 @@
+# Explicitly approved 1.0 -> 2.0 migration only. Remove after the 2.0 baseline is released.
+# Owner: @ruomoon2020. Owner approval must be recorded on the PR before merge.
+# See contracts/openapi.yaml x-breaking-change and web-backend/rules/examples/README.md.
+POST /api/v1/system/users removed the success response with the status `200`
+DELETE /api/v1/system/users/{id} api removed without deprecation
+PUT /api/v1/system/users/{id} api removed without deprecation

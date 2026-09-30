@@ -17,7 +17,9 @@ alwaysApply: false
 # API / 状态 / 路由 / 权限
 
 - 组件内禁止直接 `axios` / `fetch`；走 `src/api` 与 request wrapper。
-- 字段来自 schema / generated；登出须 `resetAllStores()` 等等价清理。
+- 字段来自 `contracts/openapi.yaml` 及其同步生成类型；生成物不得手改。登出须 `resetAllStores()` 等等价清理。
+- 错误恢复按稳定 `errorCode` 映射端侧文案与动作；`message` 只作允许的兜底，禁止按其内容做业务分支。
+- 并发提交带页面当前持有的 `version`；冲突保留输入，禁止提交前重查最新版本或自动覆盖重试。
 - keep-alive：`defineOptions({ name })` 与路由 `name` 一致。
 - 前端权限仅 UI 收敛，后端须鉴权。
 
@@ -26,3 +28,5 @@ alwaysApply: false
 - `rules/shared/05-api-contract.md`
 - `rules/shared/06-state-route-permission.md`
 - `rules/shared/12-schema-ssot.md`
+- `rules/shared/13-form-and-detail.md`
+- `rules/shared/21-error-recovery.md`

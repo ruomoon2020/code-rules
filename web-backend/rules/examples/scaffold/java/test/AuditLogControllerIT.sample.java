@@ -4,6 +4,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
@@ -16,13 +17,14 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  *
  * <p>业务仓接入 Security 后补充：
  * <ul>
- *   <li>无 {@code audit:read} 权限时 {@code GET /audit-logs} 返回 403</li>
+ *   <li>无 {@code system:audit-log:read} 权限时 {@code GET /audit-logs} 返回 403</li>
  *   <li>契约无 DELETE 审计接口；若误暴露须 404/405</li>
  *   <li>列表/详情 {@code requestSummary} 等字段不含完整证件号等 PII 明文</li>
  * </ul>
  */
 @SpringBootTest
 @AutoConfigureMockMvc
+@WithMockUser(authorities = "system:audit-log:read")
 class AuditLogControllerIT {
 
     @Autowired
@@ -42,9 +44,9 @@ class AuditLogControllerIT {
 
     @Test
     void detail_should_return_not_found_when_missing() throws Exception {
-        mockMvc.perform(get("/api/v1/system/audit-logs/non-existent-id"))
-                .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.code").value(400))
+        mockMvc.perform(get("/api/v1/system/audit-logs/999999999"))
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("$.code").value(404))
                 .andExpect(jsonPath("$.errorCode").value("AUDIT_LOG_NOT_FOUND"))
                 .andExpect(jsonPath("$.traceId").exists());
     }

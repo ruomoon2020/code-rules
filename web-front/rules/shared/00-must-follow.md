@@ -1,6 +1,6 @@
 # 必须遵守的规则
 
-本文件中带编号的 34 条是所有项目在 Level 0 都成立的不变量，违反即拒 PR。场景规则按文末条件路由启用，不因文件存在就自动成为 Level 0 门禁。
+本文件编号 1 到 34 的条款，所有项目都要遵守，违反就拒绝合并。文末的场景规则只有改到那一类页面时才读，不会因为文件在仓库里，就变成每个项目的合并条件。
 
 ## 架构与依赖
 
@@ -31,7 +31,7 @@
 
 17. 组件内禁止直接 `axios` / `fetch` 调接口。
 18. API 必须走 `src/api` 与统一 request wrapper。
-19. 表单字段、表格列、DTO 类型必须先读 `contracts/schema.json` 或 generated 类型。
+19. 表单字段、表格列、DTO 类型必须先读权威契约 `contracts/openapi.yaml` 与同步后的 generated 类型；生成的 `contracts/schema.json` 不得手改。
 20. 禁止手写与 `src/api/generated` 冲突或重复的 interface。
 21. 禁止修改 `src/api/generated`；应修改契约源后重新生成。
 22. API 契约变更必须有 generated diff，字段删除、必填变化、枚举变化必须 Review。
@@ -67,7 +67,7 @@
 - 新增 / 升级依赖和修改公共组件 API 时须完成替代方案、体积、许可证、调用方兼容与回滚检查（见 `20-dependency-governance.md`）。
 - 文件导入 / 导出须遵守 schema、权限、脱敏、公式注入防护、鉴权下载和审计要求（见 `14-upload-import-export.md`）。
 - 全局错误、路由 chunk 失败、登录过期和白屏恢复不得散落在页面中重复实现（见 `21-error-recovery.md`）。
-- Feature Flag 须有 Owner、默认值、创建原因、观察指标、回滚方式和清理日期（见 `08-quality-gates.md`、`docs/release-checklist.md`）。
+- Feature Flag、灰度和实验配置须满足 `common-governance/docs/environment-promotion.md` 的统一生命周期清单；前端只消费受控结果，不把本地开关作为权限或业务状态的最终判断（见 `08-quality-gates.md`、`docs/release-checklist.md`）。
 - 体积、依赖检查、API check、E2E、视觉回归、a11y 和发布门禁按项目 Level 与变更范围启用（见 `08-quality-gates.md`、`15-testing.md`）。
 - AI 生成复杂前端代码前须读取 Base 源码、schema 和对应场景规则；禁止因示例存在原生 Element Plus 就沿用，并须在输出前按 `10-verification-checklist.md` 自检（见 `09-ai-generation.md`）。
 - 基于成熟后台平台新增业务页面时，须复用平台菜单、路由、权限、字典、壳层与 generated API（见 `22-business-module-extension.md`）。

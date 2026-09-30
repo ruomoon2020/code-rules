@@ -1,4 +1,4 @@
-# 03 Vue3 TypeScript uni-app
+# Vue 3、TypeScript 与 uni-app 规则
 
 ## 基础
 

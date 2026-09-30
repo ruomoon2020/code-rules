@@ -9,6 +9,7 @@ import com.company.product.modules.system.api.dto.AuditLogSummaryResponse;
 import com.company.product.modules.system.application.AuditLogService;
 import jakarta.validation.Valid;
 import org.slf4j.MDC;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -16,10 +17,11 @@ import org.springframework.web.bind.annotation.RestController;
 
 /**
  * 审计日志只读 API（样板）。与 contracts/openapi.yaml 对齐；禁止注入 Mapper。
- * 业务仓接入 Security 后建议：{@code @PreAuthorize("hasAuthority('audit:read')")} 于类或方法。
+ * 权限码 {@code system:audit-log:read} 与 OpenAPI {@code x-permission} 对齐。
  */
 @RestController
 @RequestMapping("/api/v1/system/audit-logs")
+@PreAuthorize("hasAuthority('system:audit-log:read')")
 public class AuditLogController {
 
     private final AuditLogService auditLogService;
@@ -34,7 +36,7 @@ public class AuditLogController {
     }
 
     @GetMapping("/{id}")
-    public ApiResult<AuditLogResponse> detail(@PathVariable String id) {
+    public ApiResult<AuditLogResponse> detail(@PathVariable long id) {
         return ApiResult.ok(auditLogService.detail(id), traceId());
     }
 

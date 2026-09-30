@@ -236,6 +236,28 @@ def check_readme_shared_inventory(root: Path, errors: list[str]) -> None:
             errors.append(f"README.md file inventory missing {rel}")
 
 
+def check_shared_titles(root: Path, errors: list[str]) -> None:
+    for path in sorted((root / "shared").glob("*.md")):
+        lines = read(path).splitlines()
+        title = lines[0].strip() if lines else ""
+        if not title.startswith("# "):
+            errors.append(f"{path.name}: must start with an H1 title")
+            continue
+        if re.match(r"^#\s+\d{2}(?:\s|$)", title):
+            errors.append(f"{path.name}: H1 must not repeat the filename number")
+        if not re.search(r"[\u4e00-\u9fff]", title):
+            errors.append(f"{path.name}: H1 must use a Chinese display title")
+
+
+def check_openapi_ssot_wording(root: Path, errors: list[str]) -> None:
+    path = root / "shared/12-list-form-pagination.md"
+    if not path.is_file():
+        return
+    ambiguous = [phrase for phrase in ("OpenAPI / schema", "schema / generated") if phrase in read(path)]
+    if ambiguous:
+        errors.append("shared/12-list-form-pagination.md: ambiguous OpenAPI SSOT wording: " + ", ".join(ambiguous))
+
+
 def check_scaffold_assets(root: Path, errors: list[str]) -> None:
     scaffold = root / "examples" / "scaffold"
     missing = [rel for rel in SCAFFOLD_REQUIRED if not (scaffold / rel).is_file()]
@@ -416,6 +438,32 @@ def check_agents_shared_refs(root: Path, errors: list[str]) -> None:
             errors.append(f"AGENTS.md: missing shared/{rel}")
 
 
+def check_v2_regression_coverage(root: Path, errors: list[str]) -> None:
+    required = {
+        "examples/99-project-local.mdc.sample": (
+            "权威契约：`contracts/openapi.yaml`",
+            "禁止手改或作为第二份源头",
+        ),
+        "evals/prompts.md": ("pageNo=0", "提交前先重查详情", "禁止手改或作为第二份源头"),
+        "shared/22-error-recovery-offline.md": ("打开详情时保存的 `version`", "提交前不得重新查询详情"),
+        "codex/02-page-generation.md": ("先读权威契约 `contracts/openapi.yaml`", "禁止用手改 `schema.json`"),
+        "cursor/22-error-recovery.mdc": ("CONCURRENT_MODIFICATION", "当前持有的 `version`", "稳定 `errorCode`"),
+        "codex/05-verification.md": ("稳定 `errorCode`", "当前持有的 `version`", "提交前是否避免重新查询并替换该值"),
+        "README.md": ("所有项目都要遵守的基础条款",),
+        "docs/rules-package-index.md": ("所有项目都要遵守的基础条款",),
+        "codex/AGENTS.md": ("基础条款是所有项目都要遵守的",),
+    }
+    for rel, markers in required.items():
+        content = read(root / rel)
+        for marker in markers:
+            if marker not in content:
+                errors.append(f"{rel}: miniapp v2 coverage missing: {marker}")
+
+    route = read(root / "codex/02-page-generation.md")
+    if route.find("contracts/openapi.yaml") > route.find("generated"):
+        errors.append("codex/02-page-generation.md must read OpenAPI before generated types")
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description="Validate miniapp rules package consistency")
     parser.add_argument(
@@ -555,10 +603,13 @@ def main() -> int:
 
     check_readme_paths(root, errors)
     check_readme_shared_inventory(root, errors)
+    check_shared_titles(root, errors)
+    check_openapi_ssot_wording(root, errors)
     check_scaffold_assets(root, errors)
     check_project_local_sample(root, errors)
     check_scaffold_runtime(root, errors)
     check_eval_topic_manifest(root, errors)
+    check_v2_regression_coverage(root, errors)
     check_shared_numbered_files(root, errors)
     check_cursor_shared_refs(root, errors)
     check_agents_shared_refs(root, errors)

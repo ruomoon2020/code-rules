@@ -1,19 +1,31 @@
-# Rules Evals（规则回归评测）
+# 前端 AI 规则回归评测
 
-用于验证 AI 是否遵守 `rules/` 约束。建议每季度或规则大版本发布前跑一轮。
+本目录用于验证 AI 在固定提示词下是否稳定遵守前端规则。评测关注的是“AI 行为是否符合规则”，不替代 `lint`、类型检查、组件测试、浏览器验证和人工业务评审。
+
+## 什么时候运行
+
+| 变更场景 | 最小套件 |
+|---|---|
+| 日常规则或路由调整 | Smoke |
+| API、Schema、权限或高风险页面 | 对应专项套件 + Smoke |
+| 规则包发布或大版本升级 | Full + AI Tool Safety |
+
+建议保留每次执行的模型版本、日期、判定人和结果文件，便于比较规则升级前后的行为变化。
 
 ## 前置条件
 
 1. 业务仓库已按 `rules/README.md` **方式 A** 落地完整 `rules/`。
 2. 已配置 Cursor `.cursor/rules/` 或 Codex 根目录 `AGENTS.md`。
-3. 测试仓库具备最小可运行结构：`src/views`、`src/components/base`、`contracts/schema.json`（可用 fixture）。
+3. 测试仓库具备最小可运行结构：`src/views`、`src/components/base`、`contracts/openapi.yaml`，以及由其生成的 schema / client fixture。
 
-## 如何执行
+## 执行流程
 
 1. 打开 `prompts.md`，按编号依次向 AI 发送**固定提示词**（不要改措辞）。
 2. 对照 `rubric.md` 判定 Pass / Fail / Partial。
 3. 填写 `results-template.md`（复制为带日期的结果文件，如 `results-2026-05-24.md`）。
-4. Fail 项回流修改 `shared/` 或 `cursor/`，并更新 `CHANGELOG.md`。
+4. 记录模型、执行时间、评测人和失败证据。
+5. Fail 项先定位到 `shared/`、Codex/Cursor 路由或提示词边界，再修正规则并更新 `CHANGELOG.md`。
+6. 重跑失败用例和相关套件；若输出了可合并代码，再在真实业务仓运行确定性质量门禁。
 
 ## 通过标准
 

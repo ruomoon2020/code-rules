@@ -9,8 +9,9 @@
 1. 新业务页面进入既有业务域目录（如 `src/views/{biz}/`），不污染 `layout`、`router` 全局守卫、`store` 公共模块，除非按项目 Owner 流程改平台能力。
 2. 平台已有能力必须优先复用：菜单注册、路由、按钮权限、字典、壳层导航、文件上传、导入导出、操作记录、全局错误恢复。
 3. 禁止在业务 views 重复实现一套菜单 API、权限 store、字典服务或登录态逻辑。
-4. CodeGen / 脚手架页面只是起点；上线前须换 Base 组件、补四态、权限、字典 fallback、分页竞态与测试。
-5. 后端 OpenAPI / 权限码 / 菜单未就绪时，不得先写「假字段」页面联调。
+4. 项目采用横向 `views/`、`store/`、`api/` 目录时，仍须按业务域划定公开出口；禁止订单域等业务直接导入其他域的 store、页面私有组件、页面 composable 或手写请求封装。跨域共享只允许来自 `components/base`、OpenAPI 同步生成的 API 类型和壳层公开接口。
+5. CodeGen / 脚手架页面只是起点；上线前须换 Base 组件、补四态、权限、字典 fallback、分页竞态与测试。
+6. 后端 OpenAPI / 权限码 / 菜单未就绪时，不得先写「假字段」页面联调。
 
 ## 平台边界与命名
 
@@ -22,7 +23,7 @@
 
 ## 契约与 API
 
-1. 字段、表格列、表单、枚举以 `contracts/schema.json` 或 `src/api/generated` 为 SSOT（`12-schema-ssot`）。
+1. 字段、表格列、表单、枚举以 `contracts/openapi.yaml` 为 SSOT；`contracts/schema.json` 与 `src/api/generated` 是同步产物，不得手改（`12-schema-ssot`）。
 2. 改接口先改契约源，再 `schema:sync` → `api:gen` → `api:check`；**禁止**手改 `src/api/generated`。
 3. 组件内禁止直接 `axios` / `fetch`；API 走 `src/api` 薄 wrapper（`05-api-contract`）。
 
@@ -51,7 +52,7 @@
 
 | 类型 | 前端必查 |
 |---|---|
-| 树表 | 父节点选择与后端租户 / 数据范围一致；跨租户父节点须报错态，不可静默挂载 |
+| 树表 | 父节点选择与后端数据范围一致。租户模型不是 `NONE` 时，跨租户父节点须报错态，不可静默挂载 |
 | 主子表 | 子表编辑与主表同一提交流或明确分步；失败时 UI 状态与后端回滚一致 |
 | 导入导出 | 主子关系错误明细展示；异步任务进度 / 轮询；完成后刷新列表与操作记录 |
 
@@ -72,4 +73,4 @@
 
 ## 与其他规则的关系
 
-OpenAPI / generated 见 `12`；API 调用见 `05`；路由权限见 `06`、`17`；列表见 `19`；导入导出见 `14`；收尾见 `10`；AI 行为见 `09`。前端平台边界见 `cursor/19-platform-boundary.mdc`；后端模块边界见 monorepo `web-backend/rules/shared/43-business-module-extension.md`。
+OpenAPI 契约与生成物边界见 `12`；API 调用见 `05`；路由权限见 `06`、`17`；列表见 `19`；导入导出见 `14`；收尾见 `10`；AI 行为见 `09`。前端平台边界见 `cursor/19-platform-boundary.mdc`；后端模块边界见 monorepo `web-backend/rules/shared/43-business-module-extension.md`。

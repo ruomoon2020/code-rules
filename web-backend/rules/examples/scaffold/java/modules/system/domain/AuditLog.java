@@ -14,7 +14,6 @@ public class AuditLog {
 
     @TableId(type = IdType.ASSIGN_ID)
     private Long id;
-    private String tenantId;
     private String operatorId;
     private String action;
     private String resourceType;
@@ -32,8 +31,6 @@ public class AuditLog {
 
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
-    public String getTenantId() { return tenantId; }
-    public void setTenantId(String tenantId) { this.tenantId = tenantId; }
     public String getOperatorId() { return operatorId; }
     public void setOperatorId(String operatorId) { this.operatorId = operatorId; }
     public String getAction() { return action; }

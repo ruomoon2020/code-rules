@@ -1,13 +1,13 @@
-# Service-to-Service Authentication
+# 服务间身份认证规则
 
-用于内部 HTTP/RPC、MQ producer/consumer、Job、Webhook、调度平台等机器身份与服务间授权。
+这份规则管的是服务自己的调用身份，不是登录用户。内部 HTTP、RPC、消息的生产和消费、定时任务、Webhook、调度平台，都要能证明调用方是谁。
 
 ## 基本原则
 
 1. 禁止仅凭“内网 IP”“调用方说自己是谁”判断可信。
-2. 服务间调用必须有机器身份：mTLS、服务网格身份、网关签发 token、HMAC 签名或等价机制。
+2. 服务之间调用必须能证明调用方身份，例如双向 TLS、服务网格身份、网关签发的 token，或 HMAC 签名。
 3. 服务账号须最小权限、分环境、分系统；禁止多个系统共用同一高权限 AK/SK。
-4. 机器身份凭证须可轮换、可吊销、可审计，密钥管理见 `36-crypto-key-management.md`。
+4. 调用方凭证必须能轮换、吊销和审计。密钥管理见 `36-crypto-key-management.md`。
 
 ## 内部调用
 

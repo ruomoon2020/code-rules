@@ -1,13 +1,10 @@
 ---
 description: 加密与密钥管理
 globs:
-  - "src/main/java/**/*Security*.java"
-  - "src/main/java/**/*Auth*.java"
-  - "src/main/java/**/*Token*.java"
-  - "src/main/java/**/*Crypto*.java"
-  - "src/main/java/**/*Webhook*.java"
-  - "src/main/resources/**/*.yml"
-  - "src/main/resources/**/*.yaml"
+  - "src/main/java/**/*CryptoLifecycle*.java"
+  - "src/main/java/**/*RotationPolicy*.java"
+  - "src/main/java/**/*KmsAdapter*.java"
+  - "src/main/java/**/*VaultAdapter*.java"
 alwaysApply: false
 ---
 

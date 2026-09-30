@@ -1,4 +1,4 @@
-# 业务仓规则落地 Checklist
+# 接到业务仓库后检查
 
 复制到小程序业务仓 `docs/` 或 PR 描述中勾选。
 
@@ -6,7 +6,7 @@
 
 - [ ] `rules/` 整包（或 submodule）+ 根 `AGENTS.md` + `.cursor/rules/*.mdc`
 - [ ] `99-project-local.mdc` 已填写：分包路径、主包预算、目标平台、契约路径
-- [ ] OpenAPI / schema SSOT：`contracts/openapi.yaml`（或等价）+ `api:gen` / `api:check`
+- [ ] 契约来源是 `contracts/openapi.yaml`（或项目声明的等价 OpenAPI）；`schema.json` 与 generated 只作生成结果，并用 `api:gen` / `api:check` 核对
 - [ ] 页面不走 `uni.request` / `uni.login` 直调；走 `api/`、`auth/`、`platform/`
 - [ ] 新业务页默认 `src/subpackages/**`
 - [ ] CI：`lint`、`type-check`、`build:mp-weixin`、`api:check`、`size:check`（以 `package.json` 为准）

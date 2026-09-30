@@ -1,15 +1,15 @@
-# Scripts
+# 前端规则包校验脚本
 
-## validate-rules-package.py
+`validate-rules-package.py` 面向规则维护者和已嵌入 `rules/` 的业务仓，用于发现版本、路由、引用、评测清单和硬规则摘要之间的漂移。它只做确定性静态校验，**不会**执行 AI 对话评测，也不会证明前端业务功能正确。
 
-校验前端规则包内部一致性（**不**执行 AI evals 对话）。
+## 运行方式
 
 ```bash
 python scripts/validate-rules-package.py
 python rules/scripts/validate-rules-package.py --rules-dir rules
 ```
 
-### 检查项
+## 校验范围
 
 | 项 | 说明 |
 |---|---|
@@ -28,9 +28,11 @@ python rules/scripts/validate-rules-package.py --rules-dir rules
 python -m unittest discover -s scripts/tests -v
 ```
 
-### CI
+## CI 接入
 
 | 场景 | Workflow |
 |---|---|
 | code-rules monorepo | 仓库根 `.github/workflows/validate-rules-packages.yml` |
 | 业务仓 | 复制 `examples/ci/rules-package-validate.yml` |
+
+建议将该校验与业务仓的 `lint`、`type-check`、测试和构建并列执行。修改规则正文、Codex/Cursor 路由或 evals 后，应先运行本脚本，再运行单元测试；仅修改业务页面时，仍以业务仓自身的质量门禁为主。

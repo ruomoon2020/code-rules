@@ -1,7 +1,7 @@
 -- 审计日志只追加。保留周期和归档方式写入项目配置。
+-- 默认租户模型为 NONE。项目已有租户机制时，按项目约定显式补充 tenant_id 和租户前缀索引。
 CREATE TABLE IF NOT EXISTS sys_audit_log (
     id              BIGINT        PRIMARY KEY,
-    tenant_id       VARCHAR(64)   NOT NULL,
     operator_id     VARCHAR(64)   NOT NULL,
     action          VARCHAR(64)   NOT NULL,
     resource_type   VARCHAR(64)   NOT NULL,
@@ -20,18 +20,17 @@ CREATE TABLE IF NOT EXISTS sys_audit_log (
     CONSTRAINT ck_sys_audit_log_result CHECK (result IN ('SUCCESS', 'FAIL'))
 );
 
-CREATE INDEX IF NOT EXISTS idx_sys_audit_log_tenant_occurred
-    ON sys_audit_log (tenant_id, occurred_at DESC);
-CREATE INDEX IF NOT EXISTS idx_sys_audit_log_tenant_operator
-    ON sys_audit_log (tenant_id, operator_id, occurred_at DESC);
-CREATE INDEX IF NOT EXISTS idx_sys_audit_log_tenant_action
-    ON sys_audit_log (tenant_id, action, occurred_at DESC);
-CREATE INDEX IF NOT EXISTS idx_sys_audit_log_tenant_resource
-    ON sys_audit_log (tenant_id, resource_type, resource_id);
+CREATE INDEX IF NOT EXISTS idx_sys_audit_log_occurred
+    ON sys_audit_log (occurred_at DESC);
+CREATE INDEX IF NOT EXISTS idx_sys_audit_log_operator
+    ON sys_audit_log (operator_id, occurred_at DESC);
+CREATE INDEX IF NOT EXISTS idx_sys_audit_log_action
+    ON sys_audit_log (action, occurred_at DESC);
+CREATE INDEX IF NOT EXISTS idx_sys_audit_log_resource
+    ON sys_audit_log (resource_type, resource_id);
 
 COMMENT ON TABLE sys_audit_log IS '系统审计日志；只追加。保留周期见项目配置，到期归档';
 COMMENT ON COLUMN sys_audit_log.id IS '雪花 ID，由应用分配';
-COMMENT ON COLUMN sys_audit_log.tenant_id IS '租户 ID';
 COMMENT ON COLUMN sys_audit_log.operator_id IS '操作者用户 ID 或系统主体 ID';
 COMMENT ON COLUMN sys_audit_log.action IS '操作动作编码';
 COMMENT ON COLUMN sys_audit_log.resource_type IS '资源类型编码';

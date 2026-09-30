@@ -1,4 +1,4 @@
-# Persistence Rules（MyBatis-Plus + 多数据库）
+# 持久化规则（MyBatis-Plus 与多数据库）
 
 ## 技术栈（默认）
 
@@ -23,10 +23,14 @@
 ## MyBatis-Plus 使用
 
 1. 单表 CRUD：`interface UserMapper extends BaseMapper<User>`。
-2. 业务服务：`UserService extends IService<User>` 或组合 Mapper（按项目约定）。
+2. 新代码由 Application Service 组合 Mapper；已经继承 MyBatis-Plus `IService` 的存量项目可继续维护，但不得为普通 CRUD 新增只转发 `IService` 的浅层。
 3. 条件查询：`LambdaQueryWrapper`，避免硬编码列名字符串。
-4. 逻辑删除、乐观锁、自动填充（`createTime` 等）使用项目已启用的 MP 插件，禁止重复造轮子。
-5. 主键：团队统一 `ASSIGN_ID`（雪花）或数据库自增；**多库优先雪花** 减少方言差异。
+4. 逻辑删除、乐观锁和自动填充沿用项目已有的 MyBatis-Plus 配置。
+   - 使用 `@Version` 时必须注册 `OptimisticLockerInnerInterceptor`。
+   - 分页插件不得传入固定 `DbType`，应按当前连接识别方言。分页作用于查询，乐观锁作用于更新；插件顺序不影响版本条件。
+   - 未声明字段时，自动填充使用 `created_at` / `updated_at`，不新增 `createTime`。
+   - 实体字段 `is_deleted` 必须使用 `@TableField("is_deleted")` 固定列名，避免 `is` 前缀被映射为 `deleted`。
+5. 主键未声明时使用 `ASSIGN_ID`（雪花，由应用分配）。表已使用数据库自增时沿用自增，不把同一张表改成雪花。禁止同一库内混用多种主键生成方式。
 
 ## XML 规则
 
@@ -56,7 +60,11 @@ mybatis-plus:
     map-underscore-to-camel-case: true
   global-config:
     db-config:
-      logic-delete-field: deleted
+      logic-delete-field: isDeleted
+      logic-delete-value: 1
+      logic-not-delete-value: 0
+      # 过滤只看 is_deleted。deleted_at 只留删除时间，不要配成逻辑删除字段。
+      # 删除时在同一次更新里写入 delete_token、deleted_at、deleted_by。不要只调用 deleteById。
 ```
 
 `databaseId` 由 `DatabaseIdProvider` 或 vendor 自动识别（MySQL、PostgreSQL）。
@@ -68,8 +76,10 @@ mybatis-plus:
 | 分页 | 统一 MP `Page`，禁止手写 `LIMIT` 三套 |
 | JSON | 方言 XML 或 Java 处理 |
 | UPSERT | 分 dialect 文件，禁止混用 `ON DUPLICATE` 与 `ON CONFLICT` |
-| 布尔/时间 | 由 Flyway 迁移定义类型，Java 用 `Boolean` / `Instant` |
-| 自增 | 优先雪花 ID |
+| 布尔 | 由 Flyway 迁移定义类型，Java 用 `Boolean` |
+| 时刻 | Java 用 `Instant` 或 `OffsetDateTime`；列注释写明 UTC 或偏移 |
+| 自然日 | Java 用 `LocalDate`；写明业务时区与闭开区间，禁止用本地时区把无时区时间猜成业务日 |
+| 主键 | 未声明时用雪花 ID；已有自增表沿用自增 |
 
 ## 读写分离
 
@@ -126,13 +136,13 @@ COMMENT ON COLUMN biz_order.status IS '状态：CREATED/PAID/CANCELLED';
 ## 建表设计基线
 
 1. 表名、字段名、约束名、索引名必须符合 `02-naming.md` 的数据库命名规范；业务表须有稳定业务前缀，禁止临时缩写和拼音混用。
-2. 主键策略须全项目统一；多库项目优先使用雪花 ID / 分布式 ID，禁止同一库内混用多种主键生成方式。
-3. 通用治理字段按项目统一：`created_at`、`updated_at`、`deleted`、`version`、`tenant_id`、`created_by`、`updated_by`。不适用时须在 PR 说明原因。
+2. 主键未声明时使用雪花 ID，由应用分配。已有自增表沿用自增。禁止同一库内混用多种主键生成方式。
+3. 可更新业务表统一 `created_at`、`updated_at`、`created_by`、`updated_by`。逻辑删除沿用项目已启用的字段。未声明时：`is_deleted` 用 `SMALLINT`，`0` 未删除、`1` 已删除，`@TableLogic` 只绑这一列；`delete_token` 未删除为 `0`，删除时写成该行主键，唯一约束是 `(业务键, delete_token)`；`deleted_at`、`deleted_by` 只记录删除时间和操作者，类型与 `created_at`、`created_by` 一致，并在同一次更新里写入。禁止只调用 `deleteById`。禁止用 `(业务键, is_deleted)` 做唯一约束，也禁止把可空的 `deleted_at` 放进唯一键。已有 `del_flag` 或 `deleted` 时继承该字段，不另造 `is_deleted`。恢复时改回 `is_deleted = 0`、`delete_token = 0`，并清空删除时间和操作者，且先确认没有另一行活数据占用同一业务键。逻辑删除不是销毁；保留期过后由任务清除或匿名化个人信息，并另记审计。回收站查询必须显式关闭该表的逻辑删除条件。只追加的审计、流水和日志表不加逻辑删除、`updated_at` 和 `version`。`version` 只加在会被并发修改的行上。租户模型不是 `NONE` 时再统一 `tenant_id`；`NONE` 不把 `tenant_id` 当作缺省列。
 4. 字符集与排序规则须统一；MySQL 默认 `utf8mb4`，是否指定 `collation` 由项目基线决定，禁止单表随意漂移。
 5. 状态 / 枚举字段须有取值来源：字典表、代码枚举、OpenAPI schema enum 或数据库 `CHECK`；禁止只有 `VARCHAR` 但无取值约束。
-6. 金额、数量、比率、时间字段须写明单位、精度、时区和边界；金额禁止 `FLOAT` / `DOUBLE`（见 `40-money-time-precision.md`）。
-7. 业务唯一性必须落数据库唯一约束；涉及逻辑删除时须明确唯一策略（例如组合 `deleted`、部分索引或归档后释放唯一值），禁止只靠应用层判断。
-8. 多租户表的唯一约束和查询索引通常须包含 `tenant_id`；跨租户全局唯一必须在注释和 PR 中说明。
+6. 金额列禁止 `FLOAT` / `DOUBLE`，并写明币种、精度和舍入。时刻写明时区或明确 UTC；自然日使用日期类型，并写明业务时区与闭开区间。复杂账期再读 `40-money-time-precision.md`。
+7. 业务唯一性必须落数据库唯一约束。需要未删除数据唯一时，未声明用 `(业务键, delete_token)`。禁止 `(业务键, is_deleted)`，也禁止把可空 `deleted_at` 放进唯一键。已有逻辑删除字段的库沿用既有令牌或部分唯一索引，不要再加一套。禁止只靠应用层判断。
+8. 租户模型不是 `NONE` 时，租户表的唯一约束和查询索引通常须包含 `tenant_id`；跨租户全局唯一必须在注释和 PR 中说明。`NONE` 不追加租户列。
 9. 高频查询索引命名：唯一索引用 `uk_{table}_{cols}`，普通索引用 `idx_{table}_{cols}`；索引字段顺序须按等值过滤、范围过滤、排序和选择性评估。
 10. 审计、流水、日志类大表须提前定义保留周期、归档方式和核心查询索引，禁止无限增长后再补救。
 11. PII / 敏感字段须在注释中标识脱敏或用途边界；禁止把 Token、密码、证件号等敏感明文落普通业务表。

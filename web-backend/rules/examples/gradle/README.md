@@ -1,6 +1,8 @@
-# Gradle 样板（Spring Boot 3.x + ArchUnit + OWASP + Flyway）
+# Gradle 后端工程样板
 
-> **非可运行模块**：复制到业务仓根目录后改 `rootProject.name`、包名与依赖版本。Maven 等价物见 `../pom-dependencies.sample.xml`、`../scaffold/`。Spring Boot 4.x 项目须先按 `../../shared/20-dependency-governance.md` 完成迁移评估。
+面向 Spring Boot 3.x + Java 17+ 项目，提供 ArchUnit、OWASP Dependency-Check 和 Flyway 的 Gradle 接入参考。
+
+> 本目录不是可直接运行的业务模块。复制到业务仓后必须调整 `rootProject.name`、包名、插件与依赖版本，并与项目现有构建合并。Maven 等价物见 `../pom-dependencies.sample.xml` 和 `../scaffold/`。Spring Boot 4.x 项目须先按 `../../shared/20-dependency-governance.md` 完成兼容性评估。
 
 ## 复制清单
 
@@ -17,7 +19,7 @@
 gradle wrapper --gradle-version 8.10
 ```
 
-## 硬门禁命令
+## 接入验收
 
 ```bash
 ./gradlew check          # 编译 + 单测 + ArchUnit（test 内）
@@ -26,6 +28,8 @@ gradle wrapper --gradle-version 8.10
 ```
 
 CI 自动识别见 `../ci/backend-ci-required.yml`；供应链见 `common-governance/examples/ci/supply-chain-required.yml` 的 `gradle-dependency-check` job；Gradle Flyway 条件门禁见 `../ci/backend-ci-optional-gradle.yml`。
+
+只有实际应用对应插件并让命令在 CI 中成功执行，才能把 OWASP 或 Flyway 声明为已接入；保留示例文件或跳过 job 不构成验证证据。
 
 ## 与 Maven 样板对照
 

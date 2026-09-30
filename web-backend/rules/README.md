@@ -1,13 +1,34 @@
-# Backend AI Rules（Spring Boot）
+# Spring Boot 后端研发规则包
 
 版本见 `VERSION`，变更见 `CHANGELOG.md`，发版见 `RELEASE.md`。
 
-企业级 **Spring Boot 3.x + Java 17+ + MyBatis-Plus** 规则包，支持 **MySQL、PostgreSQL** 等多数据库（方言 SQL 与迁移分治）。Spring Boot 4.x 项目可复用本包的架构、安全、契约与治理规则，但须先完成依赖兼容性、Jakarta EE 版本与迁移评估；不得在未验证 MyBatis-Plus、Springdoc、插件与 CI 的情况下直接把 3.x 基线改为 4.x。
+本规则包面向 **Spring Boot 3.x + Java 17+ + MyBatis-Plus** 业务系统，覆盖 API 契约、模块边界、事务、权限与数据范围、持久化、多数据库、审计、可靠性、质量门禁和成熟后台二开。
+
+支持 **MySQL、PostgreSQL** 等多数据库，方言 SQL 与迁移脚本分治。Spring Boot 4.x 项目可以复用架构、安全、契约与治理原则，但必须先完成依赖兼容性、Jakarta EE 版本和迁移评估；未验证 MyBatis-Plus、Springdoc、插件和 CI 前，不得直接把 3.x 基线改为 4.x。
+
+## 使用后应达到的结果
+
+- 业务模块边界明确，普通业务不污染 `common`、`framework`、`system` 或 generator。
+- OpenAPI、DTO、权限码、错误码、分页、时间和金额口径保持一致。
+- 鉴权、租户、数据权限、审计和对象级授权覆盖所有读写路径。
+- 事务、幂等、并发、消息和外部调用的失败路径可恢复、可测试。
+- 构建、测试、契约、迁移和安全门禁有真实执行证据；业务正确性另行人工评审。
 
 - **Codex**：`codex/AGENTS.md` → 复制到后端仓库根目录 `AGENTS.md`
 - **Cursor**：`cursor/*.mdc` → 复制到 `.cursor/rules/`
 - **SSOT**：`shared/`；Cursor 摘要指向 shared，不重复全文
 - **测试治理**：`shared/15-testing.md` 覆盖确定性、失败证据、并发幂等与兼容迁移；具体阈值和条件工具由项目覆盖层声明
+
+## 首次接入
+
+1. 将本目录整包放入后端业务仓 `rules/`。
+2. 复制 `codex/AGENTS.md` 到根 `AGENTS.md`，复制 `cursor/*.mdc` 到 `.cursor/rules/`。
+3. 从 `examples/99-project-local.mdc.sample` 和 `examples/AGENTS.project-section.md.sample` 建立项目覆盖层。
+4. 明确架构档、API 风格、持久化栈、租户模式、OpenAPI 路径、构建命令和采纳 Level。
+5. 按需接入 ArchUnit、Checkstyle、固定版本 `oasdiff breaking --fail-on WARN`、Flyway 和 CI 样板。
+6. 运行规则包校验与项目构建，并用一个真实业务 PR 验证权限、契约和门禁链路。
+
+新项目完整步骤见 `docs/onboarding-new-project.md`，成熟后台业务开发见 `docs/business-feature-playbook.md`。
 
 ## 规则层级
 
@@ -21,7 +42,7 @@ L2  codex/*.md、cursor/*.mdc
 
 ```text
 Cursor alwaysApply 概览
-  → Cursor globs / Codex 任务包
+  → Cursor 按路径 / Codex 按改动类型
   → 按需读取 shared 全文
   → mvn verify / ./gradlew check / evals / PR checklist
 ```
@@ -34,7 +55,7 @@ Cursor alwaysApply 概览
 2. 复制 `codex/AGENTS.md` → 根 `AGENTS.md`。
 3. 复制 `cursor/*.mdc` → `.cursor/rules/`。
 4. 与前端共享 `contracts/openapi.yaml`（见 `docs/fullstack-contract.md`）。
-5. 接入 `examples/` 中 ArchUnit、Checkstyle、OpenAPI diff。
+5. 接入 `examples/` 中 ArchUnit、Checkstyle、固定版本 `oasdiff breaking --fail-on WARN`。
 
 业务仓目录示例：
 
@@ -73,10 +94,10 @@ Codex 入口是业务仓根目录 `AGENTS.md`。
 Codex 路由逻辑：
 
 1. 每次改代码先读 `codex/01-before-editing.md` + `shared/00-must-follow.md`。
-2. 再按 `AGENTS.md` 的任务包、触发词、路径触发追加读取。
+2. 再按 `AGENTS.md` 的改动类型、触发词、路径追加读取。
 3. 写完按 `shared/10-verification-checklist.md` + `codex/05-verification.md` 收尾。
 
-不要要求 Codex “通读全部 shared”。如果任务复杂，先让它说明命中的任务包和准备读取的规则。
+不要要求 Codex 通读全部 shared。改动较大时，先让它说明这次改动对应哪一类，以及准备读取哪些规则。
 
 ## Cursor 怎么用
 
@@ -93,6 +114,8 @@ Cursor 入口是 `.cursor/rules/*.mdc`。
 | `common` / `framework` / `system` / `generator` | `36-platform-boundary.mdc` |
 | OpenAPI 契约 | `12-openapi-contract.mdc` |
 | MyBatis / Mapper XML | `06-persistence-mybatis.mdc` |
+
+其余 Cursor 场景及完整文件名见 `docs/cursor-shared-map.md`；该表同时给出每个 `.mdc` 对应的 shared 正文，禁止按编号猜映射。
 
 不要把所有 `.mdc` 设成 `alwaysApply: true`。如果业务仓不是 RuoYi / Jeecg 类成熟后台，可以不复制 `35`，或把它的 globs 改成真实业务包路径。
 
@@ -111,11 +134,23 @@ Cursor 入口是 `.cursor/rules/*.mdc`。
 - 新增 CRUD 默认跑 evals Business Extension B55–B63
 ```
 
-`.cursor/rules/99-project-local.mdc`：复制 `examples/99-project-local.mdc.sample` 并按项目修改（包名、模块路径、是否 RuoYi、Level、测试治理参数）。
+`.cursor/rules/99-project-local.mdc`：复制 `examples/99-project-local.mdc.sample`，按项目改路径、技术栈、采纳级别和测试参数。没写明、也看不出租户时，用轻量分层和 Request / Response，查询用 GET、写入用 POST，按单租户处理，SQL 只访问本模块的表（`CRUD_LITE`、`ENTITY_REQUEST_RESPONSE`、`GET_POST_COMPAT`、`NONE`）。已有 `tenant_id`、租户插件或拦截器时，沿用共享表加租户列（`SHARED_COLUMN`）。普通增删改查不用先填决策表。只有旧项目的经典分层、复杂业务的六边形、公网接口、要改隔离方式，或要写其他模块的表时，才在根 `AGENTS.md` 和项目规则里写明差异。
 
 本地覆盖层只写项目路径、技术栈、采纳 Level，不要复制 `00` 或 `43` 全文。
 
-## 怎么写真实业务
+## 业务研发流程
+
+```text
+需求与验收条件
+  → 领域 / 状态 / 权限 / 数据影响分析
+  → OpenAPI 与数据库变更设计
+  → Controller / Application / Domain / Persistence 实现
+  → 正常、失败、并发、越权和兼容测试
+  → 构建、契约、迁移和安全门禁
+  → 人工业务正确性 Review
+```
+
+Review 时必须单独检查流程状态、事务与回滚、租户和数据范围、BOLA/IDOR、字段映射、排序与分页、金额和时区、旧客户端兼容以及发布回滚。CI 绿色只能证明相应工具通过，不能替代这些判断。
 
 ### 成熟后台新增业务模块
 
@@ -125,8 +160,8 @@ Cursor 入口是 `.cursor/rules/*.mdc`。
 2. 业务只进业务模块，禁止为单业务污染 `common` / `framework` / `system` / `generator`。
 3. 先改 `contracts/openapi.yaml`，再写 DTO / Controller / Service / Mapper。
 4. CodeGen 只作为初稿；生成后补权限、审计、数据权限、索引、错误码、测试。
-5. list / detail / export / delete / batch / job 都要一致校验租户、数据权限和 BOLA。
-6. 树表 / 主子表额外检查父子归属、跨租户、循环关系、事务回滚和孤儿数据。
+5. list / detail / export / delete / batch / job 都要一致校验数据权限和 BOLA。租户模型不是 `NONE` 时租户条件也一致。
+6. 树表 / 主子表额外检查父子归属、循环关系、事务回滚和孤儿数据。非 `NONE` 时再检查跨租户。
 7. 后端完成后按 `docs/fullstack-contract.md` 与前端联调。
 
 必读：
@@ -237,7 +272,7 @@ AI 行为回归：
 | `shared/34-data-archival.md` | 归档与冷热分层 |
 | `shared/35-threat-modeling.md` | 威胁建模 |
 | `shared/36-crypto-key-management.md` | 加密与密钥管理 |
-| `shared/37-service-to-service-auth.md` | 服务间认证 / 机器身份 |
+| `shared/37-service-to-service-auth.md` | 服务之间的调用身份 |
 | `shared/38-cloud-native-runtime.md` | 容器 / K8s / IaC 运行时 |
 | `shared/39-event-contracts.md` | MQ / 事件契约 |
 | `shared/40-money-time-precision.md` | 金额 / 时间 / 精度 |
@@ -245,7 +280,7 @@ AI 行为回归：
 | `shared/42-cost-governance.md` | 成本治理 |
 | `shared/43-business-module-extension.md` | 成熟后台业务模块扩展 |
 | `docs/backup-restore-runbook.md` | 备份恢复 Runbook 模板 |
-| `evals/*` | AI 行为回归 B01–B67；`ai-tool-safety.md` 独立门禁 BAT01–BAT05 |
+| `evals/*` | AI 行为回归 B01–B71；`ai-tool-safety.md` 独立门禁 BAT01–BAT05 |
 | `docs/owasp-api-top10-mapping.md` | OWASP API Top 10 映射 |
 | `docs/compliance-cn-mapping.md` | 国内合规对照 |
 | `docs/release-checklist.md` | 发版检查清单 |
@@ -253,6 +288,8 @@ AI 行为回归：
 | `docs/codeowners-guidance.md` | CODEOWNERS 指引 |
 | `docs/rule-maturity-model.md` | 采纳分层 Level 0–3 |
 | `docs/cursor-shared-map.md` | Cursor 文件号 ↔ shared 正文对照（编号不相等） |
+| `docs/enterprise-governance.md` | 独立规则包的治理入口 |
+| `docs/migration-from-template.md` | 从后端模板迁移到业务仓的边界与步骤 |
 | `docs/pull-request-template.md` | 业务仓 PR 模板 |
 | `docs/contributing-rules-package.md` | 规则包维护者变更治理 |
 | `scripts/validate-rules-package.py` | 规则包一致性校验（evals 计数、门槛、smoke 索引） |
@@ -260,7 +297,7 @@ AI 行为回归：
 | `examples/99-project-local.mdc.sample` | 业务仓 Cursor 本地覆盖样板 |
 | `examples/ci/rules-package-validate.yml` | 业务仓 rules/ 一致性校验 workflow |
 | `examples/scaffold/` | Java 源码样板（system 用户域） |
-| `examples/*` | ArchUnit、Checkstyle、CI、配置、Flyway、POM 依赖、数据修复样板 |
+| `examples/*` | ArchUnit、Checkstyle、CI、配置、Flyway、POM 依赖样板；生产数据修复 SQL 见 `shared/31-production-data-ops.md` |
 | `docs/fullstack-contract.md` | 前后端契约（含新增业务功能全栈表） |
 | `docs/sql-dialect-matrix.md` | 方言 SQL 登记 |
 | `docs/onboarding-new-project.md` | 新项目落地步骤 |
@@ -275,7 +312,7 @@ AI 行为回归：
 
 ## Evals
 
-**P0 8/8**，**P1 至少 53/59**（B09–B67），AI Tool Safety **BAT01–BAT05 5/5**。日常 **Smoke**、发版 **Full**；安全/契约/业务扩展 PR 可跑对应子集（见 `evals/README.md`、`evals/smoke-prompts.md`）。
+**P0 8/8**，**P1 至少 57/63**（B09–B71），AI Tool Safety **BAT01–BAT05 5/5**。日常 **Smoke**、发版 **Full**；安全/契约/架构/业务扩展 PR 可跑对应子集（见 `evals/README.md`、`evals/smoke-prompts.md`）。
 
 ## 采纳与 PR
 

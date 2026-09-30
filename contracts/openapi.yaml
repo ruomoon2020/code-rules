@@ -1,18 +1,30 @@
 openapi: 3.0.3
+x-api-style: GET_POST_COMPAT
+x-breaking-change:
+  from-version: 1.0.0
+  migration: Upgrade generated clients to the 2.0 contract before switching the server deployment.
 info:
   title: System API
-  version: 1.0.0
+  version: 2.0.0
+  license:
+    name: Project-specific; see repository policy
+    url: https://github.com/ruomoon2020/code-rules
   description: |
     全栈契约示例（用户 CRUD + 审计日志查询 + 分页）。
     字段对齐：web-backend/rules/docs/fullstack-contract.md
+    2.0 迁移：写操作由 PUT/PATCH/DELETE 迁移为 POST 动作端点；旧客户端须先升级生成代码再切换服务端。
 
 servers:
   - url: /
+
+security:
+  - BearerAuth: []
 
 paths:
   /api/v1/system/users:
     get:
       operationId: systemUserPage
+      x-permission: system:user:read
       summary: 用户分页列表
       tags: [SystemUser]
       parameters:
@@ -45,12 +57,17 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ApiResultUserPage'
+        '400': { $ref: '#/components/responses/BadRequest' }
+        '401': { $ref: '#/components/responses/Unauthenticated' }
+        '403': { $ref: '#/components/responses/AccessDenied' }
+        '429': { $ref: '#/components/responses/RateLimited' }
+        '500': { $ref: '#/components/responses/InternalError' }
     post:
       operationId: systemUserCreate
+      x-permission: system:user:create
       summary: 创建用户
+      description: 示例当前不支持安全重试；业务仓若声明 Idempotency-Key，必须同时实现服务端去重与结果复用。
       tags: [SystemUser]
-      parameters:
-        - $ref: '#/components/parameters/IdempotencyKey'
       requestBody:
         required: true
         content:
@@ -58,16 +75,29 @@ paths:
             schema:
               $ref: '#/components/schemas/UserCreateRequest'
       responses:
-        '200':
-          description: OK
+        '201':
+          description: Created
+          headers:
+            Location:
+              description: 新建用户资源的 URI
+              schema:
+                type: string
+                format: uri-reference
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/ApiResultUserDetail'
+        '400': { $ref: '#/components/responses/BadRequest' }
+        '401': { $ref: '#/components/responses/Unauthenticated' }
+        '403': { $ref: '#/components/responses/AccessDenied' }
+        '409': { $ref: '#/components/responses/Conflict' }
+        '429': { $ref: '#/components/responses/RateLimited' }
+        '500': { $ref: '#/components/responses/InternalError' }
 
   /api/v1/system/users/{id}:
     get:
       operationId: systemUserDetail
+      x-permission: system:user:read
       summary: 用户详情
       tags: [SystemUser]
       parameters:
@@ -79,9 +109,17 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ApiResultUserDetail'
-    put:
+        '401': { $ref: '#/components/responses/Unauthenticated' }
+        '403': { $ref: '#/components/responses/AccessDenied' }
+        '404': { $ref: '#/components/responses/NotFound' }
+        '429': { $ref: '#/components/responses/RateLimited' }
+        '500': { $ref: '#/components/responses/InternalError' }
+  /api/v1/system/users/{id}/update:
+    post:
       operationId: systemUserUpdate
-      summary: 更新用户
+      x-permission: system:user:update
+      summary: 更新用户（GET/POST 兼容风格）
+      description: 目标邮箱可以与当前值相同，但每次命令都受 version 前置条件约束，不保证旧请求重放成功。客户端不得在超时后盲目并发重试；并发版本冲突返回 409 CONCURRENT_MODIFICATION。
       tags: [SystemUser]
       parameters:
         - $ref: '#/components/parameters/IdPath'
@@ -98,23 +136,45 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ApiResultUserDetail'
-    delete:
+        '400': { $ref: '#/components/responses/BadRequest' }
+        '401': { $ref: '#/components/responses/Unauthenticated' }
+        '403': { $ref: '#/components/responses/AccessDenied' }
+        '404': { $ref: '#/components/responses/NotFound' }
+        '409': { $ref: '#/components/responses/Conflict' }
+        '429': { $ref: '#/components/responses/RateLimited' }
+        '500': { $ref: '#/components/responses/InternalError' }
+  /api/v1/system/users/{id}/delete:
+    post:
       operationId: systemUserDelete
-      summary: 删除用户
+      x-permission: system:user:delete
+      summary: 删除用户（GET/POST 兼容风格）
+      description: 请求带回打开详情时的 version，与当前行不一致返回 409。删除成功后重复提交返回 404，且不得重复写入成功审计；客户端不得把该 POST 当作可自动重试命令。
       tags: [SystemUser]
       parameters:
         - $ref: '#/components/parameters/IdPath'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserDeleteRequest'
       responses:
-        '200':
-          description: OK
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ApiResultVoid'
+        '204':
+          description: No Content
+          headers:
+            X-Trace-Id:
+              $ref: '#/components/headers/TraceId'
+        '401': { $ref: '#/components/responses/Unauthenticated' }
+        '403': { $ref: '#/components/responses/AccessDenied' }
+        '404': { $ref: '#/components/responses/NotFound' }
+        '409': { $ref: '#/components/responses/Conflict' }
+        '429': { $ref: '#/components/responses/RateLimited' }
+        '500': { $ref: '#/components/responses/InternalError' }
 
   /api/v1/system/audit-logs:
     get:
       operationId: systemAuditLogPage
+      x-permission: system:audit-log:read
       summary: 审计日志分页
       description: 只读查询；写入由业务操作异步/同步落库，见 fullstack-contract §审计日志。
       tags: [SystemAuditLog]
@@ -159,10 +219,16 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ApiResultAuditLogPage'
+        '400': { $ref: '#/components/responses/BadRequest' }
+        '401': { $ref: '#/components/responses/Unauthenticated' }
+        '403': { $ref: '#/components/responses/AccessDenied' }
+        '429': { $ref: '#/components/responses/RateLimited' }
+        '500': { $ref: '#/components/responses/InternalError' }
 
   /api/v1/system/audit-logs/{id}:
     get:
       operationId: systemAuditLogDetail
+      x-permission: system:audit-log:read
       summary: 审计日志详情
       tags: [SystemAuditLog]
       parameters:
@@ -179,8 +245,68 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ApiResultAuditLogDetail'
+        '401': { $ref: '#/components/responses/Unauthenticated' }
+        '403': { $ref: '#/components/responses/AccessDenied' }
+        '404': { $ref: '#/components/responses/NotFound' }
+        '429': { $ref: '#/components/responses/RateLimited' }
+        '500': { $ref: '#/components/responses/InternalError' }
 
 components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+  headers:
+    TraceId:
+      description: 用于关联网关、应用日志与审计记录的追踪号
+      schema:
+        type: string
+
+  responses:
+    BadRequest:
+      description: 请求格式、参数或校验失败
+      content:
+        application/json:
+          schema: { $ref: '#/components/schemas/ApiError' }
+    Unauthenticated:
+      description: 未认证或登录态失效
+      content:
+        application/json:
+          schema: { $ref: '#/components/schemas/ApiError' }
+    AccessDenied:
+      description: 已认证但无权操作该资源
+      content:
+        application/json:
+          schema: { $ref: '#/components/schemas/ApiError' }
+    NotFound:
+      description: 资源不存在，或为避免泄露资源存在性而隐藏
+      content:
+        application/json:
+          schema: { $ref: '#/components/schemas/ApiError' }
+    Conflict:
+      description: 唯一约束、幂等键或并发更新冲突
+      content:
+        application/json:
+          schema: { $ref: '#/components/schemas/ApiError' }
+    RateLimited:
+      description: 请求过于频繁
+      headers:
+        Retry-After:
+          description: 建议重试前等待的秒数
+          schema:
+            type: integer
+            minimum: 0
+      content:
+        application/json:
+          schema: { $ref: '#/components/schemas/ApiError' }
+    InternalError:
+      description: 服务端内部错误
+      content:
+        application/json:
+          schema: { $ref: '#/components/schemas/ApiError' }
+
   parameters:
     IdPath:
       name: id
@@ -203,24 +329,24 @@ components:
         minimum: 1
         maximum: 100
         default: 20
-    IdempotencyKey:
-      name: Idempotency-Key
-      in: header
-      required: false
-      description: |
-        客户端生成的幂等键（UUID 等），用于可安全重试的写操作去重。
-        服务端建议 TTL ≥ 24h；冲突时返回与原请求一致结果或 409 + 明确 errorCode。
-      schema:
-        type: string
-        maxLength: 128
-
   schemas:
+    ApiError:
+      allOf:
+        - $ref: '#/components/schemas/ApiResultBase'
+        - type: object
+          required: [errorCode]
+          properties:
+            data:
+              type: object
+              nullable: true
+
     ApiResultVoid:
       allOf:
         - $ref: '#/components/schemas/ApiResultBase'
         - type: object
           properties:
             data:
+              type: object
               nullable: true
 
     ApiResultUserPage:
@@ -235,6 +361,7 @@ components:
       allOf:
         - $ref: '#/components/schemas/ApiResultBase'
         - type: object
+          required: [data]
           properties:
             data:
               $ref: '#/components/schemas/UserDetailResponse'
@@ -248,13 +375,15 @@ components:
           description: 0 表示成功
         message:
           type: string
+          description: 服务端 fallback 或诊断文案，不保证语言和长期稳定性；客户端不得据此分支
         traceId:
           type: string
         errorCode:
+          type: string
           allOf:
             - $ref: '#/components/schemas/BusinessErrorCode'
           nullable: true
-          description: 失败时业务错误码；成功时为 null
+          description: 失败时的稳定业务语义码，客户端据此映射文案与恢复行为；成功时为 null
 
     UserPageData:
       type: object
@@ -274,6 +403,7 @@ components:
 
     UserSummaryResponse:
       type: object
+      required: [id, username, status, createdAt]
       properties:
         id:
           type: string
@@ -290,16 +420,21 @@ components:
       allOf:
         - $ref: '#/components/schemas/UserSummaryResponse'
         - type: object
+          required: [version]
           properties:
             email:
               type: string
             phoneMasked:
               type: string
               description: 脱敏手机号
+            version:
+              type: integer
+              minimum: 0
+              description: 当前行的乐观锁版本。下一次更新或删除带回这个值。保存成功后响应里是加一后的新版本。
 
     UserCreateRequest:
       type: object
-      required: [username, status]
+      required: [username]
       properties:
         username:
           type: string
@@ -308,19 +443,28 @@ components:
         email:
           type: string
           format: email
-        status:
-          type: string
-          enum: [ENABLED, DISABLED]
+
+    UserDeleteRequest:
+      type: object
+      required: [version]
+      properties:
+        version:
+          type: integer
+          minimum: 0
+          description: 打开详情时读到的乐观锁版本。与当前行不一致时返回冲突。
 
     UserUpdateRequest:
       type: object
+      required: [email, version]
+      minProperties: 1
       properties:
         email:
           type: string
           format: email
-        status:
-          type: string
-          enum: [ENABLED, DISABLED]
+        version:
+          type: integer
+          minimum: 0
+          description: 打开详情时读到的乐观锁版本。与当前行不一致时返回冲突。
 
     ApiResultAuditLogPage:
       allOf:
@@ -365,8 +509,6 @@ components:
         operatorName:
           type: string
           description: 展示用，由用户服务解析，非审计主存储字段
-        tenantId:
-          type: string
         action:
           type: string
           description: 稳定动作码，与字典/i18n 对齐
@@ -418,7 +560,6 @@ components:
         - AUDIT_LOG_NOT_FOUND
         - CONCURRENT_MODIFICATION
         - INVALID_SORT_FIELD
-        - TENANT_CONTEXT_MISSING
         - VALIDATION_FAILED
         - UNAUTHENTICATED
         - ACCESS_DENIED

@@ -1,10 +1,11 @@
-# Naming Rules（Java / Spring）
+# 命名规则（Java / Spring）
 
 ## 总原则
 
 1. 英文语义命名；包名全小写；类名 PascalCase。
 2. 同一概念全项目一词；先看项目既有约定，再按本文件。
-3. 禁止 `Manager`、`Helper`、`Util` 膨胀；优先领域名 + 职责。
+3. 禁止 `Manager`、`Helper`、`Util` 膨胀；仅在项目选择经典应用分层且确有第三方封装、多 DAO 组合或跨 Service 复用能力时使用 `Manager`。
+4. 默认使用 `Entity/Request/Response`；存量项目已有稳定 `DO/DTO/BO/VO/Query` 约定时可继续使用并在 `99-project-local` 声明。禁止新项目为对象“齐全”复制第二套后缀，也禁止在同一语义上混用两套名字。
 
 ## 包与类
 
@@ -15,10 +16,16 @@
 | Service | `*Service` / `*AppService` | `UserService` |
 | Mapper | `*Mapper` | `UserMapper` |
 | Entity | 单数名词 | `User` |
+| Data Object（存量兼容） | `*DO`，前缀通常对应表或持久化对象 | `UserDO` |
 | Request DTO | `*Request` | `UserCreateRequest` |
-| Response DTO | `*Response` / `*VO` | `UserPageResponse` |
+| Response DTO | `*Response` | `UserPageResponse` |
+| View Object（存量兼容） | `*VO`，仅已有经典分层项目 | `UserPageVO` |
+| Business Object（存量兼容） | `*BO`，仅已有复杂业务内部模型 | `UserPricingBO` |
+| Query | `*Query` | `UserPageQuery` |
 | 异常 | `*Exception` | `BusinessException` |
 | 常量类 | `*Constants` | `ErrorCodes` |
+
+`DO`、`DTO`、`BO`、`VO`、`AO` 等后缀只作为存量行业约定兼容；禁止命名为 `XxxPOJO`。`AO` 仅适用于确有独立展示应用层且团队已有约定的项目，不作为默认对象类型。已有项目不得仅为统一后缀做无业务价值的大规模重命名。
 
 ## 方法与变量
 
@@ -72,8 +79,8 @@
 | 检查约束 | `ck_{table}_{column}` | `ck_order_status` |
 
 1. 索引名中的列名按索引实际字段顺序排列；过长时可保留关键字段，但必须能从名称看出用途。
-2. 唯一约束优先表达业务唯一性；多租户唯一通常包含 `tenant_id`，例如 `uk_crm_customer_tenant_phone`。
-3. 逻辑删除表若需要“未删除数据唯一”，必须明确采用组合唯一、部分索引或归档释放策略，禁止只写普通唯一导致删除后无法重建。
+2. 唯一约束优先表达业务唯一性。租户模型不是 `NONE` 时，租户内唯一通常包含 `tenant_id`，例如 `uk_crm_customer_tenant_phone`。`NONE` 不把 `tenant_id` 放进唯一约束。
+3. 逻辑删除表若需要“未删除数据唯一”，必须写明唯一策略。未声明时用 `(业务键, delete_token)`。禁止 `(业务键, is_deleted)`，也禁止把可空 `deleted_at` 放进唯一键。已有 `deleted` / `del_flag` 时沿用既有策略。禁止只写普通唯一导致删除后无法重建。
 4. 同一张表禁止出现语义重复索引，例如 `idx_user_name` 与 `idx_sys_user_username` 同时存在。
 
 ### Mapper / XML
@@ -84,7 +91,7 @@
 
 ## 错误码与权限
 
-1. 业务错误码：`DOMAIN_RESOURCE_REASON`，如 `USER_NOT_FOUND`（与 `08` 一致）。
+1. 业务错误码写成「领域_原因」（`DOMAIN_REASON`），例如 `USER_NOT_FOUND`，与 `08` 一致。
 2. 权限码：`domain:resource:action`，如 `system:user:create`（与前端对齐）。
 
 ## REST 与 OpenAPI

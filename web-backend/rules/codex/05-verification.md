@@ -1,4 +1,4 @@
-# Verification
+# 验证与收口
 
 收尾必读 `shared/10-verification-checklist.md`。
 

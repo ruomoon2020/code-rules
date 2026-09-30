@@ -12,7 +12,13 @@
 
 禁止同一页面多处各自维护 `page` / `pageSize` / `filters` 导致不同步。
 
+## 排序请求
+
+请求字段为 `sortField`、`sortOrder`。`sortOrder` 只传 `asc` 或 `desc`。组件事件中的 `ascending` / `descending` 必须在发请求前映射，禁止原样提交。`sortField` 使用契约里的字段名，不传数据库列名。排序变化时 `page` 重置为 `1`。
+
 ## 页码行为（offset 分页）
+
+页码字段名为 `page`，从 1 开始。禁止 `pageNo`、`pageNum`，禁止把第一页写成 0。
 
 1. **筛选条件变化**（含搜索关键词、下拉筛选、日期范围）：`page` 必须重置为 `1` 再请求。
 2. **`pageSize` 变化**：`page` 必须重置为 `1` 再请求。
@@ -47,7 +53,7 @@
 
 - 契约为 `page` + `pageSize` 时，使用 offset 分页组件与上述行为。
 - 契约为 `cursor` / `nextToken` 时，**不要硬套** `page/pageSize`；翻页只追加或替换 cursor，遵循 schema 定义。
-- 改分页模型须与 `contracts/schema.json` 及后端一致。
+- 改分页模型须先修改 `contracts/openapi.yaml`，再同步生成 schema / API 类型并与后端一致。
 
 ## 与 UI 模式的关系
 

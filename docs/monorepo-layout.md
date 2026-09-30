@@ -25,7 +25,7 @@ product/
 ```text
 contracts/openapi.yaml
   ├─► 后端：实现 + springdoc 校验 + MockMvc 测试
-  ├─► 管理端：openapi-generator / schema.json → src/api/generated
+  ├─► 管理端：schema:sync / openapi-generator → schema.json（可选生成物）+ src/api/generated
   └─► 小程序：api:gen → src/api/generated + api:check
 ```
 
@@ -45,7 +45,7 @@ Cursor：各工程 `.cursor/rules/*.mdc` 来自对应 `rules/cursor/`。
 
 ## 规则包版本
 
-本源仓使用统一四段版本号；仓库根 `VERSION`、前端、后端、小程序和 `common-governance` 的 `VERSION` 必须一致。业务仓单独采用规则包时，以复制或发布时记录的包内 `VERSION` 为准。
+本源仓使用统一四段版本号 `主版本.次版本.修订号.构建号`；仓库根 `VERSION`、前端、后端、小程序和 `common-governance` 的 `VERSION` 必须一致。破坏既有采纳方式或契约时升主版本；向后兼容地扩充规则或能力时升次版本；仅修复规则、示例或门禁缺陷时升修订号；同一规则内容的重新打包才递增构建号。升高位时低位归零。业务仓单独采用规则包时，以复制或发布时记录的包内 `VERSION` 为准。
 
 ## 规则包 CI（本 monorepo）
 
@@ -62,7 +62,7 @@ python -m unittest discover -s scripts/tests -v
 
 另含：rules-only fixture（`--strict`）与治理 fixture（复制 `common-governance/` 后 `--level 2`）。
 
-企业级治理维护 SSOT 位于仓库根 [`definition-of-done.md`](definition-of-done.md)；业务仓应引入由它生成的 `common-governance/`，企业项目推荐：
+跨端治理文档的维护源在仓库根 [`definition-of-done.md`](definition-of-done.md)。业务仓应引入由它生成的 `common-governance/`。需要完整治理时推荐：
 
 ```bash
 python common-governance/scripts/validate-package.py

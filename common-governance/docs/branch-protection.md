@@ -69,7 +69,7 @@ code-rules 源仓提供的 Required Checks 参考实现位于 `.github/workflows
 适用于只接入 `web-backend/rules/` 的业务仓：
 
 - 后端构建门禁：`mvn verify` 或 `./gradlew check`
-- 契约门禁：OpenAPI diff / Spectral（若改 API）
+- 契约门禁：固定版本 `oasdiff breaking --fail-on WARN`（若改 API）；相对目标分支已接受的契约基线执行，首次 baseline 须有 Owner 标签并满足基线相等性要求，禁止用 PR 说明跳过
 - 规则采纳：`rules-adoption`（Level 2+）
 - 凭据扫描：`credential-scan`
 - 供应链门禁：`supply-chain-required`（按 [`supply-chain-baseline.md`](supply-chain-baseline.md)）

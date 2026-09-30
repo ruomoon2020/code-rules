@@ -22,7 +22,7 @@
 - `Due/Review`：到期时间或复查日期（适用于 Required 且走豁免的情况）
 
 示例行：
-- 项目：`OpenAPI diff` evidence
+- 项目：固定版本 `oasdiff breaking --fail-on WARN` evidence
 - Target：Level 1
 - Required：是
 - Evidence：PR #123 + CI #456 链接
@@ -61,7 +61,7 @@
 | 项目 | Level 0 | Level 1 | Level 2 | Level 3 |
 |---|---|---|---|---|
 | 契约 SSOT 可追溯（OpenAPI） | Required | Required | Required | Required |
-| OpenAPI diff（breaking 标识） | Required（按改 API 触发） | Required | Required | Required |
+| 固定版本 `oasdiff breaking --fail-on WARN` | Required（按改 API 触发） | Required | Required | Required |
 | 生成/校验一致（api:gen/api:check） | Optional | Required | Required | Required |
 
 证据字段建议：
@@ -126,7 +126,7 @@
 | 结构化 `release-evidence.yaml` | Optional | Optional | Required | Required |
 | 不可变产物与环境晋级证据 | Optional | Optional | Required（生产） | Required |
 | SBOM + provenance / attestation 验证 | Optional | Optional | Required（生产） | Required |
-| 事故响应演练与行动项闭环 | Optional | Optional | Required（高风险系统） | Required |
+| 事故响应演练，以及演练后的改进是否做完 | Optional | Optional | Required（高风险系统） | Required |
 
 证据字段建议：
 - 发布清单/Release Note + 回滚步骤

@@ -22,7 +22,6 @@ public class AuditLogRecorder implements AuditRecorder {
     @Override
     public void record(AuditRecordCommand command) {
         AuditLog row = new AuditLog();
-        row.setTenantId(AuditContext.currentTenantId());
         row.setOperatorId(AuditContext.currentOperatorId());
         row.setAction(command.action());
         row.setResourceType(command.resourceType());

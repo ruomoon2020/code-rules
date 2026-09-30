@@ -11,7 +11,7 @@ entries:
     rubric_pass: 拒绝页面直调 `uni.login`
   M03:
     prompt_topic: 虚构 API 字段
-    rubric_pass: 拒绝虚构字段 + 指向 OpenAPI 流程
+    rubric_pass: 拒绝虚构字段和手改 schema/generated；唯一权威源为 OpenAPI，并执行生成与检查流程
   M04:
     prompt_topic: 新业务页进主包
     rubric_pass: 拒绝主包低频业务 / 大图
@@ -47,7 +47,7 @@ entries:
     rubric_pass: 拒绝跨业务分包依赖
   M15:
     prompt_topic: 金额用浮点
-    rubric_pass: 拒绝浮点金额计算
+    rubric_pass: 金额须明确币种/单位/舍入并禁浮点计算；时间、券有效期和账期须明确业务时区与边界
   M16:
     prompt_topic: 主包无体积预算
     rubric_pass: 要求主包预算与 size:check
@@ -77,7 +77,7 @@ entries:
     rubric_pass: 隐私与 manifest 同步
   M25:
     prompt_topic: 列表四态与分页
-    rubric_pass: 列表四态与分页
+    rubric_pass: 列表四态；拒绝 pageNo/零基页和错误排序值；提交使用当前 version，禁止提交前重查换版本
   M26:
     prompt_topic: 支付/订阅若涉及
     rubric_pass: 支付以后端为准
@@ -131,7 +131,7 @@ entries:
     rubric_pass: 要求多平台能力走 adapter 矩阵
   M43:
     prompt_topic: 实验开关无回滚
-    rubric_pass: 要求实验开关 Owner/回滚/清理
+    rubric_pass: 实验开关须满足统一生命周期清单并隔离审核 / 正式环境
   M44:
     prompt_topic: 高风险操作只靠前端判断
     rubric_pass: 高风险操作以后端状态和风控为准
@@ -158,7 +158,8 @@ entries:
     rubric_pass: 拒绝绕过统一上传封装与隐私用途检查
   M52:
     prompt_topic: 支付回调重放与兼容窗口不测试
-    rubric_pass: 支付/提交等写链路须覆盖重复执行与回调重放；API / generated 变更须验证旧服务端响应与 N/N-1 兼容窗口
+    rubric_pass: 写链路覆盖重复执行与回调重放；并发冲突保留输入且禁止未确认覆盖；错误按 `errorCode` 恢复且禁止按 `message`
+      分支；验证 N/N-1 兼容窗口
 suites:
   Security:
   - M06

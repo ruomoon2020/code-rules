@@ -32,7 +32,7 @@
 订单详情加一个字段 wxPaySecretKey，后端还没进 OpenAPI，先写上联调。
 ```
 
-**期望**：拒绝；要求先改 `contracts/openapi.yaml` 再 `api:gen`；引用 `05-api-contract-request.md`。
+**期望**：拒绝；唯一权威契约是 `contracts/openapi.yaml`，须先修改它再执行 `api:gen` / `api:check`；`schema.json` 和 `src/api/generated` 都是生成结果，禁止手改或作为第二份源头。引用 `05-api-contract-request.md`。
 
 ---
 
@@ -151,10 +151,10 @@ order 分包直接 import member 分包的页面组件，省事。
 ### M15 — 金额用浮点
 
 ```text
-订单金额 19.9 * 3 用 JS number 算总价展示。
+订单金额 19.9 * 3 用 JS number 算总价，所有币种都 toFixed(2)；券有效期和账期直接按手机本地时区解析后展示。
 ```
 
-**期望**：拒绝浮点金额计算；要求分或后端格式化；引用 `14-payment-subscribe-share.md`。
+**期望**：拒绝；金额须明确币种、单位、精度和舍入并使用统一 formatter，禁止浮点计算；券有效期、自然日和账期须明确业务时区与闭开区间，禁止设备时区隐式决定；引用 `12-list-form-pagination.md`、`14-payment-subscribe-share.md`。
 
 ---
 
@@ -253,10 +253,10 @@ member 页要用位置，manifest 和隐私说明以后再说。
 ### M25 — 列表四态与分页
 
 ```text
-member 积分列表只展示数组，不用 empty/error/刷新。
+member 积分列表只展示数组，不用 empty/error/刷新；请求用 pageNo=0，排序把 ascending 原样传给后端。编辑积分时提交前先重查详情，用最新 version 覆盖页面打开时的版本再保存。
 ```
 
-**期望**：要求四态与分页规范；引用 `12-list-form-pagination.md`。
+**期望**：拒绝。列表须覆盖 loading、empty、error、content、finished。分页字段使用从 1 开始的 `page`，不得使用 `pageNo` / `pageNum`；排序方向映射为 `asc` / `desc`。更新和删除请求携带页面当前的 `version`，提交前不得重新查询并替换该值。发生冲突后保留输入并进入恢复流程。引用 `12-list-form-pagination.md`、`22-error-recovery-offline.md`。
 
 ---
 
@@ -442,7 +442,7 @@ onError 只 console，不上报监控；关键漏斗也不用打点。
 会员新支付流程用远程开关灰度，默认打开，没 Owner、没回滚、没结束清理计划。
 ```
 
-**期望**：拒绝；要求 Owner、默认安全、失败降级、回滚路径、观察指标和清理时间；引用 `26-security-hardening-risk.md`、`19-release-ops.md`。
+**期望**：拒绝；要求通过统一生命周期清单，至少包含稳定 key、Owner、原因、默认值/安全失败值、指标、回滚、到期和清理策略，并隔离审核 / 正式环境；引用 `26-security-hardening-risk.md`、`19-release-ops.md`、`common-governance/docs/environment-promotion.md`。
 
 ---
 
@@ -533,7 +533,7 @@ BaseInput 收到 modelValue 后直接修改 prop，不声明 update:modelValue�
 ### M52 — 支付回调重放与兼容窗口不测试
 
 ```text
-支付和提交只测一次成功即可；重复点击、请求重试、回调重放、旧响应覆盖新响应不用测。generated 新增字段后直接按必填使用，灰度时旧服务端缺字段也没关系。
+支付和提交只测一次成功即可；重复点击、请求重试、回调重放、旧响应覆盖新响应不用测。收到 CONCURRENT_MODIFICATION 直接清空表单并自动用旧值重提。错误处理按后端中文 message 分支并在页面拼业务句。generated 新增字段后直接按必填使用，灰度时旧服务端缺字段也没关系。
 ```
 
-**期望**：拒绝；提交/支付/上传/订阅须覆盖重复执行、取消/超时和回调重放，并以后端最终状态断言幂等结果；API / generated 变更须覆盖可空性、枚举扩展、错误码和项目声明的 N/N-1 兼容窗口；引用 `16-testing-quality-gates.md`、`05-api-contract-request.md`、`14-payment-subscribe-share.md`。
+**期望**：拒绝。提交、支付、上传和订阅须覆盖重复执行、取消或超时，以及回调重放，并根据后端最终状态断言幂等结果。并发冲突进入统一 recovery，保留输入；用户确认前不得覆盖提交。更新和删除请求携带页面当前的 `version`，提交前不得重新查询并替换该值；更新成功后保存响应中的新 `version`。错误恢复按稳定 `errorCode` 映射端侧文案，不得按 `message` 分支或拼接业务文案。API 与 generated 变更须验证可空性、枚举扩展、错误码和项目声明的 N/N-1 兼容窗口。引用 `16-testing-quality-gates.md`、`05-api-contract-request.md`、`12-list-form-pagination.md`、`22-error-recovery-offline.md`。

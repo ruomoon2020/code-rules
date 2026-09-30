@@ -1,4 +1,4 @@
-# Event and Message Contracts
+# 事件与消息契约规则
 
 消息、事件、Outbox、Webhook 也是契约，须像 REST/OpenAPI 一样治理版本、兼容和观测。
 
@@ -8,6 +8,8 @@
 2. 消息 schema 放在项目约定目录（如 `contracts/events/`），禁止无 schema 的随意 Map。
 3. 字段命名、枚举、时间、金额规则与 REST DTO 一致。
 4. 消息体最小化；禁止塞完整 PII、密码、Token、无必要的大对象。
+5. 事件、任务消息和 Outbox 记录必须携带或可可靠解析 `tenantId`（无租户项目除外）、`actorId` / 操作者身份与 `traceId`；字段语义、缺省策略和可信来源须进入 schema。禁止把客户端自报身份直接当作授权依据。
+6. 消费者必须恢复并校验操作者、数据权限和审计上下文。租户模型不是 `NONE` 时同时恢复并校验租户。禁止因进入异步链路改用无数据范围的系统身份执行写操作。确需平台系统身份时，须有显式用例、最小权限、审计和允许访问的数据范围；非 `NONE` 时还须限定允许访问的租户。
 
 ## 兼容策略
 
@@ -18,7 +20,7 @@
 
 ## Outbox 与重放
 
-1. Outbox 表须记录 eventId、eventName、version、aggregateId、status、retryCount、lastError。
+1. Outbox 表须记录 eventId、eventName、version、aggregateId、tenantId（若适用）、actorId、traceId、status、retryCount、lastError。
 2. 重放须有 runbook、范围、审批、幂等校验和审计。
 3. 消息消费失败须进入死信或可恢复状态，禁止只打印日志后丢弃。
 

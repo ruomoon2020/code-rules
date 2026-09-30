@@ -1,4 +1,4 @@
-# 09 Content Safety
+# 内容安全
 
 涉及 rich-text、评论、公告、UGC、用户输入展示时：
 
