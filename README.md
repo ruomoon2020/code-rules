@@ -211,7 +211,8 @@ Cursor 靠 `.cursor/rules/*.mdc` 的 `alwaysApply` 和 `globs` 触发。
 ```md
 ## 本项目约定
 
-- 业务模块路径：`src/main/java/com/acme/modules/{biz}/`
+- 业务模块路径：`src/main/java/{basePackagePath}/modules/{biz}/`
+- 占位符替换：`{basePackagePath}` 使用 Java 基础包的目录形式（如 `com/example/project`），`{biz}` 使用实际业务模块名。
 - OpenAPI：`contracts/openapi.yaml`
 - 采纳 Level：1
 - （可选）成熟后台栈名、成功码取值、响应壳字段映射：见 `99-project-local.mdc`

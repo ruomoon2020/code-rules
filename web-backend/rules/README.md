@@ -128,7 +128,8 @@ Cursor 入口是 `.cursor/rules/*.mdc`。
 ```md
 ## 本项目约定
 
-- 业务模块路径：`src/main/java/com/acme/modules/{biz}/`
+- 业务模块路径：`src/main/java/{basePackagePath}/modules/{biz}/`
+- 占位符替换：`{basePackagePath}` 使用 Java 基础包的目录形式（如 `com/example/project`），`{biz}` 使用实际业务模块名。
 - 成熟后台栈：RuoYi-Vue-Plus 5.x
 - 采纳 Level：1（见 `rules/docs/rule-maturity-model.md`）
 - 新增 CRUD 默认跑 evals Business Extension B55–B63

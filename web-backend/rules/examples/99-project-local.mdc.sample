@@ -5,8 +5,9 @@ alwaysApply: true
 
 # 本项目约定（示例，请按实际修改）
 
-- 业务模块路径：`src/main/java/com/acme/modules/{biz}/`
-- 公共层路径：`src/main/java/com/acme/{common,framework,system,generator}/`
+- 业务模块路径：`src/main/java/{basePackagePath}/modules/{biz}/`
+- 占位符替换：`{basePackagePath}` 使用 Java 基础包的目录形式（如 `com/example/project`），`{biz}` 使用实际业务模块名。
+- 公共层路径：`src/main/java/{basePackagePath}/{common,framework,system,generator}/`
 - 成熟后台栈：RuoYi-Vue-Plus 5.x（本示例未启用租户插件；非 RuoYi 项目请删除 `35-business-module-extension.mdc` 或收窄其 globs）
 - OpenAPI SSOT：`contracts/openapi.yaml`
 - 架构档：`CRUD_LITE`
