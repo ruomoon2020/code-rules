@@ -106,3 +106,7 @@ pnpm audit
 ```
 
 详见 `rules/shared/16-testing-quality-gates.md` 与 `rules/codex/05-verification.md`。全栈契约见 `rules/docs/fullstack-contract.md`。
+
+## 不熟悉功能的入口
+
+遇到不熟悉的功能、协议或实现机制，编码前必须读取 `rules/shared/17-ai-generation.md` 的“先调研再实现”，完成 GitHub 高星筛选、Agent-Reach 扩展检索与比较取舍。

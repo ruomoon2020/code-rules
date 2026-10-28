@@ -1,5 +1,5 @@
 {
-  "version": "2.0.0.0",
+  "version": "2.0.0.1",
   "source": "code-rules/docs",
   "files": {
     "docs/project-adoption-guide.md": "e6af137283080791792f83ba0f8aeb14c4efa7520994e8f12e6b7d7cf7f70358",
@@ -24,8 +24,8 @@
     "docs/git-pr-governance.md": "cf19ca4d4899df82c56a52ce9f6ce52e429a9e2333afd674932aa57f6145abfe",
     "docs/migration-baseline.md": "0bc074f9b0503c707e8b67db7f679e784cf20ec5ab234563375f1919cd2d231f",
     "README.md": "cd3ddd4305bc7ebfbe1fe37200279983ba727d05dad636a42c05eed78f6fe0d9",
-    "CHANGELOG.md": "a09b279061ef58dc65fa089afb158ba8462d5ac0d242a790c3fddb980b2dad04",
-    "VERSION": "9c1d2c9c290ad9f47ac70d44d96f2b2014e9aa900c986d77a8872a5b5bdaf9b8",
+    "CHANGELOG.md": "560d649afe8d9a2aac7c08a045aab9bb2e94fbe0a526a2fa9a962666f8599b18",
+    "VERSION": "c9f8a1ee25fd4cdcd29b3491093a65fcc7f5c022548c4a344d8030c883ac9673",
     "examples/commitlint.config.cjs.sample": "f1a8fa354951a714be8f2f5d867c0daab4be05be9c483601c01a5c2d87d512c7",
     "examples/SECURITY.md.sample": "606786ff30c4b1127c2054cca4c6c9ef62e72fa664109fcfd4c2d2f08791c063",
     "examples/adr-template.md": "23f4f66b38f1d747be5578ebb459826dfbdd8b38cd4cbf40c3a21774cf13a142",

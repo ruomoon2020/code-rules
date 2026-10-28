@@ -56,3 +56,7 @@ alwaysApply: true
 - 新业务分包：`18-business-module-extension.mdc`（仅新业务扩展任务强制；见 `99-project-local`）
 
 项目真实路径、包体积预算和目标平台写入 `.cursor/rules/99-project-local.mdc`。核心 P1 evals 门槛 **>= 10/12**。
+
+## 不熟悉功能
+
+遇到不熟悉的功能、协议或实现机制，编码前必须读取 `rules/shared/17-ai-generation.md` 的“先调研再实现”，完成 GitHub 高星筛选、Agent-Reach 扩展检索与比较取舍。

@@ -39,3 +39,7 @@ git diff --check
 ```
 
 报告跳过的检查和剩余风险。校验器通过只能证明规则包一致，不能单独证明业务正确。
+
+## 不熟悉功能
+
+遇到不熟悉的功能、协议或实现机制，先按目标技术栈的 AI 生成规则完成开源调研，再实现：前端 `web-front/rules/shared/09-ai-generation.md`、后端 `web-backend/rules/shared/26-ai-generation.md`、小程序 `miniapp/rules/shared/17-ai-generation.md`。

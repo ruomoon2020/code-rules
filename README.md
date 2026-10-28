@@ -389,3 +389,7 @@ python scripts/check-project-adoption.py --repo /path/to/your-app --stack fronte
 4. 改 eval 数量时，同步 prompts、rubric、results-template、smoke、README 和校验脚本。
 5. 跨包引用 shared 编号时，见 `web-backend/rules/docs/fullstack-contract.md` §跨包编号说明，勿只报「读 08 / 22」。
 6. 外层 README 只写全栈部署和协作，不复制前后端规则全文。
+
+## 不熟悉功能先调研
+
+三端 AI 生成规则统一要求：编码前检索 GitHub `stars:>500`、维护活跃、许可证明确的同类项目；使用 Agent-Reach 扩展范围，比较设计、依赖和已知问题。分别通过各包 `evals/open-source-research.md` 验证；工具不可用须记录降级与证据缺口。

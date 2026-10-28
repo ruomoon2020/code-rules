@@ -253,3 +253,7 @@ Codex 必须在改代码前先说明：这次改动对应哪一类、将读取�
 - 腾讯 / 微信小程序：分包、包体积、隐私授权、平台能力、审核风险。
 - DCloud / uni-app：Vue3、TypeScript、`pages.json`、`manifest.json`、跨小程序平台差异。
 - 企业移动端实践：页面瘦身、能力封装、弱网、幂等、埋点和灰度开关。
+
+## 不熟悉功能先调研
+
+`shared/17-ai-generation.md` 新增 GitHub `stars:>500`、维护/许可证核验、Agent-Reach 扩展检索与实现前比较要求。专项评测：`evals/open-source-research.md`（3/3）。

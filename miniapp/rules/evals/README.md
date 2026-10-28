@@ -90,3 +90,7 @@ M09、M11、M13、M14、M15、M16、M17、M18、M19、M20。
 ## 与落地清单关系
 
 `adoption-checklist.md` 用于勾选业务仓规则落地状态，与 evals 互补。
+
+## 开源调研专项
+
+修改不熟悉功能调研规则或命中该场景时，执行 `open-source-research.md`，三项全部通过；独立于现有 P0/P1 和 AI Tool Safety 计数。保存模型、日期、输出与逐项判定。

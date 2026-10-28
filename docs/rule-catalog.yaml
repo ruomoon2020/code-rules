@@ -166,10 +166,11 @@ rules:
   path: web-front/rules/shared/09-ai-generation.md
   owner_role: Frontend owner
   wording_stats:
-    normative_markers: 19
+    normative_markers: 23
     advisory_markers: 0
   routing:
   - web-front/rules/codex/AGENTS.md
+  - web-front/rules/cursor/00-project-overview.mdc
   - web-front/rules/cursor/21-ai-generation.mdc
   eval_cases:
   - E13
@@ -960,7 +961,7 @@ rules:
   path: web-backend/rules/shared/26-ai-generation.md
   owner_role: Backend owner
   wording_stats:
-    normative_markers: 3
+    normative_markers: 7
     advisory_markers: 0
   routing:
   - web-backend/rules/codex/AGENTS.md
@@ -1587,7 +1588,7 @@ rules:
   path: miniapp/rules/shared/17-ai-generation.md
   owner_role: Miniapp owner
   wording_stats:
-    normative_markers: 13
+    normative_markers: 17
     advisory_markers: 0
   routing:
   - miniapp/rules/codex/AGENTS.md

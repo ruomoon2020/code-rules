@@ -339,3 +339,7 @@ CI 硬门禁建议至少包含：`lint`、`type-check`、`build`、schema check�
 3. 发版前在规则包目录执行：`node rules/examples/run-ci-scan-fixtures.mjs`。
 
 仅接 ESLint 而不跑 `ci-scan`，无法覆盖模板标签；`lint:views-el` 应与 `lint` 同级进入 PR 检查。
+
+## 不熟悉功能先调研
+
+`shared/09-ai-generation.md` 新增 GitHub `stars:>500`、维护/许可证核验、Agent-Reach 扩展检索与实现前比较要求。专项评测：`evals/open-source-research.md`（3/3）。

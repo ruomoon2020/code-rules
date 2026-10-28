@@ -326,3 +326,7 @@ AI 行为回归：
 `examples/ci/github-actions-backend.yml` 标注 **Required / Conditional / Optional**；须按项目裁剪（见 `examples/README.md`、`23-quality-gates.md`）。
 
 本 monorepo 改 `web-backend/rules/**` 时，CI 自动运行 `scripts/validate-rules-package.py`（见仓库根 `.github/workflows/validate-rules-packages.yml`）。**未接入的工具不得伪造「已通过」**。
+
+## 不熟悉功能先调研
+
+`shared/26-ai-generation.md` 新增 GitHub `stars:>500`、维护/许可证核验、Agent-Reach 扩展检索与实现前比较要求。专项评测：`evals/open-source-research.md`（3/3）。

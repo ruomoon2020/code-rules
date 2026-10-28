@@ -44,3 +44,7 @@ alwaysApply: true
 - 写字段前读 `rules/shared/12-schema-ssot.md`
 
 不要使用已删除的 `rules.md`。规则包应可独立使用，不依赖外部大文档。
+
+## 不熟悉功能
+
+遇到不熟悉的功能、协议或实现机制，编码前必须读取 `rules/shared/09-ai-generation.md` 的“先调研再实现”，完成 GitHub 高星筛选、Agent-Reach 扩展检索与比较取舍。

@@ -29,3 +29,7 @@
 ## 不要做
 
 - [ ] 不要在业务仓 CI 的包体积检查上使用「仅 warning、永不 fail」且无 Owner 审批
+
+## 开源调研规则发布核验
+
+- [ ] 核对 Codex/Cursor 不熟悉功能入口及 AI 生成规则一致；执行 `evals/open-source-research.md` 三项评测并保存证据，未运行须明确标记。

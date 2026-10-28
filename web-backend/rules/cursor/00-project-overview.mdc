@@ -20,3 +20,7 @@ Spring Boot 3.x + Java 17+ + MyBatis-Plus + MySQL/PostgreSQL。Spring Boot 4.x �
 - 生产事故 / 安全事件 / 复盘：读取 `common-governance/docs/incident-response.md` 与 `common-governance/docs/incident-postmortem-template.md`。
 
 须能访问完整 `rules/` 目录。持久化见 shared `07`；可靠性见 `32`；安全高阶治理见 shared `35`–`42`（非 cursor/35 业务扩展）；业务扩展见 shared `43`；CI 样板须按项目裁剪（见 `examples/README.md`）。
+
+## 不熟悉功能
+
+遇到不熟悉的功能、协议或实现机制，编码前必须读取 `rules/shared/26-ai-generation.md` 的“先调研再实现”，完成 GitHub 高星筛选、Agent-Reach 扩展检索与比较取舍。

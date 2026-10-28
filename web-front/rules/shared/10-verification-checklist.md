@@ -54,3 +54,7 @@ pnpm api:check
 Codex 详见 `rules/codex/05-verification.md`；质量门禁详见 `shared/08-quality-gates.md`。
 
 跨端发版与合并标准见 `docs/enterprise-governance.md`（monorepo `docs/definition-of-done.md`）。
+
+## 不熟悉功能调研核验
+
+- [ ] 命中不熟悉功能时，已按 AI 生成规则完成高星开源候选比较、维护与许可核验、Agent-Reach 使用或降级说明，并保存实现前取舍及实现后验证证据。

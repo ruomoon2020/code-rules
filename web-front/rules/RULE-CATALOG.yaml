@@ -167,10 +167,11 @@ rules:
   path: shared/09-ai-generation.md
   owner_role: Frontend owner
   wording_stats:
-    normative_markers: 19
+    normative_markers: 23
     advisory_markers: 0
   routing:
   - codex/AGENTS.md
+  - cursor/00-project-overview.mdc
   - cursor/21-ai-generation.mdc
   eval_cases:
   - E13

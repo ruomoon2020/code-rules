@@ -63,6 +63,10 @@ Codex 优先读 `rules/shared/*.md` 与 `rules/codex/*.md`。
 - 不要依赖 `rules/cursor/*.mdc`（该目录仅供 Cursor）。
 - 维护规则包时可读 `rules/docs/contributing-rules-package.md`；业务编码任务只按本文件明确路由读取对应文档。成熟后台新增业务页可读 `rules/docs/business-feature-playbook-frontend.md`，编码约束以 `rules/shared/22-business-module-extension.md` 为准。
 
+## 不熟悉功能的入口
+
+遇到不熟悉的功能、协议或实现机制，编码前必须读取 `rules/shared/09-ai-generation.md` 的“先调研再实现”，使用 GitHub 高星筛选与 Agent-Reach 扩展检索，并先提交比较和取舍证据。
+
 ## 硬规则
 
 - 未阅读目标仓库 Base 组件源码或 `rules/shared/11-base-components-context.md` 前，不得编写或重构 `src/views/**`。

@@ -28,3 +28,7 @@ mvn verify
 | AI / 外部内容 / 工具调用 | `26-ai-generation.md`、common governance 的 `ai-tool-security.md` |
 
 结果记录与回复格式见 `codex/05-verification.md`；发布验证见 `docs/release-checklist.md`。
+
+## 不熟悉功能调研核验
+
+- [ ] 命中不熟悉功能时，已按 AI 生成规则完成高星开源候选比较、维护与许可核验、Agent-Reach 使用或降级说明，并保存实现前取舍及实现后验证证据。

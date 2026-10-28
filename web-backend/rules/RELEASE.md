@@ -28,3 +28,7 @@
 ## 不要做
 
 - [ ] 生产禁止 `ddl-auto=update`（规则与代码评审双重约束）
+
+## 开源调研规则发布核验
+
+- [ ] 核对 Codex/Cursor 不熟悉功能入口及 AI 生成规则一致；执行 `evals/open-source-research.md` 三项评测并保存证据，未运行须明确标记。

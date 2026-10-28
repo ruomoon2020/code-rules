@@ -497,7 +497,7 @@ rules:
   path: shared/26-ai-generation.md
   owner_role: Backend owner
   wording_stats:
-    normative_markers: 3
+    normative_markers: 7
     advisory_markers: 0
   routing:
   - codex/AGENTS.md

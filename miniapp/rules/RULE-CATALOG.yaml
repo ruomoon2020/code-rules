@@ -330,7 +330,7 @@ rules:
   path: shared/17-ai-generation.md
   owner_role: Miniapp owner
   wording_stats:
-    normative_markers: 13
+    normative_markers: 17
     advisory_markers: 0
   routing:
   - codex/AGENTS.md
